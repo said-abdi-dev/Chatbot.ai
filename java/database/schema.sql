@@ -1,13 +1,7 @@
-BEGIN TRANSACTION;
 
-DROP TABLE IF EXISTS users;
+select * from topics
+select * from subjects
 
-CREATE TABLE users (
-	user_id SERIAL,
-	username varchar(50) NOT NULL UNIQUE,
-	password_hash varchar(200) NOT NULL,
-	role varchar(50) NOT NULL,
-	CONSTRAINT PK_user PRIMARY KEY (user_id)
-);
-
-COMMIT TRANSACTION;
+select * from subjects
+JOIN topics on subjects.subject_id = topics.topic_id
+WHERE subject_name = 'Java'
