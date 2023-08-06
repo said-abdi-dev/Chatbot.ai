@@ -1,45 +1,57 @@
 package com.techelevator.dao;
 
+import com.techelevator.model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import com.techelevator.model.ChatbotResponse;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JdbcChatbotResponseDao implements ChatbotResponseDao{
 
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
     private ChatbotResponseDao chatbotResponseDao;
 
+    public JdbcChatbotResponseDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
-    public String getInput(String usersInput) {
-        String sql = "select topics.chatbot_response from topics\n" +
-                "JOIN subjects on subjects.subject_id = topics.subject_id\n" +
-                "WHERE subject_name = ? AND topic_name = ?";
+    public String getResponseFromInput(String usersInput) {
 
+        String [] userInputArr = usersInput.split(" ");
+
+        //gets all subject names
         String sqlSubjectNames = "select subject_name from subjects";
-        String sqlTopicNames = "select topic_name from topics where subject_id = ?";
-
         List<String> listOfSubjects = new ArrayList<>();
-
         SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSubjectNames);
-        //gets our list of subjects
         while(rows.next()) {
             String subjectName = rows.getString("subject_name");
             listOfSubjects.add(subjectName);
         }
+        //gets all topic names
+        String sqlTopicNames = "select topic_name from topics where subject_name = ?";
+        List<String> listOfTopics = new ArrayList<>();
+        SqlRowSet rows2 = jdbcTemplate.queryForRowSet(sqlTopicNames,userInputArr[0]);
+        while(rows2.next()) {
+            String topicName = rows2.getString("topic_name");
+            listOfTopics.add(topicName);
+        }
+        if (listOfSubjects.contains(userInputArr[0]) && listOfTopics.contains(userInputArr[1])) {
+            String sql = "select topics.chatbot_response from topics\n" +
+                    "JOIN subjects on subjects.subject_name = topics.subject_name\n" +
+                    "WHERE topics.subject_name = ? AND topic_name = ?";
 
-        //iterate through subjects listand see if subject is includes
-        //if not throw an error
-
-        //if true, then store the subject name in a variable
-        //new list for correct responses
-        //get responses topics, except UNIQUE for that specific subject name
-
-
-        //
-
-
-return null;
+           return  jdbcTemplate.queryForObject(sql, String.class, userInputArr[0],userInputArr[1]);
+        }
+        else {
+            return "invalid input";
+        }
     }
+
+
+
 }
