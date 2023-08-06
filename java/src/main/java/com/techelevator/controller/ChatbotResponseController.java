@@ -1,5 +1,10 @@
 package com.techelevator.controller;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.techelevator.model.ChatbotResponse;
 import com.techelevator.dao.ChatbotResponseDao;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,10 +18,11 @@ public class ChatbotResponseController {
         this.chatbotResponseDao = chatbotResponseDao;
     }
     @RequestMapping(path = "{userInput}", method = RequestMethod.GET)
+    public ChatbotResponse getChatbotResponse (@PathVariable String userInput ){
 
-    public  String getChatbotResponse (@PathVariable String userInput ){
+        ChatbotResponse chatbotResponse = chatbotResponseDao.createResponse(userInput);
 
-        return chatbotResponseDao.getInput(userInput);
+        return chatbotResponse;
     }
 
 }
