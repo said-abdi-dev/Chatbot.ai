@@ -38,6 +38,7 @@
 
 
 <script>
+import ChatBotResponseService from '../services/ChatbotResponseService'
 
 export default {
   name: 'ChatBox',
@@ -54,18 +55,20 @@ export default {
         author: 'client'
       })
 
-      this.message = ''
-
-      this.$axios.get(`https://www.cleverbot.com/getreply?key=CC8uqcCcSO3VsRFvp5-uW5Nxvow&input=${message}`)
-      .then(respose => {
+      this.message = '';
+      ChatBotResponseService.getChatbotResponse(message)
+      .then(response => {
+        console.log(response);
         this.messages.push({
-          text: respose.data.output,
+          text: response.data.chatbotResponse,
           author: 'server'
         })
 
         this.$nextTick(() => {
           this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
         })  
+      }).catch(err => {
+        console.error(err);
       })
     },
   
@@ -128,6 +131,10 @@ export default {
     }
     p {
       float: left;
+    
+      
+            padding: 22px;
+
             font-size: 1.3rem;
 
     }
@@ -135,11 +142,12 @@ export default {
 
   .client {
     span {
-      background: #0070C8; 
+      background: rgb(0, 150, 255)
       
     }
     p {
       float: right;
+      word-spacing: 2px;
             font-size: 1.3rem;
 
     }

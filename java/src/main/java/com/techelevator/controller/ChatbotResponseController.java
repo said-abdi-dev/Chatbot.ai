@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/")
+@CrossOrigin
 public class ChatbotResponseController {
 
     private ChatbotResponseDao chatbotResponseDao;
