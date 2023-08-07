@@ -14,3 +14,5 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
+Vue.prototype.$axios = axios
+
