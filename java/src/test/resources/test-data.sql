@@ -1,3 +1,5 @@
+--this is where the test data goes !
+
 BEGIN TRANSACTION;
 
 INSERT INTO users (username,password_hash,role) VALUES ('user1','user1','ROLE_USER');
