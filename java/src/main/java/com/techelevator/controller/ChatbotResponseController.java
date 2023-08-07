@@ -23,8 +23,8 @@ public class ChatbotResponseController {
         ChatbotResponse chatbotResponse = new ChatbotResponse();
         String chatbotReply = chatbotResponseDao.getResponseFromInput(userInput);
 
-        chatbotResponse.setUserInput(chatbotReply);
-        chatbotResponse.setUserInput(chatbotReply);
+        chatbotResponse.setUserInput(userInput);
+        chatbotResponse.setChatbotResponse(chatbotReply);
         return chatbotResponse;
     }
 
