@@ -4,21 +4,21 @@
       <ul class="chat-box-list">
         <li
           class="message"
-
-
           v-for="(message, idx) in messages"
-
           :key="idx"
-
           :class="message.author"
-        >
-          <p>
-            <span>{{ message.text }} </span>
-                
-          </p>
-          <br>
-          <p class="time">{{formattedTimestamp}}</p>
+        >   
+          <section class="message-section">
+            
+            <p class="content_paragraph">{{ message.text }} 
+             </p>
+             <p class="time">{{formattedTimestamp}}</p>
+             
 
+                
+        </section>
+         
+         
         </li>
       </ul>
     </div>
@@ -116,39 +116,45 @@ export default {
   padding-left: 15px;
   padding-right: 15px;
 
-  span {
+  .content_paragraph {
     padding: 10px;
     color: white;
     border-radius: 6px;
+    text-align: right;
+    width: 55%;
+    background-color: rgb(194, 99, 21);
+ 
   }
 
   .server {
     span {
       background: gray;
-      color: white;
-
-      
+      color: rgb(148, 20, 20);     
     }
-    p {
+    .content_paragraph {
       float: left;
-    
+      padding: 22px;
+      font-size: 1.4rem;
+      background-color:#705cf6;
+      padding: auto;
+      margin: auto;
+      border-radius: 12px;
+      width: 60%;
       
-            padding: 22px;
 
-            font-size: 1.3rem;
 
     }
   }
 
   .client {
     span {
-      background: rgb(0, 150, 255)
+      background: rgb(112, 117, 121)
       
     }
     p {
       float: right;
       word-spacing: 2px;
-            font-size: 1.3rem;
+      font-size: 1.3rem;
 
     }
   }
@@ -164,7 +170,11 @@ export default {
   margin-right: auto;
   align-items: space-between;
   justify-content: space-between;
-  border-radius: 10px;
+  border-radius: 20px;
+ -webkit-box-shadow: 1.5px 1.7px 2px 3px #ccc;  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+  -moz-box-shadow:    1.5px 1.5px 1.4px 3px #ccc;  /* Firefox 3.5 - 3.6 */
+  box-shadow:         2px 2px 3px 3px #ccc;  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+  
 }
 
 .chat-inputs {
@@ -191,6 +201,7 @@ export default {
     border-bottom: none;
     border-right:none;
     border-radius: 18px;
+    font-size: 1.2rem;
   
     
   }
