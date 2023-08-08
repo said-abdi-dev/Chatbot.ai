@@ -29,5 +29,30 @@ VALUES
     (3, 'JavaScript is a dynamic and versatile scripting language primarily used for web development. It enables interactive and dynamic content on websites, enhancing user experience. JavaScript can be executed directly in web browsers, making it an essential tool for front-end development.'),
     (4, 'Arrays in JavaScript are essential data structures that store a collection of elements. Unlike some programming languages, JavaScript arrays can hold values of different types within the same array. They offer various built-in methods for manipulation and iteration, making them powerful tools for developers.');
 
+-- Inserts from 8/8/2023, 1:32pm
+
+INSERT INTO subjects (subject_name)
+VALUES
+    ('python'),
+    ('sql');
+
+-- Additional topics
+INSERT INTO topics (topic_name, subject_name)
+VALUES
+    ('basics', 'python'),
+    ('functions', 'python'),
+    ('queries', 'sql'),
+    ('joins', 'sql');
+
+-- Additional responses
+INSERT INTO responses (topic_id, response)
+VALUES
+    (5, 'Python is a high-level programming language known for its simplicity and readability. It emphasizes code readability and allows programmers to express concepts in fewer lines of code compared to other languages. Python is widely used in various domains including web development, scientific computing, and data analysis.'),
+    (6, 'Functions in Python are blocks of reusable code that can be called with arguments. They allow you to modularize your code and make it more organized. Python supports both built-in functions and user-defined functions, providing a powerful way to encapsulate functionality.'),
+    (7, 'SQL (Structured Query Language) is a domain-specific language used to manage and manipulate relational databases. It provides a standardized way to define, query, and manage data stored in a relational database system.'),
+
+    (8, 'In SQL, joins are used to combine rows from two or more tables based on a related column between them. There are different types of joins, including INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL JOIN, each serving different purposes in retrieving and combining data from multiple tables.');
 COMMIT;
+
+
 

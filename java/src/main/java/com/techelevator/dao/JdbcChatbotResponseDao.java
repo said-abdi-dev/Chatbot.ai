@@ -30,11 +30,17 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlGetSubjectNames);
         String foundSubject = "";
         //check if subject exists in usersInput
+
+        /*
+
+         */
         while(rows.next()) {
                 String subjectName = rows.getString("subject_name");
                 if (userInputNoSpaces.contains(subjectName)) {
-                    foundSubject = subjectName;
-                    break;
+                    if (subjectName.length() > foundSubject.length()) {
+                        foundSubject = subjectName;
+                    }
+
                 }
         }
         //gets all topic names for given subject
@@ -45,10 +51,11 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         while(rows2.next()) {
             String topicName = rows2.getString("topic_name");
             if (userInputNoSpaces.contains(topicName)){
-                foundTopicName = topicName;
-                String sqlGetFoundTopicId = "SELECT topic_id FROM topics WHERE topic_name = ? AND subject_name = ?";
-                foundTopicId = jdbcTemplate.queryForObject(sqlGetFoundTopicId, Integer.class, foundTopicName, foundSubject);
-                break;
+                if(topicName.length() > foundTopicName.length()) {
+                    foundTopicName = topicName;
+                    String sqlGetFoundTopicId = "SELECT topic_id FROM topics WHERE topic_name = ? AND subject_name = ?";
+                    foundTopicId = jdbcTemplate.queryForObject(sqlGetFoundTopicId, Integer.class, foundTopicName, foundSubject);
+                }
             }
         }
 
