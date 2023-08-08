@@ -31,11 +31,11 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         String foundSubject = "";
         //check if subject exists in usersInput
         while(rows.next()) {
-            String subjectName = rows.getString("subject_name");
-            if (userInputNoSpaces.contains(subjectName)){
-                foundSubject = subjectName;
-                break;
-            }
+                String subjectName = rows.getString("subject_name");
+                if (userInputNoSpaces.contains(subjectName)) {
+                    foundSubject = subjectName;
+                    break;
+                }
         }
         //gets all topic names for given subject
         String sqlGetTopicsFromSubject = "select topic_name from topics where subject_name = ?";
