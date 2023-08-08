@@ -52,6 +52,67 @@ VALUES
     (7, 'SQL (Structured Query Language) is a domain-specific language used to manage and manipulate relational databases. It provides a standardized way to define, query, and manage data stored in a relational database system.'),
 
     (8, 'In SQL, joins are used to combine rows from two or more tables based on a related column between them. There are different types of joins, including INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL JOIN, each serving different purposes in retrieving and combining data from multiple tables.');
+
+INSERT INTO subjects (subject_name)
+VALUES
+    ('oop');
+
+INSERT INTO topics (topic_name, subject_name)
+VALUES
+    ('polymorphism', 'oop'),
+    ('encapsulation', 'oop'),
+    ('inheritance', 'oop');
+
+INSERT INTO responses (topic_id, response)
+VALUES
+    (9, 'Polymorphism is a concept in object-oriented programming where objects of different classes can be treated as objects of a common superclass. It allows for flexible and extensible code.'),
+    (10, 'Encapsulation is the practice of bundling data (attributes) and methods (functions) that operate on the data into a single unit (class). It provides data hiding and abstraction.'),
+    (11, 'Inheritance allows a class to inherit attributes and behaviors from a parent class. It promotes code reuse and hierarchy in class relationships.');
+
+-- Insert data related to mutability
+INSERT INTO subjects (subject_name)
+VALUES
+    ('mutability');
+
+INSERT INTO topics (topic_name, subject_name)
+VALUES
+    ('mutability', 'mutability'),
+    ('immutable Objects', 'mutability'),
+    ('mutable Objects', 'mutability');
+
+INSERT INTO responses (topic_id, response)
+VALUES
+    (12, 'Mutability refers to the ability of an object to change its state after creation.'),
+    (13, 'Immutable objects cannot be changed after creation. For example, strings in many programming languages are immutable.'),
+    (14, 'Mutable objects can be modified after creation. Consequences include potential data integrity issues and difficulty in reasoning about code.');
+
+-- Continue with similar insert statements for other topics...
+
+INSERT INTO subjects (subject_name)
+VALUES
+    ('types');
+
+INSERT INTO topics (topic_name, subject_name)
+VALUES
+    ('primitive Types', 'types'),
+	('reference Types', 'types'),
+    ('memory Allocation', 'types');
+
+INSERT INTO responses (topic_id, response)
+VALUES
+    (15, 'Primitive types hold simple values directly, like integers or floating-point numbers.'),
+    (16, 'Reference types hold references to objects, allowing for more complex data structures.'),
+    (17, 'Primitive types are usually stored in the stack, while reference types (objects) are stored in the heap.');
+
+-- Continuing with inserts of other topics
+
+
+
+
+
+
+
+
 COMMIT;
 
 
