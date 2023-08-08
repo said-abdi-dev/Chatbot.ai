@@ -1,27 +1,21 @@
 <template>
   <section class="chat-box">
-    <div class="chat-box-list-container" ref="chatbox">
+    <section class="chat-box-list-container" ref="chatbox">
       <ul class="chat-box-list">
-        <li
+        <span
           class="message"
-
-
           v-for="(message, idx) in messages"
-
           :key="idx"
-
           :class="message.author"
         >
           <p>
-            <span>{{ message.text }} </span>
-                
+            {{ message.text }}   
           </p>
-          <br>
-          <p class="time">{{formattedTimestamp}}</p>
-
-        </li>
+          <!-- <br>
+          <p class="time">{{formattedTimestamp}}</p> -->
+        </span>
       </ul>
-    </div>
+    </section>
     <div class="chat-inputs">
       <input
         type="text"
@@ -31,8 +25,6 @@
       <button @click="sendMessage">Send</button>
     </div>
   </section>
-  
-  
 </template>
 
 
@@ -52,7 +44,7 @@ export default {
 
       this.messages.push({
         text: message,
-        author: 'client'
+        author: 'request-box'
       })
 
       this.message = '';
@@ -61,7 +53,7 @@ export default {
         console.log(response);
         this.messages.push({
           text: response.data.chatbotResponse,
-          author: 'server'
+          author: 'response-box'
         })
 
         this.$nextTick(() => {
@@ -95,81 +87,103 @@ export default {
 
 <style scoped lang="scss">
 
+p {
+  display: inline;
+}
+
+div {
+  display: inline-block;
+}
+
 .chat-box,
 .chat-box-list {
   display: flex;
+  flex-direction: column-reverse;
   flex-direction: column;
   list-style-type: none;
+}
+
+.message {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .chat-box-list-container {
   overflow: scroll;
   margin-bottom: 2px;
 }
-.time{
+.time {
   padding-top: 10px;
   text-align: right;
-
-
 }
 .chat-box-list {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start; /* Align items to the left side */
   padding-left: 15px;
   padding-right: 15px;
-
-  span {
-    padding: 10px;
-    color: white;
-    border-radius: 6px;
-  }
-
-  .server {
-    span {
-      background: gray;
-      color: white;
-
-      
-    }
-    p {
-      float: left;
-    
-      
-            padding: 22px;
-
-            font-size: 1.3rem;
-
-    }
-  }
-
-  .client {
-    span {
-      background: rgb(0, 150, 255)
-      
-    }
-    p {
-      float: right;
-      word-spacing: 2px;
-            font-size: 1.3rem;
-
-    }
-  }
 }
 
-.chat-box {
-  margin: 10px;
-  border: 2px solid #999;
-  width: 75vw;
-  height: 75vh;
-  border-radius: 10px;
-  margin-left: auto;
-  margin-right: auto;
-  align-items: space-between;
-  justify-content: space-between;
-  border-radius: 10px;
+.response-box,
+.request-box {
+  max-width: 80%;
+  margin-bottom: 1rem;
+  display: inline-block;
+  word-wrap: break-word; /* Ensure long text wraps within the box */
+  padding: 1rem;
+  margin: 1rem;
 }
 
-.chat-inputs {
-  display: flex;
-  
+.response-box {
+  font-size: 1.4rem;
+    text-align: left;
+
+  background-color: #8effff;
+  border-radius: 12px;
+  align-self: flex-start; /* Align the response box to the left */
+}
+
+.response-box p {
+  text-align: left;
+}
+
+.request-box {
+  width: auto; /* Let the width adjust to the content */
+  text-align: left;
+  font-size: 1.3rem;
+  background-color: rgb(255, 183, 183);
+  border-radius: 12px;
+  align-self: flex-end; /* Align the request box to the right */
+}
+
+.request-box p {
+  font-size: 1.3rem;
+  text-align: left;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+
+  .chat-box {
+    margin: 10px;
+    border: 2px solid #999;
+    width: 75vw;
+    height: 75vh;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: space-between;
+    justify-content: space-between;
+    border-radius: 10px;
+  }
+  .chat-box-list li {
+    margin-bottom: 1.5rem;
+  }
+
+  .chat-inputs {
+    display: flex;
+  }
+
   input {
     line-height: 3;
     width: 100%;
@@ -191,8 +205,5 @@ export default {
     border-bottom: none;
     border-right:none;
     border-radius: 18px;
-  
-    
   }
-}
 </style>
