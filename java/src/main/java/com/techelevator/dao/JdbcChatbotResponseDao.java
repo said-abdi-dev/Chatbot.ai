@@ -23,44 +23,51 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
     public String getResponseFromInput(String usersInput) {
         String result = "";
 
-        String userInputNoSpaces = usersInput.replace(" ","");
+        String userInputNoSpaces = usersInput.toLowerCase().replace(" ","");
 
         //gets all subject names
         String sqlGetSubjectNames = "SELECT subject_name FROM subjects";
         SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlGetSubjectNames);
         String foundSubject = "";
         //check if subject exists in usersInput
+
+        /*
+
+         */
         while(rows.next()) {
-            String subjectName = rows.getString("subject_name");
-            if (userInputNoSpaces.contains(subjectName)){
-                foundSubject = subjectName;
-                break;
-            }
+                String subjectName = rows.getString("subject_name");
+                if (userInputNoSpaces.contains(subjectName)) {
+                    if (subjectName.length() > foundSubject.length()) {
+                        foundSubject = subjectName;
+                    }
+
+                }
         }
         //gets all topic names for given subject
-        String sqlGetTopicsFromSubject = "select topic_name from topics where subject_name = ?";
+        String sqlGetTopicsFromSubject = "SELECT topic_name FROM topics WHERE subject_name = ?";
         SqlRowSet rows2 = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject,foundSubject);
-        String foundTopic = "";
+        String foundTopicName = "";
+        int foundTopicId = -1;
         while(rows2.next()) {
             String topicName = rows2.getString("topic_name");
             if (userInputNoSpaces.contains(topicName)){
-                foundTopic = topicName;
-                break;
+                if(topicName.length() > foundTopicName.length()) {
+                    foundTopicName = topicName;
+                    String sqlGetFoundTopicId = "SELECT topic_id FROM topics WHERE topic_name = ? AND subject_name = ?";
+                    foundTopicId = jdbcTemplate.queryForObject(sqlGetFoundTopicId, Integer.class, foundTopicName, foundSubject);
+                }
             }
         }
 
-        if (foundSubject != "" && foundTopic != "") {
-            String sql = "select topics.chatbot_response from topics\n" +
-                    "JOIN subjects on subjects.subject_name = topics.subject_name\n" +
-                    "WHERE topics.subject_name = ? AND topic_name = ?";
-           result =  jdbcTemplate.queryForObject(sql, String.class, foundSubject, foundTopic);
+        if (foundSubject != "" && foundTopicName != "") {
+            String sql = "select response from responses\n" +
+                    "WHERE topic_id = ?";
+           result =  jdbcTemplate.queryForObject(sql, String.class, foundTopicId);
         }
         else {
            result = "invalid input";
         }
         return result;
     }
-
-
 
 }
