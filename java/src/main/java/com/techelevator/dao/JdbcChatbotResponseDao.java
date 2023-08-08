@@ -32,13 +32,13 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         //check if subject exists in usersInput
 
         while(rows.next()) {
-                String subjectName = rows.getString("subject_name");
-                if (userInputNoSpaces.contains(subjectName)) {
-                    if (subjectName.length() > foundSubject.length()) {
-                        foundSubject = subjectName;
-                    }
-
+            String subjectName = rows.getString("subject_name");
+            if (userInputNoSpaces.contains(subjectName)) {
+                if (subjectName.length() > foundSubject.length()) {
+                    foundSubject = subjectName;
                 }
+
+            }
         }
         //gets all topic names for given subject
         String sqlGetTopicsFromSubject = "SELECT topic_name FROM topics WHERE subject_name = ?";
@@ -59,10 +59,10 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         if (foundSubject != "" && foundTopicName != "") {
             String sql = "select response from responses\n" +
                     "WHERE topic_id = ?";
-           result =  jdbcTemplate.queryForObject(sql, String.class, foundTopicId);
+            result =  jdbcTemplate.queryForObject(sql, String.class, foundTopicId);
         }
         else {
-           result = "invalid input";
+            result = "invalid input";
         }
         return result;
     }

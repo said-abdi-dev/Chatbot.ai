@@ -104,11 +104,17 @@ VALUES
     (16, 'Reference types hold references to objects, allowing for more complex data structures.'),
     (17, 'Primitive types are usually stored in the stack, while reference types (objects) are stored in the heap.');
 
--- Continuing with inserts of other topics
+-- Inserts of help message
 
 
+INSERT INTO subjects (subject_name)
+VALUES ('help');
 
+INSERT INTO topics (topic_name, subject_name)
+VALUES ('help','help');
 
+INSERT INTO responses (topic_id, response)
+VALUES (18, 'Need Help? Here are a list of common questions that you can ask. Please add a subject, and a specific topic What is an array in javascript? What are functions in python? What is the definition of javascript? What are joins in sql?');
 
 
 
