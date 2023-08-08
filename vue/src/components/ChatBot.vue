@@ -6,13 +6,18 @@
           class="message"
           v-for="(message, idx) in messages"
           :key="idx"
-          :class="message.author"
-        >
-          <p>
+          :class="message.author">
+        
+          <!-- <p>
             {{ message.text }}   
-          </p>
-          <!-- <br>
-          <p class="time">{{formattedTimestamp}}</p> -->
+          </p> -->
+
+
+          <div class="icon">
+           <img src="" alt="" srcset="">
+          </div>
+          <br>
+          <p class="time">{{formattedTimestamp}}</p>
         </span>
       </ul>
     </section>
