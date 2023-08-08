@@ -31,9 +31,6 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         String foundSubject = "";
         //check if subject exists in usersInput
 
-        /*
-
-         */
         while(rows.next()) {
                 String subjectName = rows.getString("subject_name");
                 if (userInputNoSpaces.contains(subjectName)) {
