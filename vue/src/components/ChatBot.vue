@@ -42,7 +42,7 @@ export default {
     sendMessage() {
       const message = this.message
 
-      this.messages.push({
+      this.messages.unshift({
         text: message,
         author: 'request-box'
       })
@@ -50,8 +50,7 @@ export default {
       this.message = '';
       ChatBotResponseService.getChatbotResponse(message)
       .then(response => {
-        console.log(response);
-        this.messages.push({
+        this.messages.unshift({
           text: response.data.chatbotResponse,
           author: 'response-box'
         })
@@ -206,4 +205,13 @@ div {
     border-right:none;
     border-radius: 18px;
   }
+
+  .chat-box-list-container::-webkit-scrollbar {
+  width: 0.5rem; /* Adjust the width as needed */
+  background-color: transparent; /* Make the scrollbar track transparent */
+}
+
+.chat-box-list-container::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Make the scrollbar thumb transparent */
+}
 </style>
