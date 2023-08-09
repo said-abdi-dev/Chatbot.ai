@@ -37,8 +37,10 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
                     if (subjectName.length() > foundSubject.length()) {
                         foundSubject = subjectName;
                     }
-
                 }
+        }
+        if (foundSubject == "") {
+            foundSubject = "subjectnotfound";
         }
         //gets all topic names for given subject
         String sqlGetTopicsFromSubject = "SELECT topic_name FROM topics WHERE subject_name = ?";
@@ -58,11 +60,26 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
                 }
             }
         }
-
-        if (foundSubject != "" && foundTopicName != "") {
-            String sql = "select response from responses\n" +
-                    "WHERE topic_id = ?";
-           result =  jdbcTemplate.queryForObject(sql, String.class, foundTopicsResponseId);
+        //sets topic to topicNotFound(aka null)
+        if (foundTopicName == "") {
+            foundTopicName = "topicnotfound";
+        }
+        //SUBJECT not found
+        if (foundSubject == "subjectnotfound") {
+            String sql = "SELECT response from responses WHERE response_id = (SELECT response_id from topics WHERE subject_name = 'subjectnotfound' LIMIT 1)";
+            result = jdbcTemplate.queryForObject(sql,String.class);
+        }
+        //TOPIC not found, subject found
+        else if (foundSubject != "subjectnotfound" && foundTopicName == "topicnotfound") {
+           String sql =  "SELECT response from responses WHERE response_id = (SELECT response_id from topics WHERE topic_name = 'topicnotfound' LIMIT 1)";
+           result = jdbcTemplate.queryForObject(sql,String.class) + foundSubject;
+        }
+            else if (foundSubject == "subjectnotfound" && foundTopicName == "topicnotfound") {
+        }
+        //TOPIC AND SUBJECT found
+        else if (foundSubject != "" && foundTopicName != "") {
+            String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
+           result =  jdbcTemplate.queryForObject(sql, String.class, foundSubject,foundTopicName);
         }
         else {
            result = "invalid input";

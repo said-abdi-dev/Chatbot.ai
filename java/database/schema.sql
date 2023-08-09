@@ -30,3 +30,4 @@ CREATE TABLE topics (
     subject_name varchar(50) REFERENCES subjects (subject_name),
     response_id INTEGER REFERENCES responses (response_id)
 );
+

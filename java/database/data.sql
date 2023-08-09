@@ -23,10 +23,17 @@ VALUES
     ('vue'),
     ('help'),
     ('subjectnotfound'),
+<<<<<<< HEAD
 	('random');
 
 INSERT INTO responses (response)
 VALUES 
+=======
+   ('random');
+
+INSERT INTO responses (response)
+VALUES
+>>>>>>> de28bcc564390dd3faa075a4aac4dfa1a7161594
     ('Java is a widely-used high-level programming language known for its portability and versatility. It is designed to be platform-independent, allowing developers to write code that can run on various systems without modification. Java is popular for its object-oriented programming features and rich standard library.'),
     ('In Java, arrays are data structures used to store a collection of elements of the same type. They provide a way to efficiently manage and access multiple values using a single variable. Arrays in Java have a fixed size once they are created, and elements are accessed by their index.'),
     ('JavaScript is a dynamic and versatile scripting language primarily used for web development. It enables interactive and dynamic content on websites, enhancing user experience. JavaScript can be executed directly in web browsers, making it an essential tool for front-end development.'),
@@ -110,8 +117,5 @@ VALUES
     ('help','help', 24),
     ('subjectnotfound', 'subjectnotfound', 25),
 	('topicnotfound', 'random', 26);
-
 COMMIT;
-
-
 
