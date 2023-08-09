@@ -114,7 +114,7 @@ INSERT INTO topics (topic_name, subject_name)
 VALUES ('help','help');
 
 INSERT INTO responses (topic_id, response)
-VALUES (18, 'Need Help? Here are a list of common questions that you can ask. Please add a subject, and a specific topic What is an array in javascript? What are functions in python? What is the definition of javascript? What are joins in sql?');
+VALUES ( 'Need Help? Here are a list of common questions that you can ask. Please add a subject, and a specific topic What is an array in javascript? What are functions in python? What is the definition of javascript? What are joins in sql?');
 
 
 
