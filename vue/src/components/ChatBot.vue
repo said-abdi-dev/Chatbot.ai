@@ -1,5 +1,4 @@
 <template>
-
   <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
       <ul class="chat-box-list">
@@ -8,26 +7,26 @@
           v-for="(message, idx) in messages"
           :key="idx"
           :class="message.author">
-          <div v-if="message.author === 'request-box'" class="message-container user-message">
-  <div class="user-image">
-    <img src="img/userIcon.png" alt="User Icon" class="message-icon" />
-  </div>
-  <div class="message-content">
-    <p class="message-text">{{ message.text }}</p>
-    <p class="time">{{ formattedTimestamp }}</p> <!-- Add timestamp here -->
-  </div>
-</div>
-<div v-else class="message-container bot-message">
-  <div class="bot-image">
-    <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
-  </div>
-  <div class="message-content">
-    <p class="message-text">{{ message.text }}</p>
-    <p class="time">{{ formattedTimestamp }}</p> <!-- Add timestamp here -->
-  </div>
-</div>
-          <!-- <br>
-          <p class="time">{{formattedTimestamp}}</p> -->
+          <div class="message-container" v-if="message.author === 'request-box'">
+            <!-- User message -->
+            <div class="user-image">
+              <img src="img/userIcon.png" alt="User Icon" class="message-icon" />
+            </div>
+            <div class="message-content">
+              <p class="message-text">{{ message.text }}</p>
+              <p class="time user">{{ formattedTimestamp }}</p>
+            </div>
+          </div>
+          <div class="message-container" v-else>
+            <!-- Bot message -->
+            <div class="bot-image">
+              <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
+            </div>
+            <div class="message-content">
+              <p class="message-text">{{ message.text }}</p>
+              <p class="time bot">{{ formattedTimestamp }}</p>
+            </div>
+          </div>
         </li>
       </ul>
     </section>
@@ -41,9 +40,6 @@
     </div>
   </section>
 </template>
-
-
-
 
 <script>
 import ChatBotResponseService from '../services/ChatbotResponseService'
@@ -77,31 +73,25 @@ export default {
       }).catch(err => {
         console.error(err);
       })
-    },
-  
-      
-    
+    }
   },
-  computed:{
-   formattedTimestamp() {
- 
-  const now = new Date();
-  const estOffset = -5; // EST offset in hours
-  const estTime = new Date(now.getTime() + estOffset * 3600000);
+  computed: {
+    formattedTimestamp() {
+      const now = new Date();
+      const estOffset = -5;
+      const estTime = new Date(now.getTime() + estOffset * 3600000);
 
-  const hours = estTime.getHours();
-  const minutes = estTime.getMinutes();
+      const hours = estTime.getHours();
+      const minutes = estTime.getMinutes();
 
-  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-  
-  return formattedTime;
-}// TODO
-   }
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+      return formattedTime;
+    }
   }
-
-
-
+}
 </script>
+
 
 <style scoped lang="scss">
 
@@ -123,7 +113,7 @@ div {
 
 .message {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .chat-box-list-container {
@@ -131,12 +121,24 @@ div {
   margin-bottom: 2px;
 }
 
- .time {
+ .time.user {
+.time.user {
   font-size: 0.8rem;
   color: #999;
-  margin-top: 4px;
   align-self: flex-end;
+  margin-top: 4px;
 }
+
+}
+
+.time.bot {
+  font-size: 0.8rem;
+  color: #999;
+  align-self: flex-end;
+  margin-top: 4px;
+}
+
+
 
 .chat-box-list {
   display: flex;
@@ -157,10 +159,11 @@ div {
 }
 
 .response-box {
-  font-size: 1.4rem;
-    text-align: left;
-
-  background-color: #8effff;
+  width: auto;
+  font-size: 1.3rem;
+  text-align: left;
+  background-color: #1a1615;
+  color: #f0f0f0;
   border-radius: 12px;
   align-self: flex-start; 
 }
@@ -173,8 +176,9 @@ div {
   width: auto; 
   text-align: left;
   font-size: 1.3rem;
-  background-color: rgb(255, 183, 183);
+  background-color: rgb(19, 84, 224);
   border-radius: 12px;
+  color: #f0f0f0;
   align-self: flex-end; 
 }
 
@@ -220,7 +224,7 @@ div {
   }
 
   button {
-    
+    font-size: 21px;
     width: 145px;
     color: white;
     background: #0070C8;
@@ -236,9 +240,12 @@ div {
 }
 
 .message-icon {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   margin-right: 10px;
+  background-color: white; /* Change this color to your desired color */
+  border-radius: 50%
+  
 }
 
 .user-message {
@@ -250,10 +257,15 @@ div {
 }
 
 .message-text {
+  
+.message-text {
   background-color: #f0f0f0;
   padding: 8px;
   border-radius: 10px;
   max-width: 70%;
+  line-height: 1.4; /* Add this line to control line spacing */
+  margin-bottom: 6px; /* Add this line to add spacing between paragraphs */
+}
 }
 
 
