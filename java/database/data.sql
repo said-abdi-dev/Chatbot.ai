@@ -106,13 +106,6 @@ VALUES
 
 -- Continuing with inserts of other topics
 
-
-
-
-
-
-
-
 COMMIT;
 
 
