@@ -6,11 +6,15 @@
           class="message"
           v-for="(message, idx) in messages"
           :key="idx"
-          :class="message.author"
-        >
-          <p>
-            {{ message.text }}   
-          </p>
+          :class="message.author">
+          <div v-if="message.author === 'request-box'" class="message-container user-message">
+            <img src="img/userIcon.png" alt="User Icon" class="message-icon" />
+            <p class="message-text">{{ message.text }}</p>
+          </div>
+          <div v-else class="message-container bot-message">
+            <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
+            <p class="message-text">{{ message.text }}</p>
+          </div>
           <!-- <br>
           <p class="time">{{formattedTimestamp}}</p> -->
         </span>
@@ -197,6 +201,7 @@ div {
   }
 
   button {
+    
     width: 145px;
     color: white;
     background: #0070C8;
@@ -205,13 +210,41 @@ div {
     border-right:none;
     border-radius: 18px;
   }
+  .message-container {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+}
+
+.message-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.user-message {
+  justify-content: flex-start;
+}
+
+.bot-message {
+  justify-content: flex-end;
+}
+
+.message-text {
+  background-color: #f0f0f0;
+  padding: 8px;
+  border-radius: 10px;
+  max-width: 70%;
+}
+
 
   .chat-box-list-container::-webkit-scrollbar {
-  width: 0.5rem; /* Adjust the width as needed */
+  width: 0.8rem; /* Adjust the width as needed */
   background-color: transparent; /* Make the scrollbar track transparent */
+
 }
 
 .chat-box-list-container::-webkit-scrollbar-thumb {
-  background-color: transparent; /* Make the scrollbar thumb transparent */
+  background-color: gray; /* Make the scrollbar thumb transparent */
 }
 </style>
