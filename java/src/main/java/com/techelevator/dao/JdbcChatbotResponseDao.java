@@ -45,6 +45,7 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         SqlRowSet rows2 = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject,foundSubject);
         String foundTopicName = "";
         int foundTopicId = -1;
+        int foundTopicsResponseId = -1;
         while(rows2.next()) {
             String topicName = rows2.getString("topic_name");
             if (userInputNoSpaces.contains(topicName)){
@@ -52,6 +53,8 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
                     foundTopicName = topicName;
                     String sqlGetFoundTopicId = "SELECT topic_id FROM topics WHERE topic_name = ? AND subject_name = ?";
                     foundTopicId = jdbcTemplate.queryForObject(sqlGetFoundTopicId, Integer.class, foundTopicName, foundSubject);
+                    String sqlGetFoundTopicResponseId = "SELECT responseId FROM topics WHERE topic_id = ?";
+                    foundTopicsResponseId = jdbcTemplate.queryForObject(sqlGetFoundTopicResponseId, Integer.class, foundTopicId);
                 }
             }
         }
@@ -59,7 +62,7 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         if (foundSubject != "" && foundTopicName != "") {
             String sql = "select response from responses\n" +
                     "WHERE topic_id = ?";
-           result =  jdbcTemplate.queryForObject(sql, String.class, foundTopicId);
+           result =  jdbcTemplate.queryForObject(sql, String.class, foundTopicsResponseId);
         }
         else {
            result = "invalid input";
