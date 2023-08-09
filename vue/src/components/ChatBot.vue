@@ -1,23 +1,34 @@
 <template>
+
   <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
       <ul class="chat-box-list">
-        <span
+        <li
           class="message"
           v-for="(message, idx) in messages"
           :key="idx"
           :class="message.author">
           <div v-if="message.author === 'request-box'" class="message-container user-message">
-            <img src="img/userIcon.png" alt="User Icon" class="message-icon" />
-            <p class="message-text">{{ message.text }}</p>
-          </div>
-          <div v-else class="message-container bot-message">
-            <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
-            <p class="message-text">{{ message.text }}</p>
-          </div>
+  <div class="user-image">
+    <img src="img/userIcon.png" alt="User Icon" class="message-icon" />
+  </div>
+  <div class="message-content">
+    <p class="message-text">{{ message.text }}</p>
+    <p class="time">{{ formattedTimestamp }}</p> <!-- Add timestamp here -->
+  </div>
+</div>
+<div v-else class="message-container bot-message">
+  <div class="bot-image">
+    <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
+  </div>
+  <div class="message-content">
+    <p class="message-text">{{ message.text }}</p>
+    <p class="time">{{ formattedTimestamp }}</p> <!-- Add timestamp here -->
+  </div>
+</div>
           <!-- <br>
           <p class="time">{{formattedTimestamp}}</p> -->
-        </span>
+        </li>
       </ul>
     </section>
     <div class="chat-inputs">
@@ -30,6 +41,7 @@
     </div>
   </section>
 </template>
+
 
 
 
@@ -72,18 +84,21 @@ export default {
   },
   computed:{
    formattedTimestamp() {
-     let time = '';
-      const date = new Date();
-      if(date.getMinutes() <10){
-     time= date.getHours() + ':' + '0'+ date.getUTCMinutes();
-      }
-      else{
-     time= date.getHours() + ':' + date.getUTCMinutes();
-      }
-        return time // TODO
+ 
+  const now = new Date();
+  const estOffset = -5; // EST offset in hours
+  const estTime = new Date(now.getTime() + estOffset * 3600000);
+
+  const hours = estTime.getHours();
+  const minutes = estTime.getMinutes();
+
+  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  
+  return formattedTime;
+}// TODO
    }
   }
-}
+
 
 
 </script>
@@ -115,14 +130,18 @@ div {
   overflow: scroll;
   margin-bottom: 2px;
 }
-.time {
-  padding-top: 10px;
-  text-align: right;
+
+ .time {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 4px;
+  align-self: flex-end;
 }
+
 .chat-box-list {
   display: flex;
   flex-direction: column-reverse;
-  align-items: flex-start; /* Align items to the left side */
+  align-items: flex-start; 
   padding-left: 15px;
   padding-right: 15px;
 }
@@ -132,7 +151,7 @@ div {
   max-width: 80%;
   margin-bottom: 1rem;
   display: inline-block;
-  word-wrap: break-word; /* Ensure long text wraps within the box */
+  word-wrap: break-word; 
   padding: 1rem;
   margin: 1rem;
 }
@@ -143,7 +162,7 @@ div {
 
   background-color: #8effff;
   border-radius: 12px;
-  align-self: flex-start; /* Align the response box to the left */
+  align-self: flex-start; 
 }
 
 .response-box p {
@@ -151,12 +170,12 @@ div {
 }
 
 .request-box {
-  width: auto; /* Let the width adjust to the content */
+  width: auto; 
   text-align: left;
   font-size: 1.3rem;
   background-color: rgb(255, 183, 183);
   border-radius: 12px;
-  align-self: flex-end; /* Align the request box to the right */
+  align-self: flex-end; 
 }
 
 .request-box p {
@@ -239,12 +258,12 @@ div {
 
 
   .chat-box-list-container::-webkit-scrollbar {
-  width: 0.8rem; /* Adjust the width as needed */
-  background-color: transparent; /* Make the scrollbar track transparent */
+  width: 0.8rem; 
+  background-color: transparent;
 
 }
 
 .chat-box-list-container::-webkit-scrollbar-thumb {
-  background-color: gray; /* Make the scrollbar thumb transparent */
+  background-color: gray; 
 }
 </style>
