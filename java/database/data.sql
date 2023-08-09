@@ -23,10 +23,17 @@ VALUES
     ('vue'),
     ('help'),
     ('subjectnotfound'),
+<<<<<<< HEAD
+	('random');
+
+INSERT INTO responses (response)
+VALUES 
+=======
    ('random');
 
 INSERT INTO responses (response)
 VALUES
+>>>>>>> de28bcc564390dd3faa075a4aac4dfa1a7161594
     ('Java is a widely-used high-level programming language known for its portability and versatility. It is designed to be platform-independent, allowing developers to write code that can run on various systems without modification. Java is popular for its object-oriented programming features and rich standard library.'),
     ('In Java, arrays are data structures used to store a collection of elements of the same type. They provide a way to efficiently manage and access multiple values using a single variable. Arrays in Java have a fixed size once they are created, and elements are accessed by their index.'),
     ('JavaScript is a dynamic and versatile scripting language primarily used for web development. It enables interactive and dynamic content on websites, enhancing user experience. JavaScript can be executed directly in web browsers, making it an essential tool for front-end development.'),
@@ -56,6 +63,7 @@ VALUES
 
 INSERT INTO topics (topic_name, subject_name, response_id)
 VALUES
+<<<<<<< HEAD
 <<<<<<< HEAD
     (9, 'Polymorphism is a concept in object-oriented programming where objects of different classes can be treated as objects of a common superclass. It allows for flexible and extensible code.'),
     (10, 'Encapsulation is the practice of bundling data (attributes) and methods (functions) that operate on the data into a single unit (class). It provides data hiding and abstraction.'),
@@ -121,21 +129,28 @@ COMMIT;
    ('define', 'java', 1),
    ('definition', 'java', 1),
    ('array', 'java', 2),
+=======
+    ('whatis', 'java', 1),
+    ('what', 'java', 1),
+    ('define', 'java', 1),
+    ('definition', 'java', 1),
+	('array', 'java', 2),
+>>>>>>> c6de3ba3bd592f0b200385b5f6b0388dda007299
     ('whatis', 'javascript', 3),
     ('what', 'javascript', 3),
     ('define', 'javascript', 3),
     ('definition', 'javascript', 3),
     ('array', 'python', 4),
-   ('whatis', 'python', 5),
+	('whatis', 'python', 5),
     ('what', 'python', 5),
     ('define', 'python', 5),
     ('definition', 'python', 5),
     ('functions', 'python', 6),
-   ('whatis', 'python', 7),
+	('whatis', 'python', 7),
     ('what', 'python', 7),
     ('define', 'python', 7),
     ('definition', 'python', 7),
-   ('whatis', 'python', 7),
+	('whatis', 'python', 7),
     ('what', 'python', 7),
     ('define', 'python', 7),
     ('definition', 'python', 7),
@@ -169,6 +184,10 @@ COMMIT;
     ('managingstate', 'vue', 23),
     ('help','help', 24),
     ('subjectnotfound', 'subjectnotfound', 25),
-   ('topicnotfound', 'random', 26);
-
+	('topicnotfound', 'random', 26);
 COMMIT;
+
+<<<<<<< HEAD
+COMMIT;
+=======
+>>>>>>> c6de3ba3bd592f0b200385b5f6b0388dda007299
