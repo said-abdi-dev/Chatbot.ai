@@ -1,9 +1,11 @@
 import axios from "axios";
 export default{
 
-     getChatbotResponse(userInput){
+     getChatbotResponse(userInput, context){
+          userInput = context + userInput
           return axios.get(`/${userInput}`)
      },
 
+     
      
 }

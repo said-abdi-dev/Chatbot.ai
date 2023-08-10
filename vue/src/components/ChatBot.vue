@@ -54,13 +54,20 @@ export default {
     sendMessage() {
       const message = this.message
 
+     this.$store.commit('ADD_TO_CONV_HISTORY', {
+     text: message // Use the message's text property
+  });
       this.messages.unshift({
         text: message,
         author: 'request-box'
       })
 
       this.message = '';
-      ChatBotResponseService.getChatbotResponse(message)
+      let entireConversation = [];
+      this.$store.state.conversationHistory.forEach(element => {
+        entireConversation.push(element.text);
+      })
+      ChatBotResponseService.getChatbotResponse(message, entireConversation)
       .then(response => {
         this.messages.unshift({
           text: response.data.chatbotResponse,

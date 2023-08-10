@@ -21,6 +21,7 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
 
     @Override
     public String getResponseFromInput(String usersInput) {
+
         String result = "";
 
         String userInputNoSpaces = usersInput.toLowerCase().replace(" ","");
@@ -37,6 +38,8 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
                     if (subjectName.length() > foundSubject.length()) {
                         foundSubject = subjectName;
                     }
+                    foundSubject = subjectName;
+
                 }
         }
         if (foundSubject == "") {
@@ -84,5 +87,6 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         }
         return result;
     }
+    
 
 }
