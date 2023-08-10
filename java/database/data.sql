@@ -60,8 +60,8 @@ VALUES
     ('Vue directives are special attributes used in templates to apply behavior to DOM elements. Examples include v-bind, v-if, and v-for. Vue offers various mechanisms for managing application state, including Vuex for centralized state management and reactive data properties.'),
     ('Vue offers various mechanisms for managing application state, including Vuex for centralized state management and reactive data properties.'),
     ('Need Help? Here is a list of common questions that you can ask. Please provide a subject and a specific topic. For example: "What is an array in JavaScript?" or "How do functions work in Python?"'),
-    ('Unable to read response. Please enter a more specific topic for the subject of '),
-    ('Unable to read response. Please enter a more specific subject for the topic of ');
+    ('Unable to read response. Please enter a more specific subject for the topic of '),
+    ('Unable to read response. Please enter a more specific topic for the subject of ');
 
 
 

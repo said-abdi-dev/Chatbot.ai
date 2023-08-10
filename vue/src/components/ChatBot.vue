@@ -73,17 +73,34 @@ export default {
     sendMessage() {
       const message = this.message;
 
+     this.$store.commit('ADD_TO_CONV_HISTORY', {
+     text: message // Use the message's text property
+  });
       this.messages.unshift({
         text: message,
         author: "request-box", //this is coming from the user as a response.
       });
 
+<<<<<<< HEAD
       this.message = "";
       ChatBotResponseService.getChatbotResponse(message)
         .then((response) => {
           //this.showGreeting = false;
           this.messages.unshift({
             text: response.data.chatbotResponse,
+=======
+      this.message = '';
+      let entireConversation = [];
+      this.$store.state.conversationHistory.forEach(element => {
+        entireConversation.push(element.text);
+      })
+      ChatBotResponseService.getChatbotResponse(message, entireConversation)
+      .then(response => {
+        this.messages.unshift({
+          text: response.data.chatbotResponse,
+          author: 'response-box' //this is coming from the chatbot as a response. 
+        })
+>>>>>>> 6cae0fcac9f0aa01c544844169f2e596a14442e3
 
             author: "response-box", //this is coming from the chatbot as a response.
           });
