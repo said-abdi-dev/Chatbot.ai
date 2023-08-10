@@ -22,7 +22,7 @@ public class JdbcDaoIntegrationTests extends BaseDaoTests {
     @Test
     public void getResponseFromInputWorks(){
         String result = sut.getResponseFromInput("java array");
-        String expected = "In Java, arrays are data structures used to store a collection of elements of the same type. They provide a way to efficiently manage and access multiple values using a single variable. Arrays in Java have a fixed size once they are created, and elements are accessed by their index.";
+        String expected = "In Java, arrays are data structures used to store a collection of elements of the same type. They provide a way to efficiently manage and access multiple values using a single variable. Arrays in Java have a fixed size once they are created, and elements are accessed by their index. To learn more about working with arrays in Java, you can check out this tutorial: <a href=\"https://www.w3schools.com/java/java_arrays.asp\">https://www.w3schools.com/java/java_arrays.asp</a>";
 
         Assert.assertEquals(expected,result);
 

@@ -4,16 +4,20 @@
       <ul class="chat-box-list">
         <li
           class="message"
-          v-for="(message, idx) in messages"
-          :key="idx"
+          v-for="(message) in messages"
+          :key="messages.indexOf(message)"
           :class="message.author">
+
+
           <div class="message-container" v-if="message.author === 'request-box'">
             <!-- User message -->
             <div class="user-image">
               <img src="img/userIcon.png" alt="User Icon" class="message-icon" />
             </div>
             <div class="message-content">
+              
               <p class="message-text">{{ message.text }}</p>
+              
               <p class="time user">{{ formattedTimestamp }}</p>
             </div>
           </div>
@@ -23,8 +27,16 @@
               <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
             </div>
             <div class="message-content">
-              <p class="message-text">{{ message.text }}</p>
+              <span class=""> 
+              <p v-html="message.text" class="message-text"></p>
+              </span>
+
+               <p>{{sendLinkMessage}}</p>
+                              
               <p class="time bot">{{ formattedTimestamp }}</p>
+
+              <!-- <a v-if=""> -->
+             
             </div>
           </div>
         </li>
@@ -36,6 +48,8 @@
         v-model="message"
         @keyup.enter="sendMessage"
       />
+
+      
       <button @click="sendMessage">Send</button>
     </div>
   </section>
@@ -59,7 +73,7 @@ export default {
   });
       this.messages.unshift({
         text: message,
-        author: 'request-box'
+        author: 'request-box'    //this is coming from the user as a response. 
       })
 
       this.message = '';
@@ -71,7 +85,7 @@ export default {
       .then(response => {
         this.messages.unshift({
           text: response.data.chatbotResponse,
-          author: 'response-box'
+          author: 'response-box' //this is coming from the chatbot as a response. 
         })
 
         this.$nextTick(() => {
@@ -82,7 +96,30 @@ export default {
       })
     }
   },
+
   computed: {
+    chechForLink(responseFromDB) {
+     // if contains 'http' then save http and chars after into string.
+     // save what comes before, in seperate string
+     let keyword = 'http';
+     let link = "";
+     let finalResponseWithoutLink = "";
+     let arrayResponse = [];
+     const index = responseFromDB.indexOf(keyword);
+
+     if (index !== -1) {
+       finalResponseWithoutLink = responseFromDB.slice(0,index);
+       arrayResponse.push(finalResponseWithoutLink);
+
+       link = responseFromDB.slice(index, responseFromDB.length);
+       arrayResponse.push(link);
+
+     } else {
+       arrayResponse.push(responseFromDB);
+     }
+       return arrayResponse;
+    },
+
     formattedTimestamp() {
       const now = new Date();
       const estOffset = -5;
@@ -94,7 +131,7 @@ export default {
       const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
       return formattedTime;
-    }
+    }, 
   }
 }
 </script>
@@ -140,7 +177,7 @@ div {
 
 .time.bot {
   font-size: 0.8rem;
-  color: #999;
+  color: white;
   align-self: flex-end;
   margin-top: 4px;
 }
@@ -199,9 +236,9 @@ div {
 
   .chat-box {
     margin: 10px;
-    border: 2px solid #999;
-    width: 75vw;
-    height: 75vh;
+    border: 3px solid rgb(14, 11, 11);
+    width: 38vw;
+    height: 95vh;
     border-radius: 10px;
     margin-left: auto;
     margin-right: auto;
@@ -220,7 +257,7 @@ div {
   input {
     line-height: 3;
     width: 100%;
-    border: 2px solid #999;
+    border: 3px solid rgb(7, 5, 5);
     border-left: none;
     border-bottom: none;
     border-right: none;
@@ -250,7 +287,7 @@ div {
   width: 40px;
   height: 40px;
   margin-right: 10px;
-  background-color: white; /* Change this color to your desired color */
+  background-color: white; 
   border-radius: 50%
   
 }
@@ -270,8 +307,8 @@ div {
   padding: 8px;
   border-radius: 10px;
   max-width: 70%;
-  line-height: 1.4; /* Add this line to control line spacing */
-  margin-bottom: 6px; /* Add this line to add spacing between paragraphs */
+  line-height: 1.4; 
+  margin-bottom: 6px; 
 }
 }
 
