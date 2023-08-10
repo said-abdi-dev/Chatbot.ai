@@ -57,6 +57,7 @@
 
 <script>
 import ChatBotResponseService from '../services/ChatbotResponseService'
+import LinkedInService from '../services/LinkedInService'
 
 export default {
   name: 'ChatBox',
@@ -87,6 +88,16 @@ export default {
           text: response.data.chatbotResponse,
           author: 'response-box' //this is coming from the chatbot as a response. 
         })
+        if (message.includes('jobs')) {
+          //THIS logs, it just messes up, we need to change our api 
+          console.log(LinkedInService.getJob(message.text))
+    // (LinkedInService.getJob(message.text)).then( response =>{
+    //    this.messages.unshift({
+    //       text: response.data.job_url[0],
+    //       author: 'response-box' //this is coming from the chatbot as a response. 
+    //     })
+    //   });
+    }
 
         this.$nextTick(() => {
           this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
