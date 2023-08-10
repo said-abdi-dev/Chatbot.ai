@@ -23,17 +23,11 @@ VALUES
     ('vue'),
     ('help'),
     ('subjectnotfound'),
-<<<<<<< HEAD
 	('random');
 
-INSERT INTO responses (response)
-VALUES 
-=======
-   ('random');
 
 INSERT INTO responses (response)
 VALUES
->>>>>>> de28bcc564390dd3faa075a4aac4dfa1a7161594
     ('Java is a widely-used high-level programming language known for its portability and versatility. It is designed to be platform-independent, allowing developers to write code that can run on various systems without modification. Java is popular for its object-oriented programming features and rich standard library.'),
     ('In Java, arrays are data structures used to store a collection of elements of the same type. They provide a way to efficiently manage and access multiple values using a single variable. Arrays in Java have a fixed size once they are created, and elements are accessed by their index.'),
     ('JavaScript is a dynamic and versatile scripting language primarily used for web development. It enables interactive and dynamic content on websites, enhancing user experience. JavaScript can be executed directly in web browsers, making it an essential tool for front-end development.'),
@@ -51,7 +45,6 @@ VALUES
     ('Mutable objects can be modified after creation. Consequences include potential data integrity issues and difficulty in reasoning about code.'),
     ('Primitive types hold simple values directly, like integers or floating-point numbers.'),
     ('Reference types hold references to objects, allowing for more complex data structures.'),
-    ('Primitive types are usually stored in the stack, while reference types (objects) are stored in the heap.'),
     ('Vue is a progressive JavaScript framework for building user interfaces. It is designed to be approachable and versatile.'),
     ('Vue comes with a set of features including declarative templates, reactivity, component-based architecture, and more.'),
     ('In Vue, components are the basic building blocks. They encapsulate a portion of the user interface and can be reused throughout the application.'),
