@@ -27,7 +27,7 @@ VALUES
 	('random');
 
 INSERT INTO responses (response)
-VALUES 
+VALUES
 =======
    ('random');
 

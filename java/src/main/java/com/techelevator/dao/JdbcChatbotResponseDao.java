@@ -80,27 +80,13 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
         else if (foundSubject != "subjectnotfound" && foundTopicName == "topicnotfound") {
            String sql =  "SELECT response from responses WHERE response_id = (SELECT response_id from topics WHERE topic_name = 'topicnotfound' LIMIT 1)";
            result = jdbcTemplate.queryForObject(sql,String.class) + foundSubject;
-        }
-<<<<<<< HEAD
-        else if (foundSubject == "subjectnotfound" && foundTopicName == "topicnotfound") {
-
-        if (foundSubject != "" && foundTopicName != "") {
-            String sql = "select response from responses\n" +
-                    "WHERE topic_id = ?";
-            result =  jdbcTemplate.queryForObject(sql, String.class, foundTopicId);
-=======
-            else if (foundSubject == "subjectnotfound" && foundTopicName == "topicnotfound") {
->>>>>>> c6de3ba3bd592f0b200385b5f6b0388dda007299
+        } else if (foundSubject == "subjectnotfound" && foundTopicName == "topicnotfound") {
         }
         //TOPIC AND SUBJECT found
-        else if (foundSubject != "" && foundTopicName != "") {
-            String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
-           result =  jdbcTemplate.queryForObject(sql, String.class, foundSubject,foundTopicName);
->>>>>>> de28bcc564390dd3faa075a4aac4dfa1a7161594
-        }
+
         else {
-            result = "invalid input";
-        }
+                result = "invalid input";
+            }
         return result;
     }
 
