@@ -53,6 +53,9 @@ VALUES
     ('Immutable objects cannot be changed after creation. For example, strings in many programming languages are immutable.'),
     ('Mutable objects can be modified after creation. Consequences include potential data integrity issues and difficulty in reasoning about code.'),
     ('Primitive types hold simple values directly, like integers or floating-point numbers.'),
+
+    ('Need help with building  an awesome  resume? click here: <a> href = https://www.youtube.com/watch?v=lm6dHeoKcuY</a>'),
+
     ('Reference types hold references to objects, allowing for more complex data structures.'),
     ('Vue is a progressive JavaScript framework for building user interfaces. It is designed to be approachable and versatile. Vue comes with a set of features including declarative templates, reactivity, component-based architecture, and more. To learn more about Vue.js and its features, you can check out the official Vue.js documentation: <a href="https://vuejs.org/">https://vuejs.org/</a>'),
     ('Vue comes with a set of features including declarative templates, reactivity, component-based architecture, and more. In Vue, components are the basic building blocks. They encapsulate a portion of the user interface and can be reused throughout the application. To understand Vue components and how they work, you can refer to the Vue.js documentation on components: <a href="https://vuejs.org/v2/guide/components.html">https://vuejs.org/v2/guide/components.html</a>'),
@@ -112,4 +115,5 @@ VALUES
     ('help','help', 22),
     ('subjectnotfound', 'subjectnotfound', 23),
     ('topicnotfound', 'topicnotfound', 24);
+
 COMMIT;
