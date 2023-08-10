@@ -5,7 +5,4 @@ export default{
           userInput = context + userInput
           return axios.get(`/${userInput}`)
      },
-
-     
-     
 }
