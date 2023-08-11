@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class JdbcChatbotResponseDao implements ChatbotResponseDao{
+public class JdbcChatbotResponseDao implements ChatbotResponseDao {
 
     private JdbcTemplate jdbcTemplate;
     private ChatbotResponseDao chatbotResponseDao;
@@ -109,7 +109,6 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
                 }
             }
         }
-        return new String[] { foundSubject, foundTopic, String.valueOf(foundTopicsResponseId) };
+        return new String[]{foundSubject, foundTopic, String.valueOf(foundTopicsResponseId)};
     }
-
-}
+    }

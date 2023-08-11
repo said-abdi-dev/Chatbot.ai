@@ -23,7 +23,6 @@ VALUES
     ('vue'),
     ('help'),
     ('subjectnotfound'),
-
     ('topicnotfound'),
     ('random');
 
@@ -45,16 +44,16 @@ VALUES
     ('Immutable objects cannot be changed after creation. For example, strings in many programming languages are immutable.'),
     ('Mutable objects can be modified after creation. Consequences include potential data integrity issues and difficulty in reasoning about code.'),
     ('Primitive types hold simple values directly, like integers or floating-point numbers.'),
+    ('Need help with building  an awesome  resume? click here: <a> href = https://www.youtube.com/watch?v=lm6dHeoKcuY</a>'),
     ('Reference types hold references to objects, allowing for more complex data structures.'),
-
     ('Vue is a progressive JavaScript framework for building user interfaces. It is designed to be approachable and versatile. Vue comes with a set of features including declarative templates, reactivity, component-based architecture, and more. To learn more about Vue.js and its features, you can check out the official Vue.js documentation: <a href="https://vuejs.org/">https://vuejs.org/</a>'),
     ('Vue comes with a set of features including declarative templates, reactivity, component-based architecture, and more. In Vue, components are the basic building blocks. They encapsulate a portion of the user interface and can be reused throughout the application. To understand Vue components and how they work, you can refer to the Vue.js documentation on components: <a href="https://vuejs.org/v2/guide/components.html">https://vuejs.org/v2/guide/components.html</a>'),
     ('In Vue, components are the basic building blocks. They encapsulate a portion of the user interface and can be reused throughout the application.'),
     ('Vue directives are special attributes used in templates to apply behavior to DOM elements. Examples include v-bind, v-if, and v-for. Vue offers various mechanisms for managing application state, including Vuex for centralized state management and reactive data properties.'),
     ('Vue offers various mechanisms for managing application state, including Vuex for centralized state management and reactive data properties.'),
     ('Need Help? Here is a list of common questions that you can ask. Please provide a subject and a specific topic. For example: "What is an array in JavaScript?" or "How do functions work in Python?"'),
-    ('Unable to read response. Please enter a more specific topic for the subject of '),
-    ('Unable to read response. Please enter a more specific subject for the topic of ');
+    ('Unable to read response. Please enter a more specific subject for the topic of '),
+    ('Unable to read response. Please enter a more specific topic for the subject of ');
 
 INSERT INTO topics (topic_name, subject_name, response_id)
 VALUES
@@ -104,3 +103,4 @@ VALUES
     ('topicnotfound', 'topicnotfound', 24);
 
 COMMIT;
+
