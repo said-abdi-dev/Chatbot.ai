@@ -80,6 +80,17 @@ export default {
       });
 
       this.message = "";
+        if (message.includes('jobs')) {
+          //THIS logs, it just messes up, we need to change our api 
+        LinkedInService.getJob(message).then( response =>{
+        console.log(response.data.data[0].url)
+        this.messages.unshift({
+          text: response.data.data[0].url,
+          author: 'response-box' //this is coming from the chatbot as a response. 
+         })
+         });
+        }
+        else {
       ChatBotResponseService.getChatbotResponse(message)
         .then((response) => {
           //this.showGreeting = false;
@@ -88,25 +99,12 @@ export default {
 
             author: "response-box", //this is coming from the chatbot as a response.
           });
-
-          this.$nextTick(() => {
-            this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
-          });
         })
-        if (message.includes('jobs')) {
-          //THIS logs, it just messes up, we need to change our api 
-          console.log(LinkedInService.getJob(message.text))
-    // (LinkedInService.getJob(message.text)).then( response =>{
-    //    this.messages.unshift({
-    //       text: response.data.job_url[0],
-    //       author: 'response-box' //this is coming from the chatbot as a response. 
-    //     })
-    //   });
-    }
+        }
         this.$nextTick(() => {
           this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
         })  
-  .catch(err => {
+      .catch(err => {
         console.error(err);
       })
     
