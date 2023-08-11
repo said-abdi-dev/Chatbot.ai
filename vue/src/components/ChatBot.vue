@@ -115,8 +115,9 @@ export default {
           //THIS logs, it just messes up, we need to change our api 
         LinkedInService.getJob(message).then( response =>{
         console.log(response.data.data[0].url)
+        let linkedJob = `<a href = "${response.data.data[0].url}">` + "hi mom</a>"
         this.messages.unshift({
-          text: response.data.data[0].url,
+          text: linkedJob,
           author: 'response-box' //this is coming from the chatbot as a response. 
          })
          });
