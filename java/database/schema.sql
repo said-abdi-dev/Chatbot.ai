@@ -8,10 +8,10 @@ DROP TABLE IF EXISTS responses CASCADE;
 DROP TABLE IF EXISTS topics CASCADE;
 
 CREATE TABLE users (
-	user_id SERIAL PRIMARY KEY,
-	username varchar(50) NOT NULL UNIQUE,
-	password_hash varchar(200) NOT NULL,
-	role varchar(50) NOT NULL
+   user_id SERIAL PRIMARY KEY,
+   username varchar(50) NOT NULL UNIQUE,
+   password_hash varchar(200) NOT NULL,
+   role varchar(50) NOT NULL
 );
 
 CREATE TABLE subjects (
@@ -31,3 +31,9 @@ CREATE TABLE topics (
     response_id INTEGER REFERENCES responses (response_id)
 );
 
+--any data goes here
+--inserts, updates, deletes
+
+--create.
+
+BEGIN TRANSACTION;

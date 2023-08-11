@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class JdbcChatbotResponseDao implements ChatbotResponseDao{
@@ -20,71 +21,95 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao{
     }
 
     @Override
-    public String getResponseFromInput(String usersInput) {
-        String result = "";
+    public String[] getResponseFromInput(ChatbotResponse chatbotResponse) {
 
-        String userInputNoSpaces = usersInput.toLowerCase().replace(" ","");
+        String[] returnResponseAndContext = new String[3];
+        String response = "";
 
-        //gets all subject names
-        String sqlGetSubjectNames = "SELECT subject_name FROM subjects";
-        SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlGetSubjectNames);
-        String foundSubject = "";
-        //check if subject exists in usersInput
+        returnResponseAndContext[1] = chatbotResponse.getSubjectContext();
+        returnResponseAndContext[2] = chatbotResponse.getTopicContext();
 
-        while(rows.next()) {
-                String subjectName = rows.getString("subject_name");
-                if (userInputNoSpaces.contains(subjectName)) {
-                    if (subjectName.length() > foundSubject.length()) {
-                        foundSubject = subjectName;
-                    }
-                }
+        //if they're empty, rewrite them for page load.
+        if (returnResponseAndContext[1] == "") {
+            returnResponseAndContext[1] = "subjectnotfound";
         }
-        if (foundSubject == "") {
-            foundSubject = "subjectnotfound";
+        if (returnResponseAndContext[2] == "") {
+            returnResponseAndContext[2] = "topicnotfound";
         }
-        //gets all topic names for given subject
-        String sqlGetTopicsFromSubject = "SELECT topic_name FROM topics WHERE subject_name = ?";
-        SqlRowSet rows2 = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject,foundSubject);
-        String foundTopicName = "";
-        int foundTopicId = -1;
+
+        //changes the values within the array as desired based on checks
+        checkForSubjectAndTopic(chatbotResponse.getSubjectContext(), chatbotResponse.getTopicContext(), chatbotResponse.getUserInput());
+
+        //sets topic to topicNotFound(aka null)
+        //SUBJECT not found
+        if (returnResponseAndContext[1] == "subjectnotfound") {
+            String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id from topics WHERE subject_name = 'subjectnotfound' LIMIT 1)";
+            response = jdbcTemplate.queryForObject(sql,String.class);
+        }
+        //TOPIC not found, subject found
+        else if (returnResponseAndContext[1] != "subjectnotfound" && returnResponseAndContext[2] == "topicnotfound") {
+            String sql =  "SELECT response FROM responses WHERE response_id = (SELECT response_id from topics WHERE topic_name = 'topicnotfound' LIMIT 1)";
+            response = jdbcTemplate.queryForObject(sql,String.class) + returnResponseAndContext[1];
+        }
+        else if (returnResponseAndContext[1] == "subjectnotfound" && returnResponseAndContext[2] == "topicnotfound") {
+        }
+        //TOPIC AND SUBJECT found
+        else if (returnResponseAndContext[1] != "" && returnResponseAndContext[2] != "") {
+            String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
+            response =  jdbcTemplate.queryForObject(sql, String.class, returnResponseAndContext[1],returnResponseAndContext[2]);
+        }
+        else {
+            response = "invalid input";
+        }
+        returnResponseAndContext[0] = response;
+        return returnResponseAndContext;
+    }
+
+    public String[] checkForSubjectAndTopic(String subjectContext, String topicContext, String userInput) {
+        String foundSubject = subjectContext;
+        String foundTopic = topicContext;
         int foundTopicsResponseId = -1;
-        while(rows2.next()) {
-            String topicName = rows2.getString("topic_name");
-            if (userInputNoSpaces.contains(topicName)){
-                if(topicName.length() > foundTopicName.length()) {
-                    foundTopicName = topicName;
-                    String sqlGetFoundTopicId = "SELECT topic_id FROM topics WHERE topic_name = ? AND subject_name = ?";
-                    foundTopicId = jdbcTemplate.queryForObject(sqlGetFoundTopicId, Integer.class, foundTopicName, foundSubject);
-                    String sqlGetFoundTopicResponseId = "SELECT responseId FROM topics WHERE topic_id = ?";
-                    foundTopicsResponseId = jdbcTemplate.queryForObject(sqlGetFoundTopicResponseId, Integer.class, foundTopicId);
+
+        String[] inputWords = userInput.split("\\s+");
+
+        // Look for subject
+        String sqlGetSubjectNames = "SELECT subject_name FROM subjects";
+        SqlRowSet rowsOfSubjects = jdbcTemplate.queryForRowSet(sqlGetSubjectNames);
+
+        while (rowsOfSubjects.next()) {
+            String currentSubjectName = rowsOfSubjects.getString("subject_name");
+            for (String word : inputWords) {
+                if (currentSubjectName.equalsIgnoreCase(word)) {
+                    foundSubject = currentSubjectName;
+                    break;
+                } else {
+                    foundSubject = "subjectnotfound";
                 }
             }
         }
-        //sets topic to topicNotFound(aka null)
-        if (foundTopicName == "") {
-            foundTopicName = "topicnotfound";
+
+        // Look for topic
+        String sqlGetTopicsFromSubject = "SELECT topic_name FROM topics WHERE subject_name = ?";
+        SqlRowSet rowsOfTopics = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject, foundSubject);
+
+        while (rowsOfTopics.next()) {
+            String currentTopicName = rowsOfTopics.getString("topic_name");
+            for (String word : inputWords) {
+                if (currentTopicName.equalsIgnoreCase(word)) {
+                    foundTopic = currentTopicName;
+                    String sqlGetFoundTopicId = "SELECT topic_id FROM topics WHERE topic_name = ? AND subject_name = ?";
+                    foundTopicsResponseId = jdbcTemplate.queryForObject(sqlGetFoundTopicId, Integer.class, foundTopic, foundSubject);
+
+                    String sqlGetFoundTopicResponseById = "SELECT response_id FROM topics WHERE topic_id = ?";
+                    foundTopicsResponseId = jdbcTemplate.queryForObject(sqlGetFoundTopicResponseById, Integer.class, foundTopicsResponseId);
+
+                    break;
+                } else {
+                    foundTopic = "topicnotfound";
+                }
+            }
         }
-        //SUBJECT not found
-        if (foundSubject == "subjectnotfound") {
-            String sql = "SELECT response from responses WHERE response_id = (SELECT response_id from topics WHERE subject_name = 'subjectnotfound' LIMIT 1)";
-            result = jdbcTemplate.queryForObject(sql,String.class);
-        }
-        //TOPIC not found, subject found
-        else if (foundSubject != "subjectnotfound" && foundTopicName == "topicnotfound") {
-           String sql =  "SELECT response from responses WHERE response_id = (SELECT response_id from topics WHERE topic_name = 'topicnotfound' LIMIT 1)";
-           result = jdbcTemplate.queryForObject(sql,String.class) + foundSubject;
-        }
-            else if (foundSubject == "subjectnotfound" && foundTopicName == "topicnotfound") {
-        }
-        //TOPIC AND SUBJECT found
-        else if (foundSubject != "" && foundTopicName != "") {
-            String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
-           result =  jdbcTemplate.queryForObject(sql, String.class, foundSubject,foundTopicName);
-        }
-        else {
-           result = "invalid input";
-        }
-        return result;
+        return new String[] { foundSubject, foundTopic, String.valueOf(foundTopicsResponseId) };
     }
 
 }

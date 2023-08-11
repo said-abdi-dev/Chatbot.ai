@@ -8,6 +8,8 @@ import com.techelevator.model.ChatbotResponse;
 import com.techelevator.dao.ChatbotResponseDao;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 @RestController
 @RequestMapping(path = "/")
 @CrossOrigin
@@ -15,18 +17,26 @@ public class ChatbotResponseController {
 
     private ChatbotResponseDao chatbotResponseDao;
 
-    public ChatbotResponseController(ChatbotResponseDao chatbotResponseDao ){
+    public ChatbotResponseController(ChatbotResponseDao chatbotResponseDao) {
         this.chatbotResponseDao = chatbotResponseDao;
     }
-    @RequestMapping(path = "{userInput}", method = RequestMethod.GET)
-    public ChatbotResponse getChatbotResponse (@PathVariable String userInput ){
 
+    @GetMapping(path = "{userInput}/{subjectContext}/{topicContext}")
+    public String[] getChatbotResponse(
+            @PathVariable String userInput,
+            @PathVariable String subjectContext,
+            @PathVariable String topicContext
+    ) {
         ChatbotResponse chatbotResponse = new ChatbotResponse();
-        String chatbotReply = chatbotResponseDao.getResponseFromInput(userInput);
 
         chatbotResponse.setUserInput(userInput);
-        chatbotResponse.setChatbotResponse(chatbotReply);
-        return chatbotResponse;
-    }
+        chatbotResponse.setSubjectContext(subjectContext);
+        chatbotResponse.setTopicContext(topicContext);
 
+        // Retrieve the response directly as a string
+        String[] chatbotReply = chatbotResponseDao.getResponseFromInput(chatbotResponse);
+
+        // Return an array containing the response string
+        return chatbotReply;
+    }
 }
