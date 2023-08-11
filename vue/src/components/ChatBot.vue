@@ -9,6 +9,7 @@
           :class="message.author">
 
 
+
           <div class="message-container" v-if="message.author === 'request-box'">
             <!-- User message -->
             <div class="user-image">
@@ -68,43 +69,55 @@ export default {
   methods: {
     sendMessage() {
       const message = this.message
-
      this.$store.commit('ADD_TO_CONV_HISTORY', {
      text: message // Use the message's text property
   });
       this.messages.unshift({
         text: message,
-        author: 'request-box'    //this is coming from the user as a response. 
+        author: 'request-box'    //this is coming from the user as a response.
       })
-
       this.message = '';
-      let entireConversation = [];
-      this.$store.state.conversationHistory.forEach(element => {
-        entireConversation.push(element.text);
-      })
+      const entireConversation = this.$store.state.conversationHistory.map(element => element.text);
+      // this.$store.state.conversationHistory.forEach(element => {
+      //   entireConversation.push(element.text);
+      // })
+      
+      //Request chatbot service
       ChatBotResponseService.getChatbotResponse(message, entireConversation)
       .then(response => {
         this.messages.unshift({
           text: response.data.chatbotResponse,
-          author: 'response-box' //this is coming from the chatbot as a response. 
-        })
+          author: 'response-box' //this is coming from the chatbot as a response.
+        });
+        if(response.data.recommendedSuggestions) {
+          response.data.recommendedSuggestions.forEach( suggestion => {
+            this.message.unshift ({
+              text: suggestion,
+              author:'suggestion-box'
+            })
+          })
+        }
+
         if (message.includes('jobs')) {
-          //THIS logs, it just messes up, we need to change our api 
+          //THIS logs, it just messes up, we need to change our api
           console.log(LinkedInService.getJob(message.text))
     // (LinkedInService.getJob(message.text)).then( response =>{
     //    this.messages.unshift({
     //       text: response.data.job_url[0],
-    //       author: 'response-box' //this is coming from the chatbot as a response. 
+    //       author: 'response-box' //this is coming from the chatbot as a response.
     //     })
-    //   });
+    // });
     }
-
         this.$nextTick(() => {
           this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
-        })  
+        })
       }).catch(err => {
         console.error(err);
       })
+    },
+    selectSuggestion(selectedOption) {
+      this.message ='';
+      this.sendMessage(selectedOption);
     }
   },
 
