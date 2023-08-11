@@ -1,26 +1,37 @@
 <template>
   <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
+      <div class="vertical-buttons">
+
+        <button class="custom-button" @click="handleButton1">"What is java?"</button>
+        <button class="custom-button" @click="handleButton2"> "I wnat to know about java"</button>
+        <button class="custom-button" @click="handleButton3">Button 3</button>
+        <button class="custom-button" @click="handleButton4">Button 4</button>
+      </div>
       <ul class="chat-box-list">
-        
         <li v-if="messages.length == 0" class="message-content">
-               Hello, how can I help you?
-            </li>
+          <div class="bot-image">
+            <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
+          </div>
+          Hello, how can I help you?
+        </li>
+
         <li
           class="message"
           v-for="message in messages"
           :key="messages.indexOf(message)"
-          :class="message.author">
+          :class="message.author"
+        >
           <div
             class="message-container"
-            v-if="message.author === 'request-box'">
+            v-if="message.author === 'request-box'"
+          >
             <!-- User message -->
 
-         
             <div class="message-content">
               <p class="message-text">{{ message.text }}</p>
 
-              <p class="time user">{{ formattedTimestamp }}</p>
+              <!-- <p class="time user">{{ currentTime }}</p> -->
             </div>
           </div>
 
@@ -29,7 +40,6 @@
             <div class="bot-image">
               <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
             </div>
-            
 
             <div class="message-content">
               <span class="">
@@ -38,7 +48,7 @@
 
               <!-- <p>{{ sendLinkMessage }}</p> -->
 
-              <p class="time bot">{{ formattedTimestamp }}</p>
+              <!-- <p class="time bot">{{ currentTime }}</p> -->
 
               <!-- <a v-if=""> -->
             </div>
@@ -55,24 +65,42 @@
 </template>
 
 <script>
-import ChatBotResponseService from '../services/ChatbotResponseService'
-import LinkedInService from '../services/LinkedInService'
+import ChatBotResponseService from "../services/ChatbotResponseService";
+import LinkedInService from "../services/LinkedInService";
 
 export default {
   name: "ChatBox",
-  data()  {
-    return{
-    message: "",
-    messages: [],
-    showGreeting: true,
-    }
+
+  data() {
+    return {
+      // currentTime: '',
+
+      message: "",
+      messages: [],
+      showGreeting: true,
+    };
   },
   created() {
-   // this.messages.push('');
   },
   methods: {
+
+    handleButton1() {
+      
+      console.log("reached button1");
+    },
+    
+    handleButton2() {
+      console.log("reached button1");
+    },
+    handleButton3() {
+      console.log("reached button1");
+    },
+    handleButton4() {
+      console.log("reached button1");
+    },
     sendMessage() {
       const message = this.message;
+      // this.currentTime = this.formattedTimestamp()
 
       this.messages.unshift({
         text: message,
@@ -80,82 +108,41 @@ export default {
       });
 
       this.message = "";
-      ChatBotResponseService.getChatbotResponse(message)
-        .then((response) => {
-          //this.showGreeting = false;
-          this.messages.unshift({
-            text: response.data.chatbotResponse,
+      ChatBotResponseService.getChatbotResponse(message).then((response) => {
+        this.messages.unshift({
+          text: response.data.chatbotResponse,
 
-            author: "response-box", //this is coming from the chatbot as a response.
-          });
+          author: "response-box", //this is coming from the chatbot as a response.
+        });
 
-          this.$nextTick(() => {
-            this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
-          });
-        })
-        if (message.includes('jobs')) {
-          //THIS logs, it just messes up, we need to change our api 
-          console.log(LinkedInService.getJob(message.text))
-    // (LinkedInService.getJob(message.text)).then( response =>{
-    //    this.messages.unshift({
-    //       text: response.data.job_url[0],
-    //       author: 'response-box' //this is coming from the chatbot as a response. 
-    //     })
-    //   });
-    }
         this.$nextTick(() => {
-          this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
-        })  
-  .catch(err => {
-        console.error(err);
-      })
-    
-},
-  computed: {
-
-    hasMessages(){
-      return this.messages.length;
-
-    },
-
-    chechForLink(responseFromDB) {
-      // if contains 'http' then save http and chars after into string.
-      // save what comes before, in seperate string
-      let keyword = "http";
-      let link = "";
-      let finalResponseWithoutLink = "";
-      let arrayResponse = [];
-      const index = responseFromDB.indexOf(keyword);
-
-      if (index !== -1) {
-        finalResponseWithoutLink = responseFromDB.slice(0, index);
-        arrayResponse.push(finalResponseWithoutLink);
-
-        link = responseFromDB.slice(index, responseFromDB.length);
-        arrayResponse.push(link);
-      } else {
-        arrayResponse.push(responseFromDB);
+          this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+        });
+      });
+      if (message.includes("jobs")) {
+        //THIS logs, it just messes up, we need to change our api
+        console.log(LinkedInService.getJob(message.text));
+        // (LinkedInService.getJob(message.text)).then( response =>{
+        //    this.messages.unshift({
+        //       text: response.data.job_url[0],
+        //       author: 'response-box' //this is coming from the chatbot as a response.
+        //     })
+        //   });
       }
-      return arrayResponse;
+      // this.$nextTick(() => {
+      //   this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      // }).catch((err) => {
+      //   console.error(err);
+      // });
     },
+    computed: {
+      hasMessages() {
+        return this.messages.length;
+      },
 
-    formattedTimestamp() {
-     
-      const now = new Date();
-      const estOffset = -5;
-      const estTime = new Date(now.getTime() + estOffset * 3600000);
-
-      const hours = estTime.getHours();
-      const minutes = estTime.getMinutes();
-
-      const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}`;
-
-      return formattedTime;
+  
     },
   },
-}
 };
 </script>
 
@@ -270,6 +257,28 @@ div {
 
 .chat-inputs {
   display: flex;
+}
+
+.custom-button {
+ display: block;
+    width:350px;
+    margin:20px auto;
+    padding:7px 13px;
+    text-align:center;
+  
+    background: gray;
+    font-size:20px;
+    font-family: 'Arial', sans-serif;
+    color:#ffffff;
+    white-space: nowrap;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.custom-button:hover {
+  background-color: rgb(133, 47, 47); /* Change background on hover */
+  
 }
 
 input {
