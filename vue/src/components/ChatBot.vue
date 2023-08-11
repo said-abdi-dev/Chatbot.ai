@@ -3,10 +3,10 @@
     <section class="chat-box-list-container" ref="chatbox">
       <div class="vertical-buttons">
 
-        <button class="custom-button" @click="handleButton1">"What is java?"</button>
-        <button class="custom-button" @click="handleButton2"> "I wnat to know about java"</button>
-        <button class="custom-button" @click="handleButton3">Button 3</button>
-        <button class="custom-button" @click="handleButton4">Button 4</button>
+        <button class="custom-button" @click="handleButton1" v-html="'cars'"></button>
+        <button class="custom-button" @click="handleButton2">{{topic_name}}?</button>
+        <button class="custom-button" @click="handleButton3">{{topic_name}}?</button>
+        <button class="custom-button" @click="handleButton4">{{topic_name}}?</button>
       </div>
       <ul class="chat-box-list">
         <li v-if="messages.length == 0" class="message-content">
@@ -119,42 +119,37 @@ export default {
       });
 
       this.message = "";
-      ChatBotResponseService.getChatbotResponse(message).then((response) => {
+        if (message.includes('jobs')) {
+          //THIS logs, it just messes up, we need to change our api 
+        LinkedInService.getJob(message).then( response =>{
+        console.log(response.data.data[0].url)
         this.messages.unshift({
-          text: response.data.chatbotResponse,
+          text: response.data.data[0].url,
+          author: 'response-box' //this is coming from the chatbot as a response. 
+         })
+         });
+        }
+        else {
+      ChatBotResponseService.getChatbotResponse(message)
+        .then((response) => {
+          //this.showGreeting = false;
+          this.messages.unshift({
+            text: response.data.chatbotResponse,
 
-          author: "response-box", //this is coming from the chatbot as a response.
-        });
-
+            author: "response-box", //this is coming from the chatbot as a response.
+          });
+        }).catch(err => {
+        console.error(err);
+      })
+        }
         this.$nextTick(() => {
-          this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
-        });
-      });
-      if (message.includes("jobs")) {
-        //THIS logs, it just messes up, we need to change our api
-        console.log(LinkedInService.getJob(message.text));
-        // (LinkedInService.getJob(message.text)).then( response =>{
-        //    this.messages.unshift({
-        //       text: response.data.job_url[0],
-        //       author: 'response-box' //this is coming from the chatbot as a response.
-        //     })
-        //   });
-      }
-      // this.$nextTick(() => {
-      //   this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
-      // }).catch((err) => {
-      //   console.error(err);
-      // });
-    },
-    computed: {
-      hasMessages() {
-        return this.messages.length;
-      },
-
-    },
+          this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
+        })  
     
-  };
-}
+    
+},
+  },
+};
 </script>
 
 

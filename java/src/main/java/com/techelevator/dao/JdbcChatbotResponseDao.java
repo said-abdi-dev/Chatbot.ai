@@ -20,6 +20,8 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+//
+
     @Override
     public String[] getResponseFromInput(ChatbotResponse chatbotResponse) {
 

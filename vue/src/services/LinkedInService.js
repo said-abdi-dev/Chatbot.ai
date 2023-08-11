@@ -1,12 +1,11 @@
 import axios from "axios";
 const http = axios.create ({
 
-  //  baseURL: 'https://linkedin-jobs-search.p.rapidapi.com/',
-    headers: {
-        'content-type': 'application/json',
-        'X-RapidAPI-Key': '0fe371429dmsh4efb3bc2fedf3bbp1ac14ejsn292a99d6a1b8',
-        'X-RapidAPI-Host': 'linkedin-jobs-search.p.rapidapi.com'
-      }
+     baseURL: 'https://jobsearch4.p.rapidapi.com/api/v2/Jobs',
+  headers: {
+     'X-RapidAPI-Key': 'afc2b7159amsh5d3682f6eb18df7p1b8242jsnbb258946ed23',
+     'X-RapidAPI-Host': 'jobsearch4.p.rapidapi.com'
+   }
 
 })
 
@@ -14,13 +13,12 @@ const http = axios.create ({
 
 export default{
      getJob(jobType) {
-          console.log(jobType)
+          console.log(jobType);
          let data = {
-               "search_terms": "python programmer",
-               "location": "Chicago, IL",
-               "page": "1"
+          SearchQuery: jobType
           }
-          return http.post(`https://linkedin-jobs-search.p.rapidapi.com/`, data)   
+          //this method was broken 
+          return http.get('/Search', { params: data });   
      }
      
 }
