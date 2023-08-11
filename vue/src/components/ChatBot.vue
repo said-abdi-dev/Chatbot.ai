@@ -20,6 +20,7 @@
           class="message"
           v-for="message in messages"
           :key="messages.indexOf(message)"
+
           :class="message.author"
           >
           <div
@@ -128,8 +129,9 @@ export default {
           //THIS logs, it just messes up, we need to change our api 
         LinkedInService.getJob(message).then( response =>{
         console.log(response.data.data[0].url)
+        let linkedJob = `<a href = "${response.data.data[0].url}">` + "hi mom</a>"
         this.messages.unshift({
-          text: response.data.data[0].url,
+          text: linkedJob,
           author: 'response-box' //this is coming from the chatbot as a response. 
          })
          });
@@ -157,6 +159,7 @@ export default {
     
     
 },
+>>>>>>> 7f9866bc94d2377c4e6f6adba7a6a985fbaa7178
   },
 };
 </script>
