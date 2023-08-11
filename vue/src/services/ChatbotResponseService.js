@@ -1,6 +1,6 @@
 import axios from "axios";
 
-function sanitizeUrl(url) {
+function sanitizeUrl(url) {  //this function is removing all special characters 
     const specialCharsRegex = /[^\w\d\-._~]/g;
     const sanitizedUrl = url.replace(specialCharsRegex, ' ');
     return sanitizedUrl;

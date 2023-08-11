@@ -2,37 +2,39 @@
   <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
       <div class="vertical-buttons">
-
-        <button class="custom-button" @click="handleSuggestionButton()" v-if="subjectContext != '0'">{{variableContext}}</button>
+        <button
+          class="custom-button"
+          @click="handleSuggestionButton()"
+          v-if="subjectContext != '0'"
+        >
+          {{ variableContext }}
+        </button>
         <!-- <button class="custom-button" @click="handleButton2"> "I wnat to know about java"</button>
         <button class="custom-button" @click="handleButton3">Button 3</button>
         <button class="custom-button" @click="handleButton4">Button 4</button> -->
       </div>
       <ul class="chat-box-list">
         <li v-if="messages.length == 0" class="message-content">
-                    <div class="bot-image">
+          <div class="bot-image">
             <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
           </div>
-               Hello, how can I help you?
-            </li>
+         <p class="greetingUser">Hello, how can I help you?</p> 
+        </li>
 
         <li
           class="message"
           v-for="message in messages"
           :key="messages.indexOf(message)"
-
           :class="message.author"
-          >
+        >
           <div
             class="message-container"
-            v-if="message.author === 'request-box'"
-            >
+            v-if="message.author === 'request-box'">
             <!-- User message -->
-        
+
             <div class="message-content">
               <p class="message-text">{{ message.text }}</p>
 
-                            <!-- <p class="time user">{{ currentTime }}</p> -->
             </div>
           </div>
 
@@ -41,17 +43,12 @@
             <div class="bot-image">
               <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
             </div>
-            
+
             <div class="message-content">
               <span class="">
-                <p v-html="message.text" class="message-text"></p>
+                <p v-html="message.text" class="message-text"></p>   
               </span>
 
-              <!-- <p>{{ sendLinkMessage }}</p> -->
-
-              <!-- <p class="time bot">{{ currentTime }}</p> -->
-
-              <!-- <a v-if=""> -->
             </div>
           </div>
         </li>
@@ -74,85 +71,76 @@ export default {
 
   data() {
     return {
-            // currentTime: '',
-
-    message: "",
-    messages: [],
-    responseArrayFromServer: [],
-    showGreeting: true,
-    subjectContext: "0",
-    topicContext: "0",
-    variableContext: ""
+      message: "",
+      messages: [],  //all the messages in an array
+      responseArrayFromServer: [],   //remember to RENAME this later 
+      subjectContext: "0",     //both coming from the backend with default of 0
+      topicContext: "0",      //both coming from the backend with default of 0
+      variableContext: "",
     };
   },
-  created() {
-  },
+  
   methods: {
-    
     handleSuggestionButton() {
-      let longResult = (ChatBotResponseService.getChatbotSuggestions(this.subjectContext));
+      let longResult = ChatBotResponseService.getChatbotSuggestions(
+        this.subjectContext
+      );
       console.log(longResult);
-      ChatBotResponseService.getChatbotSuggestions(this.subjectContext).then(response=> {
-        console.log(response.data)
-        this.variableContext = response.data
-      })
-      
+      ChatBotResponseService.getChatbotSuggestions(this.subjectContext).then(
+        (response) => {
+          console.log(response.data);
+          this.variableContext = response.data;
+        }
+      );
     },
-    
-    // handleButton2() {
-    //   console.log("reached button1");
-    // },
-    // handleButton3() {
-    //   console.log("reached button1");
-    // },
-    // handleButton4() {
-    //   console.log("reached button1");
-    // },
+
+ 
     sendMessage() {
       const message = this.message;
-            // this.currentTime = this.formattedTimestamp()
-          
 
-      this.messages.unshift({
+      this.messages.unshift({        //**we'll come back for this**
         text: message,
         author: "request-box", //this is coming from the user as a response.
       });
 
       this.message = "";
-              if (message.includes('jobs')) {
-          //THIS logs, it just messes up, we need to change our api 
-        LinkedInService.getJob(message).then( response =>{
-        console.log(response.data.data[0].url)
-        let linkedJob = `<a href = "${response.data.data[0].url}">` + "hi mom</a>"
-        this.messages.unshift({
-          text: linkedJob,
-          author: 'response-box' //this is coming from the chatbot as a response. 
-         })
-         });
-        }
-        else {
-      ChatBotResponseService.getChatbotResponse(message, this.subjectContext, this.topicContext)
-        .then((responseArray) => {
-          console.log(responseArray);
-          this.subjectContext = responseArray.data[1]
-          this.topicContext = responseArray.data[2]
-
-          //this.showGreeting = false;
+      //properly a good idea to have this if condition in a different method 
+      if (message.includes("jobs")) {
+        LinkedInService.getJob(message).then((response) => {
+          console.log(response.data.data[0].url);
+          let linkedJob =
+            `<a href = "${response.data.data[0].url}">` + "hi mom</a>";
           this.messages.unshift({
-            text: responseArray.data[0],
-
+            text: linkedJob,
             author: "response-box", //this is coming from the chatbot as a response.
           });
-                  }).catch(err => {
-        console.error(err);
-      })
-        }
-        this.$nextTick(() => {
-          this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight
-        })  
-    
-    
-},
+        });
+      } else {
+        ChatBotResponseService.getChatbotResponse(
+          message,
+          this.subjectContext,
+          this.topicContext
+        )
+          .then((responseArray) => { //after a response comes back from the server we take 
+            console.log(responseArray);
+            this.subjectContext = responseArray.data[1];   
+            this.topicContext = responseArray.data[2];
+
+            //this.showGreeting = false;
+            this.messages.unshift({    //
+              text: responseArray.data[0],   //response from server 
+
+              author: "response-box", //this is coming from the chatbot as a response.
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+      this.$nextTick(() => {  
+        this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      });
+    },
   },
 };
 </script>
@@ -231,7 +219,6 @@ div {
 
 .response-box p {
   text-align: left;
-  
 }
 
 .request-box {
@@ -272,25 +259,24 @@ div {
 }
 
 .custom-button {
- display: block;
-    width:350px;
-    margin:20px auto;
-    padding:7px 13px;
-    text-align:center;
-  
-    background: gray;
-    font-size:20px;
-    font-family: 'Arial', sans-serif;
-    color:#ffffff;
-    white-space: nowrap;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
+  display: block;
+  width: 350px;
+  margin: 20px auto;
+  padding: 7px 13px;
+  text-align: center;
+
+  background: gray;
+  font-size: 20px;
+  font-family: "Arial", sans-serif;
+  color: #ffffff;
+  white-space: nowrap;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 
 .custom-button:hover {
-  background-color: rgb(133, 47, 47); 
-  
+  background-color: rgb(133, 47, 47);
 }
 
 input {
