@@ -10,12 +10,6 @@ BEGIN TRANSACTION;
 
 --makes java, js tables with data
 
-
-
-
-
-
-
 INSERT INTO subjects (subject_name)
 VALUES
     ('java'),
@@ -32,12 +26,9 @@ VALUES
     ('topicnotfound'),
     ('random');
 
-
-
-
-
 INSERT INTO responses (response)
 VALUES
+
     ('Java is a widely-used high-level programming language known for its portability and versatility. It is designed to be platform-independent, allowing developers to write code that can run on various systems without modification. Java is popular for its object-oriented programming features and rich standard library. For more information about Java programming, you can visit the official Oracle Java documentation: <a href="https://docs.oracle.com/en/java/">https://docs.oracle.com/en/java/</a>'),
     ('In Java, arrays are data structures used to store a collection of elements of the same type. They provide a way to efficiently manage and access multiple values using a single variable. Arrays in Java have a fixed size once they are created, and elements are accessed by their index. To learn more about working with arrays in Java, you can check out this tutorial: <a href="https://www.w3schools.com/java/java_arrays.asp">https://www.w3schools.com/java/java_arrays.asp</a>'),
     ('JavaScript is a dynamic and versatile scripting language primarily used for web development. It enables interactive and dynamic content on websites, enhancing user experience. JavaScript can be executed directly in web browsers, making it an essential tool for front-end development. For more information about JavaScript, you can check out this website: <a href="https://www.w3schools.com/js/">https://www.w3schools.com/js/</a>'),
@@ -53,9 +44,7 @@ VALUES
     ('Immutable objects cannot be changed after creation. For example, strings in many programming languages are immutable.'),
     ('Mutable objects can be modified after creation. Consequences include potential data integrity issues and difficulty in reasoning about code.'),
     ('Primitive types hold simple values directly, like integers or floating-point numbers.'),
-
     ('Need help with building  an awesome  resume? click here: <a> href = https://www.youtube.com/watch?v=lm6dHeoKcuY</a>'),
-
     ('Reference types hold references to objects, allowing for more complex data structures.'),
     ('Vue is a progressive JavaScript framework for building user interfaces. It is designed to be approachable and versatile. Vue comes with a set of features including declarative templates, reactivity, component-based architecture, and more. To learn more about Vue.js and its features, you can check out the official Vue.js documentation: <a href="https://vuejs.org/">https://vuejs.org/</a>'),
     ('Vue comes with a set of features including declarative templates, reactivity, component-based architecture, and more. In Vue, components are the basic building blocks. They encapsulate a portion of the user interface and can be reused throughout the application. To understand Vue components and how they work, you can refer to the Vue.js documentation on components: <a href="https://vuejs.org/v2/guide/components.html">https://vuejs.org/v2/guide/components.html</a>'),
@@ -65,9 +54,6 @@ VALUES
     ('Need Help? Here is a list of common questions that you can ask. Please provide a subject and a specific topic. For example: "What is an array in JavaScript?" or "How do functions work in Python?"'),
     ('Unable to read response. Please enter a more specific subject for the topic of '),
     ('Unable to read response. Please enter a more specific topic for the subject of ');
-
-
-
 
 INSERT INTO topics (topic_name, subject_name, response_id)
 VALUES
@@ -117,3 +103,4 @@ VALUES
     ('topicnotfound', 'topicnotfound', 24);
 
 COMMIT;
+

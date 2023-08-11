@@ -5,7 +5,7 @@ import com.techelevator.model.ChatbotResponse;
 public interface ChatbotResponseDao {
 //    String getInput(String usersInput);
 
-//    ChatbotResponse createResponse(String userInput);
+    //  public ChatbotResponse createResponse();
 
-    String getResponseFromInput(String usersInput);
+    public String[] getResponseFromInput(ChatbotResponse chatbotResponse);
 }
