@@ -3,10 +3,17 @@
     <section class="chat-box-list-container" ref="chatbox">
       <div class="vertical-buttons">
 
-        <button class="custom-button" @click="handleButton1">"What is java?"</button>
-        <button class="custom-button" @click="handleButton2"> "I wnat to know about java"</button>
+<<<<<<< HEAD
+        <button class="custom-button" @click="handleSuggestionButton()" v-if="subjectContext != '0'">{{variableContext}}</button>
+        <!-- <button class="custom-button" @click="handleButton2"> "I wnat to know about java"</button>
         <button class="custom-button" @click="handleButton3">Button 3</button>
-        <button class="custom-button" @click="handleButton4">Button 4</button>
+        <button class="custom-button" @click="handleButton4">Button 4</button> -->
+=======
+        <button class="custom-button" @click="handleButton1" v-html="'cars'"></button>
+        <button class="custom-button" @click="handleButton2">{{topic_name}}?</button>
+        <button class="custom-button" @click="handleButton3">{{topic_name}}?</button>
+        <button class="custom-button" @click="handleButton4">{{topic_name}}?</button>
+>>>>>>> 5d75bbfb809a2fe8df7dbbbcd720600bb0d82426
       </div>
       <ul class="chat-box-list">
         <li v-if="messages.length == 0" class="message-content">
@@ -20,6 +27,7 @@
           class="message"
           v-for="message in messages"
           :key="messages.indexOf(message)"
+
           :class="message.author"
           >
           <div
@@ -80,30 +88,66 @@ export default {
     responseArrayFromServer: [],
     showGreeting: true,
     subjectContext: "0",
-    topicContext: "0"
+    topicContext: "0",
+    variableContext: ""
     };
   },
   created() {
   },
   methods: {
     
-    handleButton1() {
+<<<<<<< HEAD
+    handleSuggestionButton() {
+      let longResult = (ChatBotResponseService.getChatbotSuggestions(this.subjectContext));
+      console.log(longResult);
+      ChatBotResponseService.getChatbotSuggestions(this.subjectContext).then(response=> {
+        console.log(response.data)
+        this.variableContext = response.data
+      })
       
-      console.log("reached button1");
     },
     
+    // handleButton2() {
+    //   console.log("reached button1");
+    // },
+    // handleButton3() {
+    //   console.log("reached button1");
+    // },
+    // handleButton4() {
+    //   console.log("reached button1");
+    // },
+=======
+    handleButton1() {
+      console.log("reached button1");
+    },
+
     handleButton2() {
-      console.log("reached button1");
+      console.log("reached button2");
     },
+
     handleButton3() {
-      console.log("reached button1");
+      const response = `
+        APIs enable developers to create functionalities in their applications by leveraging services and data provided by other applications, services, or platforms without having to understand the intricacies of how those services work internally.
+      `;
+
+      this.messages.unshift({
+        text: response,
+        author: "response-box", // Chatbot response
+      });
+
+      this.$nextTick(() => {
+        this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      });
     },
+
     handleButton4() {
-      console.log("reached button1");
+      console.log("reached button4");
     },
+>>>>>>> 5d75bbfb809a2fe8df7dbbbcd720600bb0d82426
     sendMessage() {
       const message = this.message;
             // this.currentTime = this.formattedTimestamp()
+          
 
       this.messages.unshift({
         text: message,
@@ -145,6 +189,7 @@ export default {
     
     
 },
+>>>>>>> 7f9866bc94d2377c4e6f6adba7a6a985fbaa7178
   },
 };
 </script>
@@ -223,6 +268,7 @@ div {
 
 .response-box p {
   text-align: left;
+  
 }
 
 .request-box {
@@ -280,7 +326,7 @@ div {
 }
 
 .custom-button:hover {
-  background-color: rgb(133, 47, 47); /* Change background on hover */
+  background-color: rgb(133, 47, 47); 
   
 }
 

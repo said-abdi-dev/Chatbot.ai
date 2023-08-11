@@ -9,6 +9,7 @@ public class ChatbotResponse {
     private String subjectContext;
     private String topicContext;
     private String response;
+    private String variableContext;
 
 
     //CONSTRUCTORS
@@ -55,9 +56,11 @@ public class ChatbotResponse {
         this.topicContext = topicContext;
     }
 
+    public String getVariableContext() {
+        return variableContext;
+    }
 
-
-
-
-
+    public void setVariableContext(String variableContext) {
+        this.variableContext = variableContext;
+    }
 }
