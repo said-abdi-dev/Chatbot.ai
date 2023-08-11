@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class JdbcChatbotResponseDao implements ChatbotResponseDao {
@@ -20,72 +21,75 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
     }
 
     @Override
-    public String getResponseFromInput(String usersInput) {
+    public String[] getResponseFromInput(ChatbotResponse chatbotResponse) {
 
-        String result = "";
+        String[] returnResponseAndContext = new String[3];
+        String response = "";
 
-        String userInputNoSpaces = usersInput.toLowerCase().replace(" ", "");
+        returnResponseAndContext[1] = chatbotResponse.getSubjectContext();
+        returnResponseAndContext[2] = chatbotResponse.getTopicContext();
 
-        //gets all subject names
+
+        //changes the values within the array as desired based on checks
+        returnResponseAndContext = checkForSubjectAndTopic(chatbotResponse.getSubjectContext(), chatbotResponse.getTopicContext(), chatbotResponse.getUserInput());
+    //    [input, subject, topic. response_id]
+        chatbotResponse.setSubjectContext(returnResponseAndContext[1]);
+        chatbotResponse.setTopicContext(returnResponseAndContext[2]);
+
+
+        if (!returnResponseAndContext[1].equals("0") && !returnResponseAndContext[2].equals("0")) {
+            String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
+
+            response =  jdbcTemplate.queryForObject(sql, String.class, returnResponseAndContext[1],returnResponseAndContext[2]);
+        } else if (returnResponseAndContext[1].equals("0") && !returnResponseAndContext[2].equals("0") ) {
+            response = "I'm sorry, I don't have quite enough information about what you're looking to learn about." +
+            "Could you be a little more specific? Or try wording your question in a different way.";
+        } else if (!returnResponseAndContext[1].equals("0") && returnResponseAndContext[2].equals("0")) {
+            response = "I can see you're asking about " + returnResponseAndContext[1] + ", but could you a little " +
+            "more specific what you'd like to know about " + returnResponseAndContext[1] + "?";
+        } else {
+            response = "We couldn't understand your request. We recommend asking questions about a certain subject, " +
+            "and a topic of that subject. Such as 'The definition of JavaScript' or 'What are some features of Vue?'";
+        }
+        returnResponseAndContext[0] = response;
+        return returnResponseAndContext;
+    }
+
+    public String[] checkForSubjectAndTopic(String usersSubjectContext, String usersTopicContext, String userInput) {
+        String foundSubject = usersSubjectContext; // equal to last return subject, or 0
+        String foundTopic = usersTopicContext; // equal to last returned valid topic, or 0
+
+        String[] inputWords = userInput.split("\\s+");
+
+        // Check user input against subjects in the database
         String sqlGetSubjectNames = "SELECT subject_name FROM subjects";
-        SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlGetSubjectNames);
-        String foundSubject = "";
-        //check if subject exists in usersInput
+        SqlRowSet rowsOfSubjects = jdbcTemplate.queryForRowSet(sqlGetSubjectNames);
 
-        while (rows.next()) {
-            String subjectName = rows.getString("subject_name");
-            if (userInputNoSpaces.contains(subjectName)) {
-                if (subjectName.length() > foundSubject.length()) {
-                    foundSubject = subjectName;
-                }
-                foundSubject = subjectName;
-                    }
-                }
-            if (foundSubject == "") {
-                foundSubject = "subjectnotfound";
-            }
-            //gets all topic names for given subject
-            String sqlGetTopicsFromSubject = "SELECT topic_name FROM topics WHERE subject_name = ?";
-            SqlRowSet rows2 = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject, foundSubject);
-            String foundTopicName = "";
-            int foundTopicId = -1;
-            int foundTopicsResponseId = -1;
-            while (rows2.next()) {
-                String topicName = rows2.getString("topic_name");
-                if (userInputNoSpaces.contains(topicName)) {
-                    if (topicName.length() > foundTopicName.length()) {
-                        foundTopicName = topicName;
-                        String sqlGetFoundTopicId = "SELECT topic_id FROM topics WHERE topic_name = ? AND subject_name = ?";
-                        foundTopicId = jdbcTemplate.queryForObject(sqlGetFoundTopicId, Integer.class, foundTopicName, foundSubject);
-                        String sqlGetFoundTopicResponseId = "SELECT response_Id FROM topics WHERE topic_id = ?";
-                        foundTopicsResponseId = jdbcTemplate.queryForObject(sqlGetFoundTopicResponseId, Integer.class, foundTopicId);
-                    }
+        while (rowsOfSubjects.next()) {
+            String currentSubjectName = rowsOfSubjects.getString("subject_name");
+            for (String word : inputWords) {
+                if (currentSubjectName != null && currentSubjectName.equals(word)) {
+                    foundSubject = currentSubjectName;
+                    break;
                 }
             }
-            //sets topic to topicNotFound(aka null)
-            if (foundTopicName == "") {
-                foundTopicName = "topicnotfound";
-            }
-            //SUBJECT not found
-            if (foundSubject == "subjectnotfound") {
-                String sql = "SELECT response from responses WHERE response_id = (SELECT response_id from topics WHERE subject_name = 'subjectnotfound' LIMIT 1)";
-                result = jdbcTemplate.queryForObject(sql, String.class);
-            }
-            //TOPIC not found, subject found
-            else if (foundSubject != "subjectnotfound" && foundTopicName == "topicnotfound") {
-                String sql = "SELECT response from responses WHERE response_id = (SELECT response_id from topics WHERE topic_name = 'topicnotfound' LIMIT 1)";
-                result = jdbcTemplate.queryForObject(sql, String.class) + foundSubject;
-            } else if (foundSubject == "subjectnotfound" && foundTopicName == "topicnotfound") {
-            }
-            //TOPIC AND SUBJECT found
-            else if (foundSubject != "" && foundTopicName != "") {
-                String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
-                result = jdbcTemplate.queryForObject(sql, String.class, foundSubject, foundTopicName);
-            } else {
-                result = "invalid input";
-            }
-            return result;
+
         }
 
+            String sqlGetTopicsFromSubject = "SELECT topic_name, topic_id FROM topics WHERE subject_name = ?";
+            SqlRowSet rowsOfTopics = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject, foundSubject);
 
+
+            while (rowsOfTopics.next()) {
+                String currentTopicName = rowsOfTopics.getString("topic_name");
+
+                for (String word : inputWords) {
+                    if (currentTopicName != null && currentTopicName.equals(word)) {
+                        foundTopic = currentTopicName;
+                        break;
+                    }
+                }
+        }
+        return new String[]{userInput, foundSubject, foundTopic};
     }
+}
