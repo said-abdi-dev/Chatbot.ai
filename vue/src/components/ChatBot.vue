@@ -10,28 +10,28 @@
       </div>
       <ul class="chat-box-list">
         <li v-if="messages.length == 0" class="message-content">
-          <div class="bot-image">
+                    <div class="bot-image">
             <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
           </div>
-          Hello, how can I help you?
-        </li>
+               Hello, how can I help you?
+            </li>
 
         <li
           class="message"
           v-for="message in messages"
           :key="messages.indexOf(message)"
           :class="message.author"
-        >
+          >
           <div
             class="message-container"
             v-if="message.author === 'request-box'"
-          >
+            >
             <!-- User message -->
-
+        
             <div class="message-content">
               <p class="message-text">{{ message.text }}</p>
 
-              <!-- <p class="time user">{{ currentTime }}</p> -->
+                            <!-- <p class="time user">{{ currentTime }}</p> -->
             </div>
           </div>
 
@@ -40,7 +40,7 @@
             <div class="bot-image">
               <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
             </div>
-
+            
             <div class="message-content">
               <span class="">
                 <p v-html="message.text" class="message-text"></p>
@@ -73,17 +73,19 @@ export default {
 
   data() {
     return {
-      // currentTime: '',
+            // currentTime: '',
 
-      message: "",
-      messages: [],
-      showGreeting: true,
+    message: "",
+    messages: [],
+    showGreeting: true,
+    subjectContext: "0",
+    topicContext: "0"
     };
   },
   created() {
   },
   methods: {
-
+    
     handleButton1() {
       
       console.log("reached button1");
@@ -100,7 +102,7 @@ export default {
     },
     sendMessage() {
       const message = this.message;
-      // this.currentTime = this.formattedTimestamp()
+            // this.currentTime = this.formattedTimestamp()
 
       this.messages.unshift({
         text: message,
@@ -108,7 +110,7 @@ export default {
       });
 
       this.message = "";
-        if (message.includes('jobs')) {
+              if (message.includes('jobs')) {
           //THIS logs, it just messes up, we need to change our api 
         LinkedInService.getJob(message).then( response =>{
         console.log(response.data.data[0].url)
@@ -119,7 +121,8 @@ export default {
          });
         }
         else {
-      ChatBotResponseService.getChatbotResponse(message)
+      ChatBotResponseService.getChatbotResponse(message, this.subjectContext, this.topicContext)
+      console.log("hi")
         .then((response) => {
           //this.showGreeting = false;
           this.messages.unshift({
@@ -127,7 +130,7 @@ export default {
 
             author: "response-box", //this is coming from the chatbot as a response.
           });
-        }).catch(err => {
+                  }).catch(err => {
         console.error(err);
       })
         }
