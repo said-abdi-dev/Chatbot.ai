@@ -11,4 +11,7 @@ export default {
         const sanitizedInput = sanitizeUrl(userInput); // Sanitize userInput
         return axios.get(`/${sanitizedInput}/${subjectContext}/${topicContext}`);
     },
+    getChatbotSuggestions(contextString) {
+         return axios.get(`/${contextString}`);
+    }
 }

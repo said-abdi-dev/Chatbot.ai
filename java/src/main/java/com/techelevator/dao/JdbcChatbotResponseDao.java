@@ -94,4 +94,19 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
         }
         return new String[]{userInput, foundSubject, foundTopic};
     }
+    public String getSuggestions(ChatbotResponse chatbotResponse) {
+        String suggestions = "";
+        String sqlSuggestions = "SELECT topic_name, subject_name\n" +
+                "FROM topics\n" +
+                "WHERE subject_name = ?\n" +
+                "LIMIT 3;";
+
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSuggestions, chatbotResponse.getVariableContext());
+
+        while (rows.next()) {
+            String topicName = rows.getString("topic_name");
+            suggestions += topicName + " ";
+        }
+        return suggestions;
+    }
 }
