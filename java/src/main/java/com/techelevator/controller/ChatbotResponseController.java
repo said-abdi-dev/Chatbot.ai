@@ -39,4 +39,13 @@ public class ChatbotResponseController {
         // Return an array containing the response string
         return chatbotReply;
     }
+    @GetMapping (path = "{contextString}")
+    public String getChatbotSuggestions(@PathVariable String contextString) {
+        ChatbotResponse chatbotResponse = new ChatbotResponse();
+
+        chatbotResponse.setVariableContext(contextString);
+        String chatbotReply = chatbotResponseDao.getSuggestions(chatbotResponse);
+
+        return chatbotReply;
+    }
 }

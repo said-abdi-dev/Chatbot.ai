@@ -8,4 +8,5 @@ public interface ChatbotResponseDao {
     //  public ChatbotResponse createResponse();
 
     public String[] getResponseFromInput(ChatbotResponse chatbotResponse);
+    public String getSuggestions(ChatbotResponse chatbotResponse);
 }

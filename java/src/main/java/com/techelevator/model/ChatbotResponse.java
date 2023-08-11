@@ -4,12 +4,12 @@ public class ChatbotResponse {
 
     //PRIVATE VARIABLES
 
-    private String[] userInputAndContext;
 
     private String userInput;
     private String subjectContext;
     private String topicContext;
     private String response;
+    private String variableContext;
 
 
     //CONSTRUCTORS
@@ -39,13 +39,6 @@ public class ChatbotResponse {
         this.userInput = userInput;
     }
 
-    public String[] getUserInputAndContext() {
-        return userInputAndContext;
-    }
-
-    public void setUserInputAndContext(String[] userInputAndContext) {
-        this.userInputAndContext = userInputAndContext;
-    }
 
     public String getSubjectContext() {
         return subjectContext;
@@ -63,9 +56,11 @@ public class ChatbotResponse {
         this.topicContext = topicContext;
     }
 
+    public String getVariableContext() {
+        return variableContext;
+    }
 
-
-
-
-
+    public void setVariableContext(String variableContext) {
+        this.variableContext = variableContext;
+    }
 }
