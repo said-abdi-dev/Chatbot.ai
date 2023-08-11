@@ -77,6 +77,7 @@ export default {
 
     message: "",
     messages: [],
+    responseArrayFromServer: [],
     showGreeting: true,
     subjectContext: "0",
     topicContext: "0"
@@ -122,11 +123,14 @@ export default {
         }
         else {
       ChatBotResponseService.getChatbotResponse(message, this.subjectContext, this.topicContext)
-      console.log("hi")
-        .then((response) => {
+        .then((responseArray) => {
+          console.log(responseArray);
+          this.subjectContext = responseArray.data[1]
+          this.topicContext = responseArray.data[2]
+
           //this.showGreeting = false;
           this.messages.unshift({
-            text: response.data.chatbotResponse,
+            text: responseArray.data[0],
 
             author: "response-box", //this is coming from the chatbot as a response.
           });

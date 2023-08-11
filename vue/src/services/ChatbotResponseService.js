@@ -1,8 +1,14 @@
 import axios from "axios";
-export default{
 
-     getChatbotResponse(userInput, subjectContext, topicContext){
-          
-          return axios.get(`/${userInput}/${subjectContext}/${topicContext}`);
-     },
+function sanitizeUrl(url) {
+    const specialCharsRegex = /[^\w\d\-._~]/g;
+    const sanitizedUrl = url.replace(specialCharsRegex, ' ');
+    return sanitizedUrl;
+}
+
+export default {
+    getChatbotResponse(userInput, subjectContext, topicContext) {
+        const sanitizedInput = sanitizeUrl(userInput); // Sanitize userInput
+        return axios.get(`/${sanitizedInput}/${subjectContext}/${topicContext}`);
+    },
 }

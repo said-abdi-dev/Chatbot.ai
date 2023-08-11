@@ -32,6 +32,10 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
 
         //changes the values within the array as desired based on checks
         returnResponseAndContext = checkForSubjectAndTopic(chatbotResponse.getSubjectContext(), chatbotResponse.getTopicContext(), chatbotResponse.getUserInput());
+    //    [input, subject, topic. response_id]
+        chatbotResponse.setSubjectContext(returnResponseAndContext[1]);
+        chatbotResponse.setTopicContext(returnResponseAndContext[2]);
+
 
         if (!returnResponseAndContext[1].equals("0") && !returnResponseAndContext[2].equals("0")) {
             String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
@@ -54,7 +58,6 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
     public String[] checkForSubjectAndTopic(String usersSubjectContext, String usersTopicContext, String userInput) {
         String foundSubject = usersSubjectContext; // equal to last return subject, or 0
         String foundTopic = usersTopicContext; // equal to last returned valid topic, or 0
-        int foundTopicsResponseId = -1;
 
         String[] inputWords = userInput.split("\\s+");
 
@@ -70,20 +73,19 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
                     break;
                 }
             }
-            break;
+
         }
 
             String sqlGetTopicsFromSubject = "SELECT topic_name, topic_id FROM topics WHERE subject_name = ?";
             SqlRowSet rowsOfTopics = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject, foundSubject);
 
+
             while (rowsOfTopics.next()) {
                 String currentTopicName = rowsOfTopics.getString("topic_name");
-                int currentTopicId = rowsOfTopics.getInt("topic_id");
 
                 for (String word : inputWords) {
                     if (currentTopicName != null && currentTopicName.equals(word)) {
                         foundTopic = currentTopicName;
-                        foundTopicsResponseId = currentTopicId;
                         break;
                     }
                 }
