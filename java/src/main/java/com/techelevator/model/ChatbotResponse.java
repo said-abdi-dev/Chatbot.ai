@@ -4,7 +4,6 @@ public class ChatbotResponse {
 
     //PRIVATE VARIABLES
 
-    private String[] userInputAndContext;
 
     private String userInput;
     private String subjectContext;
@@ -39,13 +38,6 @@ public class ChatbotResponse {
         this.userInput = userInput;
     }
 
-    public String[] getUserInputAndContext() {
-        return userInputAndContext;
-    }
-
-    public void setUserInputAndContext(String[] userInputAndContext) {
-        this.userInputAndContext = userInputAndContext;
-    }
 
     public String getSubjectContext() {
         return subjectContext;
