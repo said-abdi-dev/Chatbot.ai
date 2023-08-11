@@ -74,7 +74,6 @@ export default {
   data() {
     return {
       // currentTime: '',
-
       message: "",
       messages: [],
       showGreeting: true,
