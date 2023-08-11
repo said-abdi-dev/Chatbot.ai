@@ -159,7 +159,6 @@ export default {
     
     
 },
->>>>>>> 7f9866bc94d2377c4e6f6adba7a6a985fbaa7178
   },
 };
 </script>
