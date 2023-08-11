@@ -290,6 +290,7 @@ div {
 
 .custom-button:hover {
   background-color: rgb(133, 47, 47); 
+    cursor: pointer;
   
 }
 
