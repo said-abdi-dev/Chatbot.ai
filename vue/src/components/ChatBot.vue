@@ -83,20 +83,31 @@ export default {
   created() {
   },
   methods: {
-
     handleButton1() {
-      
       console.log("reached button1");
     },
-    
+
     handleButton2() {
-      console.log("reached button1");
+      console.log("reached button2");
     },
+
     handleButton3() {
-      console.log("reached button1");
+      const response = `
+        APIs enable developers to create functionalities in their applications by leveraging services and data provided by other applications, services, or platforms without having to understand the intricacies of how those services work internally.
+      `;
+
+      this.messages.unshift({
+        text: response,
+        author: "response-box", // Chatbot response
+      });
+
+      this.$nextTick(() => {
+        this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      });
     },
+
     handleButton4() {
-      console.log("reached button1");
+      console.log("reached button4");
     },
     sendMessage() {
       const message = this.message;
@@ -140,10 +151,10 @@ export default {
         return this.messages.length;
       },
 
-  
     },
-  },
-};
+    
+  };
+}
 </script>
 
 
@@ -220,6 +231,7 @@ div {
 
 .response-box p {
   text-align: left;
+  
 }
 
 .request-box {
@@ -277,7 +289,7 @@ div {
 }
 
 .custom-button:hover {
-  background-color: rgb(133, 47, 47); /* Change background on hover */
+  background-color: rgb(133, 47, 47); 
   
 }
 
