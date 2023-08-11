@@ -86,10 +86,7 @@ export default {
   created() {
   },
   methods: {
-<<<<<<< HEAD
-=======
     
->>>>>>> d604f5174d5a8bd8d84698df50cab7848e409cd8
     handleButton1() {
       console.log("reached button1");
     },
@@ -119,6 +116,7 @@ export default {
     sendMessage() {
       const message = this.message;
             // this.currentTime = this.formattedTimestamp()
+          
 
       this.messages.unshift({
         text: message,
