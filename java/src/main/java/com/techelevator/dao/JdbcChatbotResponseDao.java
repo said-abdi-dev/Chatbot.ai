@@ -38,18 +38,22 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
         chatbotResponse.setSubjectContext(returnResponseAndContext[1]);
         chatbotResponse.setTopicContext(returnResponseAndContext[2]);
 
-
+        //valid subject & topic
         if (!returnResponseAndContext[1].equals("0") && !returnResponseAndContext[2].equals("0")) {
             String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
 
             response =  jdbcTemplate.queryForObject(sql, String.class, returnResponseAndContext[1],returnResponseAndContext[2]);
+        //NO subject, and VALID topic
         } else if (returnResponseAndContext[1].equals("0") && !returnResponseAndContext[2].equals("0") ) {
             response = "I'm sorry, I don't have quite enough information about what you're looking to learn about." +
             "Could you be a little more specific? Or try wording your question in a different way.";
+        //VALID topic, NO topic
         } else if (!returnResponseAndContext[1].equals("0") && returnResponseAndContext[2].equals("0")) {
             response = "I can see you're asking about " + returnResponseAndContext[1] + ", but could you a little " +
             "more specific what you'd like to know about " + returnResponseAndContext[1] + "?";
-        } else {
+        }
+        //INVALID subject && INVALID topic
+        else {
             response = "We couldn't understand your request. We recommend asking questions about a certain subject, " +
             "and a topic of that subject. Such as 'The definition of JavaScript' or 'What are some features of Vue?'";
         }
