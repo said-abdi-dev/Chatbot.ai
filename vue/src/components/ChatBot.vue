@@ -172,7 +172,7 @@ methods: {
         LinkedInService.getJob(message).then((response) => {
           console.log(response.data.data[0].url);
           let linkedJob =
-            `<a href = "${response.data.data[0].url}">` + "click here for job</a>";
+            `<a href = "${response.data.data[0].url}">` + "click here for jobs</a>";
           this.messages.unshift({
             text: linkedJob,
             author: "response-box", //this is coming from the chatbot as a response.
