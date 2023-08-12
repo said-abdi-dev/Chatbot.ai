@@ -18,7 +18,7 @@
           <div class="bot-image">
             <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
           </div>
-         <p class="greetingUser">Hello, how can I help you?</p> 
+          <p class="greetingUser">Hello, how can I help you?</p>
         </li>
 
         <li
@@ -29,12 +29,12 @@
         >
           <div
             class="message-container"
-            v-if="message.author === 'request-box'">
+            v-if="message.author === 'request-box'"
+          >
             <!-- User message -->
 
             <div class="message-content">
-              <p class="message-text">{{ message.text }}</p>
-
+              <p class="message-text">{{message.text}}</p>
             </div>
           </div>
 
@@ -46,13 +46,17 @@
 
             <div class="message-content">
               <span class="">
-                <p v-html="message.text" class="message-text"></p>   
+                <p v-html="message.text" class="message-text"></p>
               </span>
-
             </div>
           </div>
         </li>
       </ul>
+      <!-- text to speech/voice -->
+      <div class="voiceAndText"> 
+        <button @click="startRecognition">Start Recognition</button>
+        <button @click="speakResponse">Speak Response</button>
+      </div>
     </section>
     <div class="chat-inputs">
       <input type="text" v-model="message" @keyup.enter="sendMessage" />
@@ -72,15 +76,75 @@ export default {
   data() {
     return {
       message: "",
-      messages: [],  //all the messages in an array
-      responseArrayFromServer: [],   //remember to RENAME this later 
-      subjectContext: "0",     //both coming from the backend with default of 0
-      topicContext: "0",      //both coming from the backend with default of 0
+      messages: [], //all the messages in an array
+      responseArrayFromServer: [], //remember to RENAME this later
+      subjectContext: "0", //both coming from the backend with default of 0
+      topicContext: "0", //both coming from the backend with default of 0
       variableContext: "",
+      recognition: null,
+      transcribedText: '',
+      isSpeakingOn: false
     };
   },
-  
-  methods: {
+  mounted() {
+  // When the component is mounted(fully compiled), initialize the speech recognition
+  this.initializeRecognition();
+},
+methods: {
+  // Method to initialize speech recognition
+  initializeRecognition() {
+    // Check if SpeechRecognition is supported in the browser
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      // Get the appropriate SpeechRecognition constructor
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      // Create a new SpeechRecognition instance
+      this.recognition = new SpeechRecognition();
+      this.recognition.lang = 'en-US'; // Set the language to English (United States)
+      this.recognition.continuous = false; // Continuously listen for speech
+      this.recognition.interimResults = true; // Get interim results as the user speaks
+      
+      // Set the event handler for speech recognition results
+      this.recognition.onresult = this.handleRecognitionResult;
+
+      // Set the event handler for speech recognition errors
+      this.recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+      };
+    } else {
+      console.error('Speech recognition is not supported in this browser.');
+    }
+  },
+  // Method to handle speech recognition results
+  handleRecognitionResult(event) {
+    let transcript = '';  //stores transcribed speech
+    
+    // Loop through the speech recognition results
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript; // Concatenate transcribed speech
+    }
+    //store transcribedText in a variable, meaning you can call it later
+    this.transcribedText = transcript;
+    this.message = this.transcribedText.toLowerCase(); //set transcribedText to message(right side of chatbot)
+  },
+  // Method to start speech recognition
+  startRecognition() {
+    if (this.recognition) {
+      this.recognition.start(); // Start speech recognition
+    }
+  },
+  // Method to generate and speak a response
+  speakResponse() {
+    // Check if SpeechSynthesisUtterance is supported in the browser
+    if ('SpeechSynthesisUtterance' in window) {
+      // Create a new SpeechSynthesisUtterance instance with the transcribed text
+      const utterance = new SpeechSynthesisUtterance(this.transcribedText);
+      // Use the browser's speech synthesis to speak the utterance
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.error('Speech synthesis is not supported in this browser.');
+    }
+  },
     handleSuggestionButton() {
       let longResult = ChatBotResponseService.getChatbotSuggestions(
         this.subjectContext
@@ -93,51 +157,55 @@ export default {
         }
       );
     },
-
- 
     sendMessage() {
       const message = this.message;
 
-      this.messages.unshift({        //**we'll come back for this**
+      this.messages.unshift({
+        //**we'll come back for this**
         text: message,
         author: "request-box", //this is coming from the user as a response.
       });
 
       this.message = "";
-      //properly a good idea to have this if condition in a different method 
-      if (message.includes("jobs")) {
+      //probably a good idea to have this if condition in a different method
+      if (message.includes("job")) {
         LinkedInService.getJob(message).then((response) => {
           console.log(response.data.data[0].url);
           let linkedJob =
-            `<a href = "${response.data.data[0].url}">` + "hi mom</a>";
+            `<a href = "${response.data.data[0].url}">` + "click here for job</a>";
           this.messages.unshift({
             text: linkedJob,
             author: "response-box", //this is coming from the chatbot as a response.
           });
         });
       } else {
+        //get normal response
         ChatBotResponseService.getChatbotResponse(
           message,
           this.subjectContext,
           this.topicContext
         )
-          .then((responseArray) => { //after a response comes back from the server we take 
+          .then((responseArray) => {
+            //after a response comes back from the server we take
             console.log(responseArray);
-            this.subjectContext = responseArray.data[1];   
+            this.subjectContext = responseArray.data[1];
             this.topicContext = responseArray.data[2];
 
             //this.showGreeting = false;
-            this.messages.unshift({    //
-              text: responseArray.data[0],   //response from server 
+            this.messages.unshift({
+              //
+              text: responseArray.data[0], //response from server
 
               author: "response-box", //this is coming from the chatbot as a response.
             });
+            const utterance = new SpeechSynthesisUtterance(responseArray.data[0]);
+        window.speechSynthesis.speak(utterance);
           })
           .catch((err) => {
             console.error(err);
           });
       }
-      this.$nextTick(() => {  
+      this.$nextTick(() => {
         this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
       });
     },
@@ -348,5 +416,8 @@ button {
   padding: 10px;
   background-color: #f0f0f0;
   border-radius: 10px;
+}
+.voiceAndText {
+  padding-top: 200;
 }
 </style>
