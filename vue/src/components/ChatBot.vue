@@ -54,8 +54,8 @@
       </ul>
       <!-- text to speech/voice -->
       <div class="voiceAndText"> 
-        <button @click="startRecognition">Start Recognition</button>
-        <button @click="speakResponse">Speak Response</button>
+        <button @click="startRecognition">Speak</button>
+        <button v-if="messages.length != 0" @click="speakResponse">Listen</button>
       </div>
     </section>
     <div class="chat-inputs">
@@ -83,7 +83,7 @@ export default {
       variableContext: "",
       recognition: null,
       transcribedText: '',
-      isSpeakingOn: false
+      responseMessage : "" // response message displayed from server
     };
   },
   mounted() {
@@ -138,7 +138,7 @@ methods: {
     // Check if SpeechSynthesisUtterance is supported in the browser
     if ('SpeechSynthesisUtterance' in window) {
       // Create a new SpeechSynthesisUtterance instance with the transcribed text
-      const utterance = new SpeechSynthesisUtterance(this.transcribedText);
+      const utterance = new SpeechSynthesisUtterance(this.responseMessage);
       // Use the browser's speech synthesis to speak the utterance
       window.speechSynthesis.speak(utterance);
     } else {
@@ -190,16 +190,13 @@ methods: {
             console.log(responseArray);
             this.subjectContext = responseArray.data[1];
             this.topicContext = responseArray.data[2];
-
-            //this.showGreeting = false;
+            this.responseMessage = responseArray.data[0];
             this.messages.unshift({
               //
               text: responseArray.data[0], //response from server
 
               author: "response-box", //this is coming from the chatbot as a response.
             });
-            const utterance = new SpeechSynthesisUtterance(responseArray.data[0]);
-        window.speechSynthesis.speak(utterance);
           })
           .catch((err) => {
             console.error(err);
