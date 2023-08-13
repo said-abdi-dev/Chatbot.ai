@@ -9,7 +9,7 @@
 <script>
 import ChatBox from './components/ChatBot.vue'
 import PostList from './components/PostList.vue'
-
+  
 export default {
   name: 'app',
   components: {
