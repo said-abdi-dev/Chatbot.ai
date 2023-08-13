@@ -12,22 +12,31 @@ BEGIN TRANSACTION;
 
 INSERT INTO subjects (subject_name)
 VALUES
-    ('java'),
-    ('javascript'),
-    ('python'),
-    ('sql'),
-    ('oop'),
-    ('mutability'),
-    ('objectoriented'),
-    ('datatype'),
-    ('vue'),
-    ('help'),
-    ('subjectnotfound'),
-    ('topicnotfound'),
-    ('random');
+    ('java'), --1
+    ('javascript'), --2
+    ('python'), --3
+    ('sql'), --4
+    ('oop'), --5
+    ('mutability'), --6
+    ('objectoriented'), --7
+    ('datatype'), --8
+    ('vue'), --9
+    ('help'), --10
+    ('random'), --11
+    ('postgres'), --12
+    ('html'), --13
+    ('css'), --14
+    ('ide'), --15
+    ('npm'), --16
 
 INSERT INTO responses (response)
 VALUES
+
+
+
+
+
+
 
     ('Java is a widely-used high-level programming language known for its portability and versatility. It is designed to be platform-independent, allowing developers to write code that can run on various systems without modification. Java is popular for its object-oriented programming features and rich standard library. For more information about Java programming, you can visit the official Oracle Java documentation: <a href="https://docs.oracle.com/en/java/">https://docs.oracle.com/en/java/</a>. Additionally, if you are interested in watching a video, you can check out this YouTube link: <a href="https://www.youtube.com/watch?v=mG4NLNZ37y4">https://www.youtube.com/watch?v=mG4NLNZ37y4</a>.'),
     ('In Java, arrays are data structures used to store a collection of elements of the same type. They provide a way to efficiently manage and access multiple values using a single variable. Arrays in Java have a fixed size once they are created, and elements are accessed by their index. To learn more about working with arrays in Java, you can check out this tutorial: <a href="https://www.w3schools.com/java/java_arrays.asp">https://www.w3schools.com/java/java_arrays.asp</a>. Additionally, if you prefer a video explanation, you can watch this YouTube tutorial: <a href="https://www.youtube.com/watch?v=2BM7VuASaJI">https://www.youtube.com/watch?v=2BM7VuASaJI</a>.'),
@@ -53,7 +62,13 @@ VALUES
     ('Vue offers various mechanisms for managing application state, including Vuex for centralized state management and reactive data properties.'),
     ('Need Help? Here is a list of common questions that you can ask. Please provide a subject and a specific topic. For example: "What is an array in JavaScript?" or "How do functions work in Python?"'),
     ('Unable to read response. Please enter a more specific subject for the topic of '),
-    ('Unable to read response. Please enter a more specific topic for the subject of ');
+    ('Unable to read response. Please enter a more specific topic for the subject of '),
+    ('Loops are control structures in Java that repeatedly execute a block of code as long as a specified condition is true. Common types include "for," "while," and "do-while" loops. To create a loop, specify the loop type, condition, and code to be executed within curly braces.'),
+    ('NPM (Node Package Manager) is a widely used package manager for JavaScript. It allows developers to easily install, share, and manage libraries, frameworks, and tools necessary for building web applications using Node.js. NPM simplifies dependency management and offers a vast ecosystem of reusable code packages'),
+    ('HTML (Hypertext Markup Language) is the standard language for creating and structuring web content. It uses tags to define elements like headings, paragraphs, links, and images. HTML provides the foundation for displaying information and resources on the internet, shaping the structure and layout of web pages.'),
+    ('CSS (Cascading Style Sheets) is a styling language used in web development. It defines the visual presentation and layout of HTML elements, enabling control over aspects like colors, fonts, spacing, and positioning. CSS separates design from content, enhancing the aesthetics and user experience of websites and web applications.'),
+    ('An IDE (Integrated Development Environment) is a software tool that provides a comprehensive environment for software development. It combines code editing, debugging, testing, and project management features into a single interface, streamlining the coding process and enhancing efficiency for programmers during software creation.'),
+
 
 INSERT INTO topics (topic_name, subject_name, response_id)
 VALUES
@@ -62,11 +77,12 @@ VALUES
    ('define', 'java', 1),
    ('definition', 'java', 1),
    ('array', 'java', 2),
-    ('whatis', 'javascript', 3),
-    ('what', 'javascript', 3),
-    ('define', 'javascript', 3),
-    ('definition', 'javascript', 3),
-    ('array', 'javascript', 4),
+   ('loop', 'java', 2),
+   ('whatis', 'javascript', 3),
+   ('what', 'javascript', 3),
+   ('define', 'javascript', 3),
+   ('definition', 'javascript', 3),
+   ('array', 'javascript', 4),
    ('whatis', 'python', 5),
     ('what', 'python', 5),
     ('define', 'python', 5),
@@ -98,9 +114,7 @@ VALUES
     ('statemanagement', 'vue', 21),
     ('managementofstate', 'vue', 21),
     ('managingstate', 'vue', 21),
-    ('help','help', 22),
-    ('subjectnotfound', 'subjectnotfound', 23),
-    ('topicnotfound', 'topicnotfound', 24);
+    ('help','help', 23);
 
 COMMIT;
 
