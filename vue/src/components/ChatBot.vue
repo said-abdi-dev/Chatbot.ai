@@ -65,7 +65,11 @@
     </section>
     <div class="chat-inputs">
       <input type="text" v-model="message" @keyup.enter="sendMessage" />
-<button @click="sendMessage" :disabled="message.trim() === ''">Send</button>  
+      <button class="send-button" @click="sendMessage" :disabled="message.trim() === ''">
+        <svg class="send-btn-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+        </svg>
+      </button>
     </div>
   </section>
 </template>
@@ -227,7 +231,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
-      });
+      }); 
     },
   },
 };
@@ -351,8 +355,7 @@ div {
   margin: 20px auto;
   padding: 7px 13px;
   text-align: center;
-
-  background: gray;
+    background: gray;
   font-size: 20px;
   font-family: "Arial", sans-serif;
   color: #ffffff;
@@ -368,13 +371,13 @@ div {
 
 input {
   line-height: 3;
+  height: 10vh;
   width: 100%;
   border: 3px solid rgb(7, 5, 5);
   border-left: none;
   border-bottom: none;
   border-right: none;
   border-bottom-left-radius: 4px;
-  padding-left: 12px;
   border-radius: 12px;
   font-size: 1.5rem;
 }
@@ -435,6 +438,20 @@ button {
   padding: 10px;
   background-color: #f0f0f0;
   border-radius: 10px;
+}
+
+.send-btn-svg {
+  height: 2rem;
+  width: 2rem;
+}
+.send-button {
+  height: 4rem;
+  width: 4rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-radius: 50%;
 }
 .voiceAndText {
   padding-top: 200;
