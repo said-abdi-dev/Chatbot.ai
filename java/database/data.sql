@@ -115,6 +115,8 @@ VALUES
     ('managementofstate', 'vue', 21),
     ('managingstate', 'vue', 21),
     ('help','help', 23);
-
+    ('help','help', 22),
+    ('subjectnotfound', 'subjectnotfound', 23),
+    ('topicnotfound', 'topicnotfound', 24);
 COMMIT;
 
