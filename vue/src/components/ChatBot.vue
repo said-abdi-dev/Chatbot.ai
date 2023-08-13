@@ -58,6 +58,7 @@
       <div class="voiceAndText"> 
         <button @click="startRecognition">Speak</button>
         <button v-if="messages.length != 0" @click="speakResponse">Listen</button>
+        <button v-if="messages.lengtth != 0" @click="stopSpeech">stop</button>
       </div>
     </section>
     <div class="chat-inputs">
@@ -135,6 +136,12 @@ methods: {
       this.recognition.start(); // Start speech recognition
     }
   },
+
+  stopSpeech(){
+          window.speechSynthesis.cancel();
+
+  },
+
   // Method to generate and speak a response
   speakResponse() {
     // Check if SpeechSynthesisUtterance is supported in the browser
@@ -159,6 +166,8 @@ methods: {
         }
       );
     },
+
+
     sendMessage() {
       const message = this.message;
 
@@ -420,5 +429,5 @@ button {
 }
 .voiceAndText {
   padding-top: 200;
-}
+ }
 </style>

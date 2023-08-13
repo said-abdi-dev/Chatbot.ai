@@ -7,12 +7,7 @@
 
 <script>
 import ChatBox from './components/ChatBot.vue'
-<<<<<<< HEAD
-import PostList from './components/PostList.vue'
   
-=======
-
->>>>>>> 4663448b4cfb9d629b89d1a65465d3f0b7a8dc33
 export default {
   name: 'app',
   components: {
