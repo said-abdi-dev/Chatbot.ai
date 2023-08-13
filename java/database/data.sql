@@ -101,6 +101,5 @@ VALUES
     ('help','help', 22),
     ('subjectnotfound', 'subjectnotfound', 23),
     ('topicnotfound', 'topicnotfound', 24);
-
 COMMIT;
 

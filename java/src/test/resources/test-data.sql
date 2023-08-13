@@ -24,7 +24,8 @@ VALUES
     ('help'),
     ('subjectnotfound'),
     ('topicnotfound'),
-    ('random');
+    ('random'),
+    ('chatbot');
 
 INSERT INTO responses (response)
 VALUES
@@ -53,7 +54,8 @@ VALUES
     ('Vue offers various mechanisms for managing application state, including Vuex for centralized state management and reactive data properties.'),
     ('Need Help? Here is a list of common questions that you can ask. Please provide a subject and a specific topic. For example: "What is an array in JavaScript?" or "How do functions work in Python?"'),
     ('Unable to read response. Please enter a more specific subject for the topic of '),
-    ('Unable to read response. Please enter a more specific topic for the subject of ');
+    ('Unable to read response. Please enter a more specific topic for the subject of '),
+    ('This is currently a keyword triggered chatbot. When the user inserts certain subject and topic keywords, the backend checks against our database for a hardcoded response. The chatbot has been built with a vue.js frontend, a java backend, and PostgreSQL as the database.');
 
 INSERT INTO topics (topic_name, subject_name, response_id)
 VALUES
@@ -100,7 +102,7 @@ VALUES
     ('managingstate', 'vue', 21),
     ('help','help', 22),
     ('subjectnotfound', 'subjectnotfound', 23),
-    ('topicnotfound', 'topicnotfound', 24);
-
+    ('topicnotfound', 'topicnotfound', 24),
+    ('how', 'chatbot', 26);
 COMMIT;
 

@@ -65,7 +65,7 @@
     </section>
     <div class="chat-inputs">
       <input type="text" v-model="message" @keyup.enter="sendMessage" />
-      <button @click="sendMessage">Send</button>
+<button @click="sendMessage" :disabled="message.trim() === ''">Send</button>  
     </div>
   </section>
 </template>
@@ -79,6 +79,7 @@ export default {
 
   data() {
     return {
+      cat: "4",
       message: "",
       messages: [], //all the messages in an array
       responseArrayFromServer: [], //remember to RENAME this later
@@ -187,8 +188,9 @@ export default {
       });
 
       this.message = "";
+      
       //probably a good idea to have this if condition in a different method
-      if (message.includes("job")) {
+       if (message.includes("job")) {
         LinkedInService.getJob(message).then((response) => {
           console.log(response.data.data[0].url);
           let linkedJob =
