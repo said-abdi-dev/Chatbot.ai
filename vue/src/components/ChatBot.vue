@@ -73,14 +73,6 @@
       </ul>
       <!-- text to speech/voice -->
       <div class="voiceAndText">
-        <!-- working on fixing slider logic later -->
-        <!-- <span class="switch" @click="toggleSwitch">
-          <span
-            class="slider"
-            :class="{ 'slider-on': switchValue, 'slider-off': !switchValue }"
-          ></span>
-        </span> -->
-        <!-- <button /> -->
       </div>
     </section>
 
@@ -165,7 +157,6 @@ export default {
       recognition: null,
       transcribedText: "",
       responseMessage: "", // response message displayed from server
-      switchValue: false,
       audioTracking: true, // tells whether the audio is currently being recorded
 
       isSpeaking: false, 
@@ -218,15 +209,7 @@ export default {
       this.transcribedText = transcript;
       this.message = this.transcribedText.toLowerCase(); //set transcribedText to message(right side of chatbot)
     },
-    //[BROKEN] turns on and off speaking and listening,
-    // toggleSwitch() {
-    //   this.switchValue = !this.switchValue;
-    //   console.log(this.switchValue);
-    //   if (this.switchValue == true) {
-    //     this.startRecognition();
-    //   }
-    // },
-    // Method to start speech recognition
+
     startRecognition() {
       console.log("We reached startReconginition");
       this.audioTracking = true;
@@ -558,32 +541,6 @@ button {
   margin-right: 1rem;
   border-radius: 50%;
 }
-.switch {
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-  background-color: #ccc;
-  border-radius: 10px;
-  position: relative;
-  cursor: pointer;
-}
-
-.slider {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  background-color: rgb(119, 32, 32);
-  border-radius: 50%;
-  transition: 0.2s;
-}
-
-.slider-on {
-  transform: translateX(-20px);
-}
-.slider-off {
-  transform: translateX(0);
-}
-
 .voiceAndText {
   padding-top: 200;
   display: flex;
