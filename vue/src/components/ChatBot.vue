@@ -1,147 +1,171 @@
 <template>
-  <section class="chat-box">
-    <section class="chat-box-list-container" ref="chatbox">
-      <div class="vertical-buttons">
-        <button
-          class="custom-button"
-          @click="handleSuggestionButton()"
-          v-if="subjectContext != '0'"
-        >
-          {{ variableContext }}
-        </button>
-      </div>
-      <ul class="chat-box-list">
-        <li v-if="messages.length == 0" class="message-content">
-          <div class="text-and-image-container">
-            <div class="bot-image">
-              <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
-            </div>
-
-            <p class="message-text">Hello, how can I help you?</p>
-          </div>
-        </li>
-
-        <li
-          class="message"
-          v-for="message in messages"
-          :key="messages.indexOf(message)"
-          :class="message.author"
-        >
-          <div
-            class="message-container"
-            v-if="message.author === 'request-box'"
+  <main class="rootTemplateTag">
+    <section class="chat-box">
+      <section class="chat-box-list-container" ref="chatbox">
+        <div class="vertical-buttons">
+          <button
+            class="custom-button"
+            @click="handleSuggestionButton()"
+            v-if="subjectContext != '0'"
           >
-            <!-- User message -->
+            {{ variableContext }}
+          </button>
+        </div>
+        <ul class="chat-box-list">
+          <li v-if="messages.length == 0" class="message-content">
+            <div class="text-and-image-container">
+              <div class="bot-image">
+                <img
+                  src="img/botIcon.png"
+                  alt="Bot Icon"
+                  class="message-icon"
+                />
+              </div>
 
-            <div class="message-content">
-              <p class="message-text">{{ message.text }}</p>
+              <p class="message-text">Hello, how can I help you?</p>
             </div>
-          </div>
+          </li>
 
-          <div class="text-and-image-container" v-else>
-            <div class="bot-image">
-              <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
-            </div>
-            <div class="message-container">
-              <!-- Bot message -->
+          <li
+            class="message"
+            v-for="message in messages"
+            :key="messages.indexOf(message)"
+            :class="message.author"
+          >
+            <div
+              class="message-container"
+              v-if="message.author === 'request-box'"
+            >
+              <!-- User message -->
+
               <div class="message-content">
-                <p v-html="message.text" class="message-text"></p>
+                <p class="message-text">{{ message.text }}</p>
               </div>
             </div>
-            <div
-              class="btn-wrapper"
-              v-if="messages.length != 0"
-              @click="speakResponse"
-            >
-              <svg
-                class="btn-standard"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
+
+            <div class="text-and-image-container" v-else>
+              <div class="bot-image">
+                <img
+                  src="img/botIcon.png"
+                  alt="Bot Icon"
+                  class="message-icon"
                 />
-              </svg>
+              </div>
+              <div class="message-container">
+                <!-- Bot message -->
+                <div class="message-content">
+                  <p v-html="message.text" class="message-text"></p>
+                </div>
+              </div>
+              <div
+                class="btn-wrapper"
+                v-if="messages.length != 0"
+                @click="speakResponse"
+              >
+                <svg
+                  class="btn-standard"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
+                  />
+                </svg>
+              </div>
             </div>
-          </div>
-        </li>
-      </ul>
-      <!-- text to speech/voice -->
-      <div class="voiceAndText">
+          </li>
+        </ul>
+        <!-- text to speech/voice -->
+        <div class="voiceAndText"></div>
+      </section>
+
+      <div class="chat-input-bar">
+        <input
+          class="chat-input"
+          type="text"
+          placeholder="Aa"
+          v-model="message"
+          @keyup.enter="sendMessage"
+        />
+        <button
+          class="btn-wrapper"
+          v-if="audioTracking == true"
+          @click="startRecognition"
+        >
+          <svg
+            class="btn-standard"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <!-- SVG path data here -->
+          </svg>
+        </button>
+        <button class="btn-wrapper" v-else @click="speakResponse">
+          <svg
+            class="btn-standard"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <!-- SVG path data here -->
+          </svg>
+        </button>
+
+        <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
+        <button
+          class="btn-wrapper"
+          @click="sendMessage"
+          :disabled="message.trim() === ''"
+        >
+          <svg
+            class="btn-standard"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+            />
+          </svg>
+        </button>
       </div>
     </section>
-
-    <div class="chat-input-bar">
-      <input
-        class="chat-input"
-        type="text"
-        placeholder="Aa"
-        v-model="message"
-        @keyup.enter="sendMessage"
-      />
-      <button
-        class="btn-wrapper"
-        v-if="audioTracking == true"
-        @click="startRecognition"
-      >
-        <svg
-          class="btn-standard"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-        >
-          <!-- SVG path data here -->
-        </svg>
-      </button>
-      <button class="btn-wrapper" v-else @click="speakResponse">
-        <svg
-          class="btn-standard"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-        >
-          <!-- SVG path data here -->
-        </svg>
-      </button>
-
-      <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
-      <button
-        class="btn-wrapper"
-        @click="sendMessage"
-        :disabled="message.trim() === ''"
-      >
-        <svg
-          class="btn-standard"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-          />
-        </svg>
-      </button>
+    <!-- div email form temp here -->
+    <section class="sectionForEmailForm">
+      <div class="emailForm">
+        <form @submit.prevent="sendEmail" ref="hiddenForm" id="hidden-form">
+          <!-- now work on fixing the format part! -->
+      <input v-model="formData.to_name" type="text" name="to_name" />
+      <textarea v-model="responseMessage" name="message"></textarea>
+      <!-- Other input fields if needed -->
+      <button type="submit" :disabled="sending">Send Email</button>
+    </form>
     </div>
-  </section>
+    </section>
+  </main>
 </template>
 
 <script>
 import ChatBotResponseService from "../services/ChatbotResponseService";
 import LinkedInService from "../services/LinkedInService";
+import emailjs from "emailjs-com";
 
+// Initialize EmailJS with your user ID
+emailjs.init("wKoUGtuY-Z0xMUnPc");
 export default {
   name: "ChatBox",
 
@@ -149,7 +173,7 @@ export default {
     return {
       cat: "4",
       message: "",
-      messages: [], //all the messages in an array  
+      messages: [], //all the messages in an array
       responseArrayFromServer: [], //remember to RENAME this later
       subjectContext: "0", //both coming from the backend with default of 0
       topicContext: "0", //both coming from the backend with default of 0
@@ -159,8 +183,15 @@ export default {
       responseMessage: "", // response message displayed from server
       audioTracking: true, // tells whether the audio is currently being recorded
 
-      isSpeaking: false, 
+      isSpeaking: false,
       speech: window.speechSynthesis,
+
+      formData: {
+        //object sent to emailjs
+        to_name: "abdishirdon@gmail.com", 
+        message: "cats",
+      },
+      sending: false,
     };
   },
   mounted() {
@@ -269,16 +300,29 @@ export default {
       //probably a good idea to have this if condition in a different method
       if (message.includes("job")) {
         LinkedInService.getJob(message).then((response) => {
-          console.log(response.data.data[0].url);
-          let linkedJob =
-            `<a href = "${response.data.data[0].url}">` +
-            "click here for jobs</a>";
+          let linkedJobs = "";
+          response.data.data.forEach((item) => {
+            linkedJobs += `<a href="${item.url}" target="_blank">${item.title}</a><br>`;
+          });
           this.messages.unshift({
-            text: linkedJob,
-            author: "response-box", //this is coming from the chatbot as a response.
+            text: 'here are some jobs, reply YES if you want us to email them to you<br>' + linkedJobs,
+            author: "response-box",
           });
         });
-      } else {
+      console.log(this.messages);
+      } 
+      else if (message.includes("YES") || message.includes("yes") && this.messages[1].text.includes("job")){
+        this.messages.unshift({
+            text: 'what is your email?',
+            author: "response-box",
+          });
+      }
+      else if (message.includes("@") && this.messages[1].text.includes("email")){
+        console.log(this.messages[0])
+        this.formData = this.messages[0].text;
+        this.sendEmail()
+      }
+       else{
         //get normal response
         ChatBotResponseService.getChatbotResponse(
           message,
@@ -287,7 +331,7 @@ export default {
         )
           .then((responseArray) => {
             //after a response comes back from the server we take
-            console.log(responseArray);
+            console.log(this.messages[0].text)
             this.subjectContext = responseArray.data[1];
             this.topicContext = responseArray.data[2];
             this.responseMessage = responseArray.data[0];
@@ -302,6 +346,24 @@ export default {
             console.error(err);
           });
       }
+    },
+    sendEmail() {
+      //emailjs send email method
+      this.sending = true;
+      const serviceID = "default_service";
+      const templateID = "template_qjk5gaf";
+      const formElement = this.$refs.hiddenForm;
+
+      emailjs
+        .sendForm(serviceID, templateID, formElement)
+        .then(() => {
+          this.sending = false;
+          alert("Sent!");
+        })
+        .catch((err) => {
+          this.sending = false;
+          alert(JSON.stringify(err));
+        });
     },
   },
 };
@@ -518,7 +580,7 @@ button {
 
 .chat-box-list-container::-webkit-scrollbar {
   width: 0.8rem;
-  background-color: transparent
+  background-color: transparent;
 }
 .greeting {
   margin: 10px;
@@ -530,7 +592,7 @@ button {
 .send-btn-svg {
   height: 1.75rem;
   width: 1.75rem;
-  z-index:2;
+  z-index: 2;
 }
 .send-button {
   height: 4rem;
@@ -545,7 +607,6 @@ button {
   padding-top: 200;
   display: flex;
 }
-
 .btn-wrapper {
   height: 3.5rem;
   width: 3.5rem;
@@ -559,7 +620,7 @@ button {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   cursor: pointer;
-  z-index:1;
+  z-index: 1;
 }
 
 .btn-standard {
@@ -569,6 +630,6 @@ button {
   color: #1abc9c;
 }
 ::-webkit-scrollbar-corner {
-  background: transparent  /* Replace 'your-color' with the desired background color */
+  background: transparent; /* Replace 'your-color' with the desired background color */
 }
 </style>
