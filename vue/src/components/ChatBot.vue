@@ -91,14 +91,6 @@
       </ul>
       <!-- text to speech/voice -->
       <div class="voiceAndText">
-        <!-- working on fixing slider logic later -->
-        <!-- <span class="switch" @click="toggleSwitch">
-          <span
-            class="slider"
-            :class="{ 'slider-on': switchValue, 'slider-off': !switchValue }"
-          ></span>
-        </span> -->
-        <!-- <button /> -->
       </div>
     </section>
 
@@ -188,7 +180,7 @@ export default {
     return {
       cat: "4",
       message: "",
-      messages: [], //all the messages in an array
+      messages: [], //all the messages in an array  
       responseArrayFromServer: [], //remember to RENAME this later
       subjectContext: "0", //both coming from the backend with default of 0
       topicContext: "0", //both coming from the backend with default of 0
@@ -248,15 +240,7 @@ export default {
       this.transcribedText = transcript;
       this.message = this.transcribedText.toLowerCase(); //set transcribedText to message(right side of chatbot)
     },
-    //[BROKEN] turns on and off speaking and listening,
-    // toggleSwitch() {
-    //   this.switchValue = !this.switchValue;
-    //   console.log(this.switchValue);
-    //   if (this.switchValue == true) {
-    //     this.startRecognition();
-    //   }
-    // },
-    // Method to start speech recognition
+
     startRecognition() {
       console.log("We reached startReconginition");
       this.audioTracking = true;
@@ -320,7 +304,7 @@ export default {
       });
 
       this.message = "";
-
+      this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
       //probably a good idea to have this if condition in a different method
       this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
 
@@ -575,11 +559,7 @@ button {
 
 .chat-box-list-container::-webkit-scrollbar {
   width: 0.8rem;
-  background-color: transparent;
-}
-
-.chat-box-list-container::-webkit-scrollbar-thumb {
-  background-color: gray;
+  background-color: transparent
 }
 .greeting {
   margin: 10px;
@@ -591,7 +571,11 @@ button {
 .send-btn-svg {
   height: 1.75rem;
   width: 1.75rem;
+<<<<<<< HEAD
   cursor: pointer;
+=======
+  z-index:2;
+>>>>>>> eb7d7ad1fafbffc402dcacd789f070b11bc8941b
 }
 .send-button {
   height: 4rem;
@@ -606,32 +590,6 @@ button {
 .send-button:hover {
   text-decoration-color: green;
 }
-.switch {
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-  background-color: #ccc;
-  border-radius: 10px;
-  position: relative;
-  cursor: pointer;
-}
-
-.slider {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  background-color: rgb(119, 32, 32);
-  border-radius: 50%;
-  transition: 0.2s;
-}
-
-.slider-on {
-  transform: translateX(-20px);
-}
-.slider-off {
-  transform: translateX(0);
-}
-
 .voiceAndText {
   padding-top: 200;
   display: flex;
@@ -650,6 +608,7 @@ button {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   cursor: pointer;
+  z-index:1;
 }
 
 .btn-standard {
@@ -657,5 +616,8 @@ button {
   width: 8vw;
   border-radius: 60%;
   color: #1abc9c;
+}
+::-webkit-scrollbar-corner {
+  background: transparent  /* Replace 'your-color' with the desired background color */
 }
 </style>

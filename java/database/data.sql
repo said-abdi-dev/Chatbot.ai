@@ -38,13 +38,6 @@ VALUES
 
 INSERT INTO responses (response)
 VALUES
-
-
-
-
-
-
-
     ('Java is a widely-used high-level programming language known for its portability and versatility. It is designed to be platform-independent, allowing developers to write code that can run on various systems without modification. Java is popular for its object-oriented programming features and rich standard library. For more information about Java programming, you can visit the official Oracle Java documentation: <br><br><a href="https://docs.oracle.com/en/java/">Learn more about Java</a>.<br><br><iframe width="300" height="200" src="https://www.youtube.com/embed/l9AzO1FMgM8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>'),
     ('In Java, arrays are data structures used to store a collection of elements of the same type. They provide a way to efficiently manage and access multiple values using a single variable. Arrays in Java have a fixed size once they are created, and elements are accessed by their index. To learn more about working with arrays in Java, you can check out this tutorial: <br><br><a href="https://www.w3schools.com/java/java_arrays.asp">Learn more about arrays in Java</a>'),
     ('JavaScript is a dynamic and versatile scripting language primarily used for web development. It enables interactive and dynamic content on websites, enhancing user experience. JavaScript can be executed directly in web browsers, making it an essential tool for front-end development. For more information about JavaScript, you can check out this website: <br><br><a href="https://www.w3schools.com/js/">Learn more about JavaScript</a><br><br><iframe width="300" height="200" src="https://www.youtube.com/embed/DHjqpvDnNGE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>'),
@@ -81,11 +74,14 @@ VALUES
 
 INSERT INTO topics (topic_name, subject_name, response_id)
 VALUES
-   ('what is', 'java', 1),
+   ('define', 'java', 1),
+   ('loop', 'java', 26),
+   ('junit', 'java', 31),
    ('what', 'java', 1),
    ('about', 'java', 1),
-   ('define', 'java', 1),
    ('definition', 'java', 1),
+   ('what is', 'java', 1),
+   ('whats', 'java', 1),
 -- ('class', 'java' ?),
 -- ('method', 'java' ?),
 -- ('constructor', 'java' ?),
@@ -94,10 +90,8 @@ VALUES
 -- ('io', 'java' ?),
 -- ('override', 'java' ?),
 -- ('jvm', 'java' ?),
-   ('junit', 'java', 31),
    ('test', 'java', 31),
    ('array', 'java', 2),
-   ('loop', 'java', 26),
    ('what is', 'javascript', 3),
    ('what', 'javascript', 3),
    ('about', 'javascript', 3),
@@ -136,13 +130,13 @@ VALUES
    ('object', 'mutability', 14),
    ('primitive type', 'datatype', 15),
    ('reference type', 'datatype', 16),
-   ('what is', 'vue', 17),
-   ('about', 'vue', 17),
-   ('what', 'vue', 17),
-   ('define', 'vue', 17),
-   ('definition', 'vue', 17),
-   ('features', 'vue', 18),
-   ('components', 'vue', 19),
+   ('what is', 'vue', 18),
+   ('about', 'vue', 18),
+   ('what', 'vue', 18),
+   ('define', 'vue', 18),
+   ('definition', 'vue', 18),
+   ('features', 'vue', 19),
+   ('components', 'vue', 20),
    ('directives', 'vue', 21),
    ('state management', 'vue', 22),
    ('management of state', 'vue', 22),
