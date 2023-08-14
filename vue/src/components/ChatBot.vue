@@ -346,6 +346,7 @@ export default {
       console.log(this.messages);
       } 
       else if (message.includes("YES") || message.includes("yes") && this.messages[1].text.includes("job")){
+        
         this.messages.unshift({
             text: 'what is your email?',
             author: "response-box",
@@ -370,7 +371,6 @@ export default {
             this.topicContext = responseArray.data[2];
             this.responseMessage = responseArray.data[0];
             this.messages.unshift({
-              //
               text: responseArray.data[0], //response from server
 
               author: "response-box", //this is coming from the chatbot as a response.
@@ -626,9 +626,8 @@ button {
 .send-btn-svg {
   height: 1.75rem;
   width: 1.75rem;
-  cursor: pointer;
-  z-index:2;
 }
+
 .send-button {
   height: 4rem;
   width: 4rem;
