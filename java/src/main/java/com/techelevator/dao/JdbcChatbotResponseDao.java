@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Arrays;
 
 @Component
 public class JdbcChatbotResponseDao implements ChatbotResponseDao {
@@ -81,20 +82,27 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
             }
 
         }
+//now lets search the topics
+        boolean allTopicWordsFound = true; // true by default, flick to false if the word isn't found, then go to thenext row
+        String sqlGetTopicsFromSubject = "SELECT topic_name, topic_id FROM topics WHERE subject_name = ?";
+        SqlRowSet rowsOfTopics = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject, foundSubject);
 
-            String sqlGetTopicsFromSubject = "SELECT topic_name, topic_id FROM topics WHERE subject_name = ?";
-            SqlRowSet rowsOfTopics = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject, foundSubject);
+        while (rowsOfTopics.next()) { // now we have a keyword, or phrase
+            String currentTopicNamePhrase = rowsOfTopics.getString("topic_name");
+            assert currentTopicNamePhrase != null;    // makes sure that it isn't null before making string array;
+            String[] arrayOfTopicNameKeywords = currentTopicNamePhrase.split("\\s+");
+            List<String> listOfTopicNameKeywords = Arrays.asList(arrayOfTopicNameKeywords);
 
-
-            while (rowsOfTopics.next()) {
-                String currentTopicName = rowsOfTopics.getString("topic_name");
-
-                for (String word : inputWords) {
-                    if (currentTopicName != null && currentTopicName.equals(word)) {
-                        foundTopic = currentTopicName;
-                        break;
-                    }
+            for (String keyword : listOfTopicNameKeywords) { //NOT FINISHED!!!! LOOK AT WHITEBOARD
+                if ( !listOfTopicNameKeywords.contains(keyword)) {
+                    allTopicWordsFound = false;
+                    break;
                 }
+            }
+            if (allTopicWordsFound) {
+                foundTopic = currentTopicNamePhrase;
+                break;
+            }
         }
         return new String[]{userInput, foundSubject, foundTopic};
     }
