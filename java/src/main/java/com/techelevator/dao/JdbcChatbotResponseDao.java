@@ -81,7 +81,6 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
                     break;
                 }
             }
-
         }
         if (!foundSubject.equals("0")) {
 //now lets search the topics
@@ -101,7 +100,7 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
                         break;
                     }
                 }
-                if (allTopicWordsFound) {
+                if (!allTopicWordsFound) {
                     foundTopic = currentTopicNamePhrase;
                     break;
                 }
