@@ -16,7 +16,7 @@
             <div class="bot-image">
               <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
             </div>
-            text-and-image-container
+
             <p class="message-text">Hello, how can I help you?</p>
           </div>
         </li>
@@ -69,8 +69,6 @@
               </svg>
             </div>
           </div>
-
-        
         </li>
       </ul>
       <!-- text to speech/voice -->
@@ -85,6 +83,7 @@
         <!-- <button /> -->
       </div>
     </section>
+
     <div class="chat-input-bar">
       <input
         class="chat-input"
@@ -93,7 +92,11 @@
         v-model="message"
         @keyup.enter="sendMessage"
       />
-            <div class="btn-wrapper" v-if="audioTracking == true" @click="startRecognition">
+      <button
+        class="btn-wrapper"
+        v-if="audioTracking == true"
+        @click="startRecognition"
+      >
         <svg
           class="btn-standard"
           xmlns="http://www.w3.org/2000/svg"
@@ -104,8 +107,8 @@
         >
           <!-- SVG path data here -->
         </svg>
-      </div>
-      <div class="btn-wrapper" v-else @click="stopSpeaking">
+      </button>
+      <button class="btn-wrapper" v-else @click="speakResponse">
         <svg
           class="btn-standard"
           xmlns="http://www.w3.org/2000/svg"
@@ -114,9 +117,9 @@
           stroke-width="1.5"
           stroke="currentColor"
         >
-    <!-- SVG path data here -->
+          <!-- SVG path data here -->
         </svg>
-      </div>
+      </button>
 
       <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
       <button
@@ -163,7 +166,10 @@ export default {
       transcribedText: "",
       responseMessage: "", // response message displayed from server
       switchValue: false,
-      audioTracking: true // tells whether the audio is currently being recorded
+      audioTracking: true, // tells whether the audio is currently being recorded
+
+      isSpeaking: false, 
+      speech: window.speechSynthesis,
     };
   },
   mounted() {
@@ -172,10 +178,6 @@ export default {
   },
   methods: {
     // Method to initialize speech recognition
-
-
-
-
 
     initializeRecognition() {
       // Check if SpeechRecognition is supported in the browser
@@ -226,27 +228,38 @@ export default {
     // },
     // Method to start speech recognition
     startRecognition() {
+      console.log("We reached startReconginition");
       this.audioTracking = true;
       if (this.recognition) {
         this.recognition.start(); // Start speech recognition
       }
     },
+
+    stopRecognition() {
+      console.log("reached stoprecognition");
+      this.recognition.stop();
+    },
+
     // Method to generate and speak a response
     speakResponse() {
+      console.log("reached speakResponse");
       this.audioTracking = false;
       // Check if SpeechSynthesisUtterance is supported in the browser
       if ("SpeechSynthesisUtterance" in window) {
-        // Create a new SpeechSynthesisUtterance instance with the transcribed text
-        const utterance = new SpeechSynthesisUtterance(this.responseMessage);
-        // Use the browser's speech synthesis to speak the utterance
-        window.speechSynthesis.speak(utterance);
+        if (this.speech.speaking) {
+          //we check if currently speaking, if so, cancel it/stop
+          this.speech.cancel();
+        } else {
+          // Create a new SpeechSynthesisUtterance instance with the transcribed text
+          const utterance = new SpeechSynthesisUtterance(this.responseMessage);
+          // Use the browser's speech synthesis to speak the utterance
+          this.speech.speak(utterance);
+        }
       } else {
         console.error("Speech synthesis is not supported in this browser.");
       }
     },
-    stopSpeaking() {
-      window.speechSynthesis.cancel();
-    },
+
     handleSuggestionButton() {
       let longResult = ChatBotResponseService.getChatbotSuggestions(
         this.subjectContext
@@ -310,9 +323,7 @@ export default {
         this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
       });
     },
-    
-  
-}
+  },
 };
 </script>
 
@@ -331,7 +342,7 @@ div {
   flex-direction: column-reverse;
   flex-direction: column;
   list-style-type: none;
-  background-color: #1d1d1d;
+  background-color: white;
 }
 
 .message {
@@ -383,7 +394,7 @@ div {
   font-size: 1.3rem;
   text-align: left;
   background-color: #1e272c;
-  color: #b90000;
+  color: #f3f3f3;
   border-radius: 12px;
   align-self: flex-start;
 }
@@ -458,6 +469,8 @@ input {
   // border-bottom-left-radius: 4px;
   // border-radius: 12px;
   // font-size: 1.5rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 25px;
 }
 
 .custom-button {
@@ -600,7 +613,7 @@ button {
 .btn-standard {
   height: 4vh;
   width: 8vw;
-  border-radius: 50%;
+  border-radius: 60%;
   color: #1abc9c;
 }
 </style>
