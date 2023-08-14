@@ -1,149 +1,173 @@
 <template>
   <main class="rootTemplateTag">
     <section class="chat-box">
-      <section class="chat-box-list-container" ref="chatbox">
-        <div class="vertical-buttons">
-          <button
-            class="custom-button"
-            @click="handleSuggestionButton()"
-            v-if="subjectContext != '0'"
-          >
-            {{ variableContext }}
-          </button>
-        </div>
-        <ul class="chat-box-list">
-          <li v-if="messages.length == 0" class="message-content">
-            <div class="text-and-image-container">
-              <div class="bot-image">
-                <img
-                  src="img/botIcon.png"
-                  alt="Bot Icon"
-                  class="message-icon"
-                />
-              </div>
-
-              <p class="message-text">Hello, how can I help you?</p>
-            </div>
-          </li>
-
-          <li
-            class="message"
-            v-for="message in messages"
-            :key="messages.indexOf(message)"
-            :class="message.author"
-          >
-            <div
-              class="message-container"
-              v-if="message.author === 'request-box'"
-            >
-              <!-- User message -->
-
-              <div class="message-content">
-                <p class="message-text">{{ message.text }}</p>
-              </div>
-            </div>
-
-            <div class="text-and-image-container" v-else>
-              <div class="bot-image">
-                <img
-                  src="img/botIcon.png"
-                  alt="Bot Icon"
-                  class="message-icon"
-                />
-              </div>
-              <div class="message-container">
-                <!-- Bot message -->
-                <div class="message-content">
-                  <p v-html="message.text" class="message-text"></p>
-                </div>
-              </div>
-              <div
-                class="btn-wrapper"
-                v-if="messages.length != 0"
-                @click="speakResponse"
-              >
-                <svg
-                  class="btn-standard"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </li>
-        </ul>
-        <!-- text to speech/voice -->
-        <div class="voiceAndText"></div>
-      </section>
-
-      <div class="chat-input-bar">
-        <input
-          class="chat-input"
-          type="text"
-          placeholder="Aa"
-          v-model="message"
-          @keyup.enter="sendMessage"
-        />
+    <section class="chat-box-list-container" ref="chatbox">
+      <div class="vertical-buttons">
         <button
-          class="btn-wrapper"
-          v-if="audioTracking == true"
-          @click="startRecognition"
+          class="custom-button"
+          @click="handleSuggestionButton()"
+          v-if="subjectContext != '0'"
         >
-          <svg
-            class="btn-standard"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-          >
-            <!-- SVG path data here -->
-          </svg>
-        </button>
-        <button class="btn-wrapper" v-else @click="speakResponse">
-          <svg
-            class="btn-standard"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-          >
-            <!-- SVG path data here -->
-          </svg>
-        </button>
-
-        <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
-        <button
-          class="btn-wrapper"
-          @click="sendMessage"
-          :disabled="message.trim() === ''"
-        >
-          <svg
-            class="btn-standard"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-            />
-          </svg>
+          {{ variableContext }}
         </button>
       </div>
+      <ul class="chat-box-list">
+        <li v-if="messages.length == 0" class="message-content">
+          <div class="text-and-image-container">
+            <div class="bot-image">
+              <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
+            </div>
+
+            <p class="message-text">Hello, how can I help you?</p>
+          </div>
+        </li>
+
+        <li
+          class="message"
+          v-for="message in messages"
+          :key="messages.indexOf(message)"
+          :class="message.author"
+        >
+          <div
+            class="message-container"
+            v-if="message.author === 'request-box'"
+          >
+            <!-- User message -->
+
+            <div class="message-content">
+              <p class="message-text">{{ message.text }}</p>
+            </div>
+          </div>
+
+          <div class="text-and-image-container" v-else>
+            <div class="bot-image">
+              <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
+            </div>
+            <div class="message-container">
+              <!-- BOT MESSAGE -->
+              <div class="message-content">
+                <p v-html="message.text" class="message-text"></p>
+              </div>
+            </div>
+            <!-- SPEAKER BUTTON -->
+            <div
+              class="btn-wrapper"
+              v-if="isSpeaking == false"
+              @click="listenToResponse"
+            >
+              <svg
+                class="btn-standard"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
+                />
+              </svg>
+            </div>
+            <!-- STOP BUTTON  -->
+            <button class="btn-wrapper" v-else @click="stopListeningToResponse">
+              <svg
+                class="btn-standard"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"
+                />
+              </svg>
+            </button>
+          </div>
+        </li>
+      </ul>
+      <!-- text to speech/voice -->
+      <div class="voiceAndText">
+      </div>
     </section>
+
+    <div class="chat-input-bar">
+      <input
+        class="chat-input"
+        type="text"
+        placeholder="Aa"
+        v-model="message"
+        @keyup.enter="sendMessage"
+      />
+
+      <!-- RECORD BUTTON -->
+      <button
+        class="btn-wrapper"
+        v-if="audioTracking == false"
+        @click="startRecognition"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="btn-standard"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"
+          />
+        </svg>
+      </button>
+      <!-- STOP BUTTON -->
+      <button class="btn-wrapper" v-else @click="stopRecognition">
+        <svg
+          class="btn-standard"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"
+          />
+        </svg>
+      </button>
+
+      <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
+
+      <!-- SEND BUTTON -->
+      <button
+        class="btn-wrapper"
+        @click="sendMessage"
+        :disabled="message.trim() === ''"
+      >
+        <svg
+          class="btn-standard"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+          />
+        </svg>
+      </button>
+    </div>
+  </section>
     <!-- div email form temp here -->
     <section class="sectionForEmailForm">
       <div class="emailForm">
@@ -181,8 +205,8 @@ export default {
       recognition: null,
       transcribedText: "",
       responseMessage: "", // response message displayed from server
-      audioTracking: true, // tells whether the audio is currently being recorded
-
+      switchValue: false,
+      audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
 
@@ -251,13 +275,15 @@ export default {
 
     stopRecognition() {
       console.log("reached stoprecognition");
+      this.audioTracking = false;
       this.recognition.stop();
     },
 
-    // Method to generate and speak a response
-    speakResponse() {
+    // Method to generate and listen to a response
+    listenToResponse() {
       console.log("reached speakResponse");
-      this.audioTracking = false;
+      this.isSpeaking = true;
+
       // Check if SpeechSynthesisUtterance is supported in the browser
       if ("SpeechSynthesisUtterance" in window) {
         if (this.speech.speaking) {
@@ -265,6 +291,7 @@ export default {
           this.speech.cancel();
         } else {
           // Create a new SpeechSynthesisUtterance instance with the transcribed text
+                console.log(this.responseMessage);
           const utterance = new SpeechSynthesisUtterance(this.responseMessage);
           // Use the browser's speech synthesis to speak the utterance
           this.speech.speak(utterance);
@@ -272,6 +299,11 @@ export default {
       } else {
         console.error("Speech synthesis is not supported in this browser.");
       }
+    },
+
+    stopListeningToResponse() {
+      this.isSpeaking = false;
+      this.speech.cancel();
     },
 
     handleSuggestionButton() {
@@ -298,6 +330,8 @@ export default {
       this.message = "";
       this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
       //probably a good idea to have this if condition in a different method
+      this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+
       if (message.includes("job")) {
         LinkedInService.getJob(message).then((response) => {
           let linkedJobs = "";
@@ -592,7 +626,8 @@ button {
 .send-btn-svg {
   height: 1.75rem;
   width: 1.75rem;
-  z-index: 2;
+  cursor: pointer;
+  z-index:2;
 }
 .send-button {
   height: 4rem;
@@ -602,6 +637,10 @@ button {
   margin-left: 1rem;
   margin-right: 1rem;
   border-radius: 50%;
+  cursor: pointer;
+}
+.send-button:hover {
+  text-decoration-color: green;
 }
 .voiceAndText {
   padding-top: 200;
