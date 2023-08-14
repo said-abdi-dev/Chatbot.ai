@@ -2,12 +2,13 @@
   <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
       <div class="vertical-buttons">
-        <button
-          class="custom-button"
-          @click="handleSuggestionButton()"
-          v-if="subjectContext != '0'"
+        <button class="suggestion-button"
+        v-for="(suggestion, index) in suggestionSets"
+        :key="index"
+        :class="{ 'selected': index === selectedSuggestionSetIndex }"
+        @click="selectedSuggestionSetIndex = index; handleSuggestionButton()"
         >
-          {{ variableContext }}
+         {{ variableContext }}
         </button>
       </div>
       <ul class="chat-box-list">
@@ -192,6 +193,12 @@ export default {
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
+      suggestionSets: [
+        ["Suggestion 1", "Suggestion 2", "Suggestion 3"],
+        ["Suggestion A", "Suggestion B", "Suggestion C"],
+        ["Suggestion X", "Suggestion Y", "Suggestion Z"],
+      ], 
+      selectedSuggestionSetIndex: 0,
     };
   },
   mounted() {
@@ -283,6 +290,8 @@ export default {
     },
 
     handleSuggestionButton() {
+      const selectedSuggestions = this.suggestionSets[this.selectedSuggestionSetIndex];
+      this.variableContext = selectedSuggestions.join(" ");
       let longResult = ChatBotResponseService.getChatbotSuggestions(
         this.subjectContext
       );
@@ -293,6 +302,11 @@ export default {
           this.variableContext = response.data;
         }
       );
+      sendSuggestions() {
+
+        const userMessage = suggestion
+
+      }
     },
     sendMessage() {
       const message = this.message;
@@ -571,11 +585,7 @@ button {
 .send-btn-svg {
   height: 1.75rem;
   width: 1.75rem;
-<<<<<<< HEAD
   cursor: pointer;
-=======
-  z-index:2;
->>>>>>> eb7d7ad1fafbffc402dcacd789f070b11bc8941b
 }
 .send-button {
   height: 4rem;
