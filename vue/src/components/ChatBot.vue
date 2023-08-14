@@ -9,9 +9,6 @@
         >
           {{ variableContext }}
         </button>
-        <!-- <button class="custom-button" @click="handleButton2"> "I wnat to know about java"</button>
-        <button class="custom-button" @click="handleButton3">Button 3</button>
-        <button class="custom-button" @click="handleButton4">Button 4</button> -->
       </div>
       <ul class="chat-box-list">
         <li v-if="messages.length == 0" class="message-content">
@@ -34,7 +31,7 @@
             <!-- User message -->
 
             <div class="message-content">
-              <p class="message-text">{{message.text}}</p>
+              <p class="message-text">{{ message.text }}</p>
             </div>
           </div>
 
@@ -55,15 +52,21 @@
         </li>
       </ul>
       <!-- text to speech/voice -->
-      <div class="voiceAndText"> 
+      <div class="voiceAndText">
+        <!-- working on fixing slider logic later -->
+        <!-- <span class="switch" @click="toggleSwitch">
+          <span
+            class="slider"
+            :class="{ 'slider-on': switchValue, 'slider-off': !switchValue }"
+          ></span>
+        </span> -->
         <button @click="startRecognition">Speak</button>
-        <button v-if="messages.length != 0" @click="speakResponse">Listen</button>
-        <button v-if="messages.lengtth != 0" @click="stopSpeech">stop</button>
+         <button v-if="messages.length != 0" @click="speakResponse">Listen</button>
+         <button v-if="messages.length != 0" @click="stopSpeaking">Stop</button>
       </div>
     </section>
     <div class="chat-inputs">
       <input type="text" v-model="message" @keyup.enter="sendMessage" />
-
       <button @click="sendMessage">Send</button>
     </div>
   </section>
@@ -85,75 +88,90 @@ export default {
       topicContext: "0", //both coming from the backend with default of 0
       variableContext: "",
       recognition: null,
-      transcribedText: '',
-      responseMessage : "" // response message displayed from server
+      transcribedText: "",
+      responseMessage: "", // response message displayed from server
+      switchValue: false,
     };
   },
   mounted() {
-  // When the component is mounted(fully compiled), initialize the speech recognition
-  this.initializeRecognition();
-},
-methods: {
-  // Method to initialize speech recognition
-  initializeRecognition() {
-    // Check if SpeechRecognition is supported in the browser
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      // Get the appropriate SpeechRecognition constructor
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      
-      // Create a new SpeechRecognition instance
-      this.recognition = new SpeechRecognition();
-      this.recognition.lang = 'en-US'; // Set the language to English (United States)
-      this.recognition.continuous = false; // Continuously listen for speech
-      this.recognition.interimResults = true; // Get interim results as the user speaks
-      
-      // Set the event handler for speech recognition results
-      this.recognition.onresult = this.handleRecognitionResult;
+    // When the component is mounted(fully compiled), initialize the speech recognition
+    this.initializeRecognition();
+  },
+  methods: {
+    // Method to initialize speech recognition
 
-      // Set the event handler for speech recognition errors
-      this.recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-      };
-    } else {
-      console.error('Speech recognition is not supported in this browser.');
-    }
-  },
-  // Method to handle speech recognition results
-  handleRecognitionResult(event) {
-    let transcript = '';  //stores transcribed speech
-    
-    // Loop through the speech recognition results
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      transcript += event.results[i][0].transcript; // Concatenate transcribed speech
-    }
-    //store transcribedText in a variable, meaning you can call it later
-    this.transcribedText = transcript;
-    this.message = this.transcribedText.toLowerCase(); //set transcribedText to message(right side of chatbot)
-  },
-  // Method to start speech recognition
-  startRecognition() {
-    if (this.recognition) {
-      this.recognition.start(); // Start speech recognition
-    }
-  },
 
-  stopSpeech(){
-          window.speechSynthesis.cancel();
 
-  },
 
-  // Method to generate and speak a response
-  speakResponse() {
-    // Check if SpeechSynthesisUtterance is supported in the browser
-    if ('SpeechSynthesisUtterance' in window) {
-      // Create a new SpeechSynthesisUtterance instance with the transcribed text
-      const utterance = new SpeechSynthesisUtterance(this.responseMessage);
-      // Use the browser's speech synthesis to speak the utterance
-      window.speechSynthesis.speak(utterance);
-    } else {
-      console.error('Speech synthesis is not supported in this browser.');
-    }
-  },
+
+    initializeRecognition() {
+      // Check if SpeechRecognition is supported in the browser
+      if (
+        "SpeechRecognition" in window ||
+        "webkitSpeechRecognition" in window
+      ) {
+        // Get the appropriate SpeechRecognition constructor
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        // Create a new SpeechRecognition instance
+        this.recognition = new SpeechRecognition();
+        this.recognition.lang = "en -US"; // Set the language to English (United States)
+        this.recognition.continuous = false; // Continuously listen for speech
+        this.recognition.interimResults = true; // Get interim results as the user speaks
+
+        // Set the event handler for speech recognition results
+        this.recognition.onresult = this.handleRecognitionResult;
+
+        // Set the event handler for speech recognition errors
+        this.recognition.onerror = (event) => {
+          console.error("Speech recognition error:", event.error);
+        };
+      } else {
+        console.error("Speech recognition is not supported in this browser.");
+      }
+    },
+    // Method to handle speech recognition results
+    handleRecognitionResult(event) {
+      let transcript = ""; //stores transcribed speech
+
+      // Loop through the speech recognition results
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript; // Concatenate transcribed speech
+      }
+      //store transcribedText in a variable, meaning you can call it later
+      this.transcribedText = transcript;
+      this.message = this.transcribedText.toLowerCase(); //set transcribedText to message(right side of chatbot)
+    },
+    //[BROKEN] turns on and off speaking and listening, 
+    // toggleSwitch() {
+    //   this.switchValue = !this.switchValue;
+    //   console.log(this.switchValue);
+    //   if (this.switchValue == true) {
+    //     this.startRecognition();
+    //   }
+    // },
+    // Method to start speech recognition
+    startRecognition() {
+      if (this.recognition) {
+        this.recognition.start(); // Start speech recognition
+      }
+    },
+    // Method to generate and speak a response
+    speakResponse() {
+      // Check if SpeechSynthesisUtterance is supported in the browser
+      if ("SpeechSynthesisUtterance" in window) {
+        // Create a new SpeechSynthesisUtterance instance with the transcribed text
+        const utterance = new SpeechSynthesisUtterance(this.responseMessage);
+        // Use the browser's speech synthesis to speak the utterance
+        window.speechSynthesis.speak(utterance);
+      } else {
+        console.error("Speech synthesis is not supported in this browser.");
+      }
+    },
+    stopSpeaking() {
+      window.speechSynthesis.cancel();
+    },
     handleSuggestionButton() {
       let longResult = ChatBotResponseService.getChatbotSuggestions(
         this.subjectContext
@@ -166,8 +184,6 @@ methods: {
         }
       );
     },
-
-
     sendMessage() {
       const message = this.message;
 
@@ -183,7 +199,8 @@ methods: {
         LinkedInService.getJob(message).then((response) => {
           console.log(response.data.data[0].url);
           let linkedJob =
-            `<a href = "${response.data.data[0].url}">` + "click here for jobs</a>";
+            `<a href = "${response.data.data[0].url}">` +
+            "click here for jobs</a>";
           this.messages.unshift({
             text: linkedJob,
             author: "response-box", //this is coming from the chatbot as a response.
@@ -222,7 +239,6 @@ methods: {
 }
 };
 </script>
-
 
 <style scoped lang="scss">
 p {
@@ -429,5 +445,30 @@ button {
 }
 .voiceAndText {
   padding-top: 200;
- }
+}
+.switch {
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.slider {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background-color: rgb(119, 32, 32);
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.slider-on {
+  transform: translateX(-20px);
+}
+.slider-off {
+  transform: translateX(0);
+}
 </style>
