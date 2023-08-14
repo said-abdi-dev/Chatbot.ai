@@ -7,7 +7,7 @@
 
 <script>
 import ChatBox from './components/ChatBot.vue'
-
+  
 export default {
   name: 'app',
   components: {
