@@ -571,12 +571,8 @@ button {
 .send-btn-svg {
   height: 1.75rem;
   width: 1.75rem;
-<<<<<<< HEAD
-  cursor: pointer;
-=======
-  z-index:2;
->>>>>>> eb7d7ad1fafbffc402dcacd789f070b11bc8941b
 }
+
 .send-button {
   height: 4rem;
   width: 4rem;

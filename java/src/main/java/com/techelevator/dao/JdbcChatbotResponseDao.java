@@ -63,8 +63,8 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
     }
 
     public String[] checkForSubjectAndTopic(String usersSubjectContext, String usersTopicContext, String userInput) {
-        String foundSubject = usersSubjectContext; // equal to last return subject, or 0
-        String foundTopic = usersTopicContext; // equal to last returned valid topic, or 0
+        String foundSubject = usersSubjectContext; // Initialize to the last returned subject or "0"
+        String foundTopic = usersTopicContext;     // Initialize to the last returned valid topic or "0"
 
         String lowerCaseUserInput = userInput.toLowerCase();
         String[] inputWords = lowerCaseUserInput.split("\\s+");
@@ -75,39 +75,39 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
 
         while (rowsOfSubjects.next()) {
             String currentSubjectName = rowsOfSubjects.getString("subject_name");
-            for (String word : inputWords) {
-                if (currentSubjectName != null && currentSubjectName.equals(word)) {
-                    foundSubject = currentSubjectName;
-                    break;
-                }
+            if (Arrays.asList(inputWords).contains(currentSubjectName)) {
+                foundSubject = currentSubjectName;
+                break;
             }
         }
+
         if (!foundSubject.equals("0")) {
-//now lets search the topics
-            boolean allTopicWordsFound = true; // true by default, flick to false if the word isn't found, then go to thenext row
-            String sqlGetTopicsFromSubject = "SELECT topic_name, topic_id FROM topics WHERE subject_name = ?";
+            // Now let's search the topics
+            String sqlGetTopicsFromSubject = "SELECT topic_name FROM topics WHERE subject_name = ?";
             SqlRowSet rowsOfTopics = jdbcTemplate.queryForRowSet(sqlGetTopicsFromSubject, foundSubject);
 
-            while (rowsOfTopics.next()) { // now we have a keyword, or phrase
+            while (rowsOfTopics.next()) {
                 String currentTopicNamePhrase = rowsOfTopics.getString("topic_name");
-                assert currentTopicNamePhrase != null;    // makes sure that it isn't null before making string array;
                 String[] arrayOfTopicNameKeywords = currentTopicNamePhrase.split("\\s+");
-                List<String> listOfTopicNameKeywords = Arrays.asList(arrayOfTopicNameKeywords);
 
-                for (String keyword : listOfTopicNameKeywords) {
+                boolean allTopicWordsFound = true;
+                for (String keyword : arrayOfTopicNameKeywords) {
                     if (!Arrays.asList(inputWords).contains(keyword)) {
                         allTopicWordsFound = false;
                         break;
                     }
                 }
-                if (!allTopicWordsFound) {
+
+                if (allTopicWordsFound) {
                     foundTopic = currentTopicNamePhrase;
                     break;
                 }
             }
         }
+
         return new String[]{userInput, foundSubject, foundTopic};
     }
+
 
     public String getSuggestions(ChatbotResponse chatbotResponse) {
         String suggestions = "";
