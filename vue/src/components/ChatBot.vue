@@ -12,10 +12,13 @@
       </div>
       <ul class="chat-box-list">
         <li v-if="messages.length == 0" class="message-content">
-          <div class="bot-image">
-            <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
+          <div class="text-and-image-container">
+            <div class="bot-image">
+              <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
+            </div>
+            text-and-image-container
+            <p class="message-text">Hello, how can I help you?</p>
           </div>
-          <p class="greetingUser">Hello, how can I help you?</p>
         </li>
 
         <li
@@ -35,20 +38,39 @@
             </div>
           </div>
 
-
           <div class="text-and-image-container" v-else>
             <div class="bot-image">
               <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
             </div>
             <div class="message-container">
-            <!-- Bot message -->
+              <!-- Bot message -->
               <div class="message-content">
-                  <p v-html="message.text" class="message-text"></p>
+                <p v-html="message.text" class="message-text"></p>
               </div>
             </div>
+            <div
+              class="btn-wrapper"
+              v-if="messages.length != 0"
+              @click="speakResponse"
+            >
+              <svg
+                class="btn-standard"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
+                />
+              </svg>
+            </div>
           </div>
-          </li>
-        </ul>
+        </li>
+      </ul>
       <!-- text to speech/voice -->
       <div class="voiceAndText">
         <!-- working on fixing slider logic later -->
@@ -58,29 +80,61 @@
             :class="{ 'slider-on': switchValue, 'slider-off': !switchValue }"
           ></span>
         </span> -->
-        <div class="btn-wrapper" v-if="messages.length != 0" @click="startRecognition">
-          <svg class="btn-standard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
-          </svg>
-        </div>
         <!-- <button /> -->
-        <div class="btn-wrapper" v-if="messages.length != 0" @click="speakResponse">
-          <svg class="btn-standard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-          </svg>
-        </div>
-        <div class="btn-wrapper"  v-if="messages.length != 0" @click="stopSpeaking">
-          <svg class="btn-standard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />
-          </svg>
-        </div>
       </div>
     </section>
-    <div class="chat-inputs">
-      <input type="text" v-model="message" @keyup.enter="sendMessage" />
-      <button class="btn-wrapper" @click="sendMessage" :disabled="message.trim() === ''">
-        <svg class="btn-standard" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+    <div class="chat-input-bar">
+      <input
+        class="chat-input"
+        type="text"
+        placeholder="Aa"
+        v-model="message"
+        @keyup.enter="sendMessage"
+      />
+            <div class="btn-wrapper" v-if="audioTracking == true" @click="startRecognition">
+        <svg
+          class="btn-standard"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <!-- SVG path data here -->
+        </svg>
+      </div>
+      <div class="btn-wrapper" v-else @click="stopSpeaking">
+        <svg
+          class="btn-standard"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+    <!-- SVG path data here -->
+        </svg>
+      </div>
+
+      <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
+      <button
+        class="btn-wrapper"
+        @click="sendMessage"
+        :disabled="message.trim() === ''"
+      >
+        <svg
+          class="btn-standard"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+          />
         </svg>
       </button>
     </div>
@@ -96,7 +150,7 @@ export default {
 
   data() {
     return {
-            cat: "4",
+      cat: "4",
       message: "",
       messages: [], //all the messages in an array
       responseArrayFromServer: [], //remember to RENAME this later
@@ -107,6 +161,7 @@ export default {
       transcribedText: "",
       responseMessage: "", // response message displayed from server
       switchValue: false,
+      audioTracking: true // tells whether the audio is currently being recorded
     };
   },
   mounted() {
@@ -154,7 +209,7 @@ export default {
       this.transcribedText = transcript;
       this.message = this.transcribedText.toLowerCase(); //set transcribedText to message(right side of chatbot)
     },
-    //[BROKEN] turns on and off speaking and listening, 
+    //[BROKEN] turns on and off speaking and listening,
     // toggleSwitch() {
     //   this.switchValue = !this.switchValue;
     //   console.log(this.switchValue);
@@ -164,12 +219,14 @@ export default {
     // },
     // Method to start speech recognition
     startRecognition() {
+      this.audioTracking = true;
       if (this.recognition) {
         this.recognition.start(); // Start speech recognition
       }
     },
     // Method to generate and speak a response
     speakResponse() {
+      this.audioTracking = false;
       // Check if SpeechSynthesisUtterance is supported in the browser
       if ("SpeechSynthesisUtterance" in window) {
         // Create a new SpeechSynthesisUtterance instance with the transcribed text
@@ -244,7 +301,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
-      }); 
+      });
     },
   },
 };
@@ -265,6 +322,7 @@ div {
   flex-direction: column-reverse;
   flex-direction: column;
   list-style-type: none;
+  background-color: #1d1d1d;
 }
 
 .message {
@@ -315,8 +373,8 @@ div {
   width: auto;
   font-size: 1.3rem;
   text-align: left;
-  background-color: #1a1615;
-  color: #f0f0f0;
+  background-color: #1e272c;
+  color: #b90000;
   border-radius: 12px;
   align-self: flex-start;
 }
@@ -329,7 +387,7 @@ div {
   width: auto;
   text-align: left;
   font-size: 1.3rem;
-  background-color: rgb(19, 84, 224);
+  background-color: #c27c0e;
   border-radius: 12px;
   color: #f0f0f0;
   align-self: flex-end;
@@ -344,7 +402,7 @@ div {
 
 .chat-box {
   margin: 10px;
-  border: 3px solid rgb(14, 11, 11);
+  border: 3px solid rgb(75, 61, 61);
   width: 38vw;
   height: 95vh;
   border-radius: 10px;
@@ -358,8 +416,39 @@ div {
   margin-bottom: 1.5rem;
 }
 
-.chat-inputs {
+.chat-input-bar {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 10vh;
+  // color: black;
+  background-color: black;
+  bottom: 0;
+}
+
+.chat-input {
+  height: 4vh;
+  width: 80%; /* Adjust the width as needed */
+  padding: 10px;
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 25px; /* Half of the height to create the pill shape */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 1rem;
+}
+
+input {
+  // background-color: rgb(70, 70, 70);
+  // line-height: 3;
+  width: 100%;
+  // border: 3px solid rgb(7, 5, 5);
+  // border-left: none;
+  // border-bottom: none;
+  // border-right: none;
+  // border-bottom-left-radius: 4px;
+  // border-radius: 12px;
+  // font-size: 1.5rem;
 }
 
 .custom-button {
@@ -368,7 +457,7 @@ div {
   margin: 20px auto;
   padding: 7px 13px;
   text-align: center;
-    background: gray;
+  background: gray;
   font-size: 20px;
   font-family: "Arial", sans-serif;
   color: #ffffff;
@@ -380,19 +469,6 @@ div {
 
 .custom-button:hover {
   background-color: rgb(133, 47, 47);
-}
-
-input {
-  line-height: 3;
-  height: 10vh;
-  width: 100%;
-  border: 3px solid rgb(7, 5, 5);
-  border-left: none;
-  border-bottom: none;
-  border-right: none;
-  border-bottom-left-radius: 4px;
-  border-radius: 12px;
-  font-size: 1.5rem;
 }
 
 button {
@@ -500,11 +576,11 @@ button {
 .btn-wrapper {
   height: 3.5rem;
   width: 3.5rem;
-    margin-top: 1rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
-    background-color: #0070c8;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  background-color: #33414b;
   border-radius: 50%;
   display: flex; /* Use flexbox to create a flexible container */
   justify-content: center; /* Center horizontally */
@@ -513,10 +589,9 @@ button {
 }
 
 .btn-standard {
-  height: 1.75rem;
-  width: 1.75rem;
+  height: 4vh;
+  width: 8vw;
   border-radius: 50%;
-  background-color: #0070c8;
-  color: white
-  }
+  color: #1abc9c;
+}
 </style>
