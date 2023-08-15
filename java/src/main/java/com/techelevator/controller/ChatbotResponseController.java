@@ -1,5 +1,7 @@
 package com.techelevator.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,13 +41,18 @@ public class ChatbotResponseController {
         // Return an array containing the response string
         return chatbotReply;
     }
-    @GetMapping (path = "{contextString}")
-    public String getChatbotSuggestions(@PathVariable String contextString) {
-        ChatbotResponse chatbotResponse = new ChatbotResponse();
 
-        chatbotResponse.setVariableContext(contextString);
-        String chatbotReply = chatbotResponseDao.getSuggestions(chatbotResponse);
+    @GetMapping("/{contextString}")
+    public ResponseEntity<String> getChatbotSuggestions(@PathVariable String contextString) {
+        try {
+            ChatbotResponse chatbotResponse = new ChatbotResponse();
+            chatbotResponse.setVariableContext(contextString);
 
-        return chatbotReply;
+            String chatbotReply = chatbotResponseDao.getSuggestions(chatbotResponse);
+            return ResponseEntity.ok(chatbotReply);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
+        }
     }
+
 }
