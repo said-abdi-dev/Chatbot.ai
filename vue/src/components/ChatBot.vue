@@ -20,7 +20,7 @@
           </div>
         </div>
         <ul class="chat-box-list">
-          <li v-if="messages.length == 0" class="message-content">
+          <li v-if="messages.length == 0" class="message response-box">
             <div class="text-and-image-container">
               <div class="bot-image">
                 <img
@@ -29,8 +29,51 @@
                   class="message-icon"
                 />
               </div>
-
-              <p class="message-text">Hello, how can I help you?</p>
+              <p class="message-text">
+                Hey! My name is ChatBot. I am a bot designed to help aspiring
+                software developers learn more about programming, prepare for,
+                and find the job of their dreams! First thing's first. If you
+                would like a profile picture, hit the camera button, or select
+                your default avatar at any time to add one!
+              </p>
+              <br /><br />
+              <p>
+                You can ask me anything you would like, but I'll help you out on
+                how to utilize me to your advantage. You can ask me about jobs,
+                just be sure to ask me about a job title or skill in the message
+                so that I can find you the most accurate jobs you are looking to
+                find!
+              </p>
+              <br /><br />
+              <p>
+                You can also ask me about a variety of programming topics, like
+                programming languages, or concepts. If provided with enough
+                information of what you're looking to know, I will find you
+                information, as well as articles and videos so you can dig
+                deeper into the topic.
+              </p>
+              <!-- ACTIVATE CAMERA BUTTON -->
+              <div class="btn-wrapper">
+                <svg
+                  class="btn-standard"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                  />
+                </svg>
+              </div>
             </div>
           </li>
 
@@ -40,17 +83,25 @@
             :key="messages.indexOf(message)"
             :class="message.author"
           >
+            <!-- User message -->
             <div
-              class="message-container"
+              class="message-and-image-container"
               v-if="message.author === 'request-box'"
             >
-              <!-- User message -->
-
-              <div class="message-content">
-                <p class="message-text">{{ message.text }}</p>
+              <div class="bot-image">
+                <img
+                  src="img/userIcon.png"
+                  alt="User Icon"
+                  class="message-icon"
+                />
+              </div>
+              <div class="message-container">
+                <div class="message-content">
+                  <p class="message-text">{{ message.text }}</p>
+                </div>
               </div>
             </div>
-
+            <!-- BOT MESSAGE -->
             <div class="text-and-image-container" v-else>
               <div class="bot-image">
                 <img
@@ -60,7 +111,6 @@
                 />
               </div>
               <div class="message-container">
-                <!-- BOT MESSAGE -->
                 <div class="message-content">
                   <p v-html="message.text" class="message-text"></p>
                 </div>
@@ -162,8 +212,6 @@
           </svg>
         </button>
 
-        <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
-
         <!-- SEND BUTTON -->
         <button
           class="btn-wrapper"
@@ -188,12 +236,13 @@
       </div>
     </section>
     <!-- div email form temp here -->
+    <!-- if this isnt here, email js doesnt work -->
     <section class="sectionForEmailForm">
       <div class="emailForm">
         <form @submit.prevent="sendEmail" ref="hiddenForm" id="hidden-form">
           <!-- now work on fixing the format part! -->
           <input v-model="formData.to_name" type="text" name="to_name" />
-          <textarea v-model="responseMessage" name="message"></textarea>
+          <textarea v-model="formData.message" name="message"></textarea>
           <!-- Other input fields if needed -->
           <button type="submit" :disabled="sending">Send Email</button>
         </form>
@@ -214,7 +263,6 @@ export default {
 
   data() {
     return {
-      cat: "4",
       message: "",
       messages: [], //all the messages in an array
       responseArrayFromServer: [], //remember to RENAME this later
@@ -224,18 +272,17 @@ export default {
       recognition: null,
       transcribedText: "",
       responseMessage: "", // response message displayed from server
-      switchValue: false,
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
       suggestionArray: ['a','b','c'],
       selectedSuggestionSetIndex: 0,
+      emailMessageLinks: "",
       formData: {
         //object sent to emailjs
-        to_name: "abdishirdon@gmail.com",
+        to_name: "noah@",
         message: "cats",
       },
-      sending: false,
     };
   },
   computed: {
@@ -247,6 +294,7 @@ export default {
     // When the component is mounted(fully compiled), initialize the speech recognition
     this.initializeRecognition();
     // this.fetchSuggestions();
+    this.scrollToBottom();
   },
   methods: {
     setMessageAndSendMessage(suggestion) {
@@ -258,7 +306,6 @@ export default {
       });
   },
     // Method to initialize speech recognition
-
     initializeRecognition() {
       // Check if SpeechRecognition is supported in the browser
       if (
@@ -349,9 +396,8 @@ export default {
       });
 
       this.message = "";
-      this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      this.scrollToBottom();
       //probably a good idea to have this if condition in a different method
-      this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
 
       if (message.includes("job")) {
         LinkedInService.getJob(message).then((response) => {
@@ -359,14 +405,17 @@ export default {
           response.data.data.forEach((item) => {
             linkedJobs += `<a href="${item.url}" target="_blank">${item.title}</a><br>`;
           });
+          this.scrollToBottom();
+
           this.messages.unshift({
             text:
               "here are some jobs, reply YES if you want us to email them to you<br>" +
               linkedJobs,
             author: "response-box",
           });
+          this.formData.message = linkedJobs;
         });
-        console.log(this.messages);
+        this.scrollToBottom();
       } else if (
         message.includes("YES") ||
         (message.includes("yes") && this.messages[1].text.includes("job"))
@@ -379,9 +428,12 @@ export default {
         message.includes("@") &&
         this.messages[1].text.includes("email")
       ) {
-        console.log(this.messages[0]);
-        this.formData = this.messages[0].text;
-        this.sendEmail();
+        console.log(this.formData.message + "formDataLog");
+        this.formData.to_name = message;
+        this.$nextTick(() => {
+          this.sendEmail();
+        });
+        this.scrollToBottom();
       } else {
         //get normal response
         ChatBotResponseService.getChatbotResponse(
@@ -400,11 +452,13 @@ export default {
 
               author: "response-box", //this is coming from the chatbot as a response.
             });
+            this.scrollToBottom();
           })
           .catch((err) => {
             console.error(err);
           });
       }
+      this.scrollToBottom();
     },
     getSuggestions() {
       console.log(this.suggestionArray)
@@ -423,6 +477,7 @@ export default {
       const serviceID = "default_service";
       const templateID = "template_qjk5gaf";
       const formElement = this.$refs.hiddenForm;
+      console.log(formElement);
 
       emailjs
         .sendForm(serviceID, templateID, formElement)
@@ -434,6 +489,12 @@ export default {
           this.sending = false;
           alert(JSON.stringify(err));
         });
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const chatbox = this.$refs.chatbox;
+        chatbox.scrollTop = chatbox.scrollHeight;
+      });
     },
   },
 };
@@ -568,6 +629,9 @@ div {
   border-radius: 25px; /* Half of the height to create the pill shape */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   margin-left: 1rem;
+
+  /* Add this property to allow text wrapping */
+  white-space: normal;
 }
 
 input {
@@ -738,5 +802,13 @@ button {
   border: none;
   cursor: pointer;
   font-size: 14px;
+}
+.sectionForEmailForm {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 </style>
