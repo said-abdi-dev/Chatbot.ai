@@ -11,6 +11,7 @@ import com.techelevator.dao.ChatbotResponseDao;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/")
@@ -43,16 +44,11 @@ public class ChatbotResponseController {
     }
 
     @GetMapping("/{contextString}")
-    public ResponseEntity<String> getChatbotSuggestions(@PathVariable String contextString) {
-        try {
-            ChatbotResponse chatbotResponse = new ChatbotResponse();
-            chatbotResponse.setVariableContext(contextString);
+    public ResponseEntity<List<String>> getChatbotSuggestions(@PathVariable String contextString) {
 
-            String chatbotReply = chatbotResponseDao.getSuggestions(chatbotResponse);
+            List<String> chatbotReply = chatbotResponseDao.getSuggestions(contextString);
             return ResponseEntity.ok(chatbotReply);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
-        }
+
     }
 
 }

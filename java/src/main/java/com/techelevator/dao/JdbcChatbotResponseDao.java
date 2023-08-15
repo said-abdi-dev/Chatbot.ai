@@ -108,22 +108,21 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
         return new String[]{userInput, foundSubject, foundTopic};
     }
 
-    public String getSuggestions(ChatbotResponse chatbotResponse) {
-    List<String> suggestionsList = new ArrayList<>(); 
+    public List<String> getSuggestions(String input) {
+        List<String> suggestionsList = new ArrayList<>(); // Use an ArrayList to store suggestions
 
-    String sqlSuggestions = "SELECT topic_name, subject_name\n" +
-            "FROM topics\n" +
-            "WHERE subject_name = ?\n" +
-            "LIMIT 3;";
+        String sqlSuggestions = "SELECT topic_name, subject_name\n" +
+                "FROM topics\n" +
+                "WHERE subject_name = ?\n" +
+                "LIMIT 3;";
 
-    SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSuggestions, chatbotResponse.getVariableContext());
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSuggestions, input);
 
-    while (rows.next()) {
-        String topicName = rows.getString("topic_name");
-        suggestionsList.add(topicName); // adding each suggestion to the list
-    }
+        while (rows.next()) {
+            String topicName = rows.getString("topic_name");
+            suggestionsList.add(topicName); // Add each suggestion to the ArrayList using the add() method
+        }
 
-    String suggestions = String.join(" ", suggestionsList); // this Joins the list elements with a space
-    return suggestions;
+        return suggestionsList;
 }
 }
