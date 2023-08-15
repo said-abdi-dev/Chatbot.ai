@@ -1,187 +1,248 @@
 <template>
   <main class="rootTemplateTag">
     <section class="chat-box">
-    <section class="chat-box-list-container" ref="chatbox">
-      <div class="suggestion-container">
-        <div class="vertical-buttons">
-          <button
-            class="suggestion-button"
-            v-for="(suggestion, index) in suggestionSets"
-            :key="index"
-            :class="{ selected: index === selectedSuggestionSetIndex }"
-            @click="selectedSuggestions(suggestion)"
-          >
-            {{ suggestion }}
-          </button>
-        </div>
-      </div>
-      <ul class="chat-box-list">
-        <li v-if="messages.length == 0" class="message-content">
-          <div class="text-and-image-container">
-            <div class="bot-image">
-              <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
-            </div>
-
-            <p class="message-text">Hello, how can I help you?</p>
-          </div>
-        </li>
-
-        <li
-          class="message"
-          v-for="message in messages"
-          :key="messages.indexOf(message)"
-          :class="message.author"
-        >
-          <div
-            class="message-container"
-            v-if="message.author === 'request-box'"
-          >
-            <!-- User message -->
-
-            <div class="message-content">
-              <p class="message-text">{{ message.text }}</p>
-            </div>
-          </div>
-
-          <div class="text-and-image-container" v-else>
-            <div class="bot-image">
-              <img src="img/botIcon.png" alt="Bot Icon" class="message-icon" />
-            </div>
-            <div class="message-container">
-              <!-- BOT MESSAGE -->
-              <div class="message-content">
-                <p v-html="message.text" class="message-text"></p>
-              </div>
-            </div>
-            <!-- SPEAKER BUTTON -->
-            <div
-              class="btn-wrapper"
-              v-if="isSpeaking == false"
-              @click="listenToResponse"
+      <section class="chat-box-list-container" ref="chatbox">
+        <div class="suggestion-container">
+          <div class="vertical-buttons">
+            <button
+              class="suggestion-button"
+              v-for="(suggestion, index) in suggestionSets"
+              :key="index"
+              :class="{ selected: index === selectedSuggestionSetIndex }"
+              @click="selectedSuggestions(suggestion)"
             >
-              <svg
-                class="btn-standard"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
-                />
-              </svg>
-            </div>
-            <!-- STOP BUTTON  -->
-            <button class="btn-wrapper" v-else @click="stopListeningToResponse">
-              <svg
-                class="btn-standard"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"
-                />
-              </svg>
+              {{ suggestion }}
             </button>
           </div>
-        </li>
-      </ul>
-      <!-- text to speech/voice -->
-      <div class="voiceAndText"></div>
+        </div>
+        <ul class="chat-box-list">
+          <li v-if="messages.length == 0" class="message response-box">
+            <div class="text-and-image-container">
+              <div class="bot-image">
+                <img
+                  src="img/botIcon.png"
+                  alt="Bot Icon"
+                  class="message-icon"
+                />
+              </div>
+              <p class="message-text">
+                Hey! My name is ChatBot. I am a bot designed to help aspiring
+                software developers learn more about programming, prepare for,
+                and find the job of their dreams! First thing's first. If you
+                would like a profile picture, hit the camera button, or select
+                your default avatar at any time to add one!
+              </p>
+              <br /><br />
+              <p>
+                You can ask me anything you would like, but I'll help you out on
+                how to utilize me to your advantage. You can ask me about jobs,
+                just be sure to ask me about a job title or skill in the message
+                so that I can find you the most accurate jobs you are looking to
+                find!
+              </p>
+              <br /><br />
+              <p>
+                You can also ask me about a variety of programming topics, like
+                programming languages, or concepts. If provided with enough
+                information of what you're looking to know, I will find you
+                information, as well as articles and videos so you can dig
+                deeper into the topic.
+              </p>
+              <!-- ACTIVATE CAMERA BUTTON -->
+              <div class="btn-wrapper">
+                <svg
+                  class="btn-standard"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </li>
+
+          <li
+            class="message"
+            v-for="message in messages"
+            :key="messages.indexOf(message)"
+            :class="message.author"
+          >
+            <!-- User message -->
+            <div
+              class="message-and-image-container"
+              v-if="message.author === 'request-box'"
+            >
+              <div class="bot-image">
+                <img
+                  src="img/userIcon.png"
+                  alt="User Icon"
+                  class="message-icon"
+                />
+              </div>
+              <div class="message-container">
+                <div class="message-content">
+                  <p class="message-text">{{ message.text }}</p>
+                </div>
+              </div>
+            </div>
+            <!-- BOT MESSAGE -->
+            <div class="text-and-image-container" v-else>
+              <div class="bot-image">
+                <img
+                  src="img/botIcon.png"
+                  alt="Bot Icon"
+                  class="message-icon"
+                />
+              </div>
+              <div class="message-container">
+                <div class="message-content">
+                  <p v-html="message.text" class="message-text"></p>
+                </div>
+              </div>
+              <!-- SPEAKER BUTTON -->
+              <div
+                class="btn-wrapper"
+                v-if="isSpeaking == false"
+                @click="listenToResponse"
+              >
+                <svg
+                  class="btn-standard"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"
+                  />
+                </svg>
+              </div>
+              <!-- STOP BUTTON  -->
+              <button
+                class="btn-wrapper"
+                v-else
+                @click="stopListeningToResponse"
+              >
+                <svg
+                  class="btn-standard"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </li>
+        </ul>
+        <!-- text to speech/voice -->
+        <div class="voiceAndText"></div>
+      </section>
+
+      <div class="chat-input-bar">
+        <input
+          class="chat-input"
+          type="text"
+          placeholder="Aa"
+          v-model="message"
+          @keyup.enter="sendMessage"
+        />
+
+        <!-- RECORD BUTTON -->
+        <button
+          class="btn-wrapper"
+          v-if="audioTracking == false"
+          @click="startRecognition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="btn-standard"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"
+            />
+          </svg>
+        </button>
+        <!-- STOP BUTTON -->
+        <button class="btn-wrapper" v-else @click="stopRecognition">
+          <svg
+            class="btn-standard"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"
+            />
+          </svg>
+        </button>
+
+        <!-- SEND BUTTON -->
+        <button
+          class="btn-wrapper"
+          @click="sendMessage"
+          :disabled="message.trim() === ''"
+        >
+          <svg
+            class="btn-standard"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+            />
+          </svg>
+        </button>
+      </div>
     </section>
-
-    <div class="chat-input-bar">
-      <input
-        class="chat-input"
-        type="text"
-        placeholder="Aa"
-        v-model="message"
-        @keyup.enter="sendMessage"
-      />
-
-      <!-- RECORD BUTTON -->
-      <button
-        class="btn-wrapper"
-        v-if="audioTracking == false"
-        @click="startRecognition"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="btn-standard"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"
-          />
-        </svg>
-      </button>
-      <!-- STOP BUTTON -->
-      <button class="btn-wrapper" v-else @click="stopRecognition">
-        <svg
-          class="btn-standard"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"
-          />
-        </svg>
-      </button>
-
-
-      <!-- SEND BUTTON -->
-      <button
-        class="btn-wrapper"
-        @click="sendMessage"
-        :disabled="message.trim() === ''"
-      >
-        <svg
-          class="btn-standard"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-          />
-        </svg>
-      </button>
-    </div>
-  </section>
     <!-- div email form temp here -->
     <!-- if this isnt here, email js doesnt work -->
     <section class="sectionForEmailForm">
       <div class="emailForm">
         <form @submit.prevent="sendEmail" ref="hiddenForm" id="hidden-form">
           <!-- now work on fixing the format part! -->
-      <input v-model="formData.to_name" type="text" name="to_name" />
-      <textarea v-model="formData.message" name="message"></textarea>
-      <!-- Other input fields if needed -->
-      <button type="submit" :disabled="sending">Send Email</button>
-    </form>
-    </div>
+          <input v-model="formData.to_name" type="text" name="to_name" />
+          <textarea v-model="formData.message" name="message"></textarea>
+          <!-- Other input fields if needed -->
+          <button type="submit" :disabled="sending">Send Email</button>
+        </form>
+      </div>
     </section>
   </main>
 </template>
@@ -215,7 +276,7 @@ export default {
       emailMessageLinks: "",
       formData: {
         //object sent to emailjs
-        to_name: "noah@", 
+        to_name: "noah@",
         message: "cats",
       },
     };
@@ -308,9 +369,9 @@ export default {
       this.isSpeaking = false;
       this.speech.cancel();
     },
-     fetchSuggestions() {
+    fetchSuggestions() {
       const selectedSuggestions =
-      this.suggestionSets[this.selectedSuggestionSetIndex];
+        this.suggestionSets[this.selectedSuggestionSetIndex];
       this.variableContext = selectedSuggestions.join(" ");
 
       let longResult = ChatBotResponseService.getChatbotSuggestions(
@@ -342,7 +403,7 @@ export default {
       });
 
       this.message = "";
-      this.scrollToBottom()
+      this.scrollToBottom();
       //probably a good idea to have this if condition in a different method
 
       if (message.includes("job")) {
@@ -351,33 +412,36 @@ export default {
           response.data.data.forEach((item) => {
             linkedJobs += `<a href="${item.url}" target="_blank">${item.title}</a><br>`;
           });
-                this.scrollToBottom()
+          this.scrollToBottom();
 
           this.messages.unshift({
-            text: 'here are some jobs, reply YES if you want us to email them to you<br>' + linkedJobs,
+            text:
+              "here are some jobs, reply YES if you want us to email them to you<br>" +
+              linkedJobs,
             author: "response-box",
           });
           this.formData.message = linkedJobs;
-
         });
-      this.scrollToBottom()
-
-      } 
-      else if (message.includes("YES") || message.includes("yes") && this.messages[1].text.includes("job")){
+        this.scrollToBottom();
+      } else if (
+        message.includes("YES") ||
+        (message.includes("yes") && this.messages[1].text.includes("job"))
+      ) {
         this.messages.unshift({
-            text: 'what is your email?',
-            author: "response-box",
-          });
-      }
-      else if (message.includes("@") && this.messages[1].text.includes("email")){
-        console.log(this.formData.message + 'formDataLog');
-        this.formData.to_name= message;
-       this.$nextTick(() => {
-        this.sendEmail();
-    });      this.scrollToBottom()
-
-      }
-       else{
+          text: "what is your email?",
+          author: "response-box",
+        });
+      } else if (
+        message.includes("@") &&
+        this.messages[1].text.includes("email")
+      ) {
+        console.log(this.formData.message + "formDataLog");
+        this.formData.to_name = message;
+        this.$nextTick(() => {
+          this.sendEmail();
+        });
+        this.scrollToBottom();
+      } else {
         //get normal response
         ChatBotResponseService.getChatbotResponse(
           message,
@@ -386,7 +450,7 @@ export default {
         )
           .then((responseArray) => {
             //after a response comes back from the server we take
-            console.log(this.messages[0].text)
+            console.log(this.messages[0].text);
             this.subjectContext = responseArray.data[1];
             this.topicContext = responseArray.data[2];
             this.responseMessage = responseArray.data[0];
@@ -395,15 +459,13 @@ export default {
 
               author: "response-box", //this is coming from the chatbot as a response.
             });
-                  this.scrollToBottom()
-
+            this.scrollToBottom();
           })
           .catch((err) => {
             console.error(err);
           });
       }
-            this.scrollToBottom()
-
+      this.scrollToBottom();
     },
     sendEmail() {
       //emailjs send email method
@@ -411,7 +473,7 @@ export default {
       const serviceID = "default_service";
       const templateID = "template_qjk5gaf";
       const formElement = this.$refs.hiddenForm;
-      console.log(formElement)
+      console.log(formElement);
 
       emailjs
         .sendForm(serviceID, templateID, formElement)
@@ -425,11 +487,11 @@ export default {
         });
     },
     scrollToBottom() {
-    this.$nextTick(() => {
-      const chatbox = this.$refs.chatbox;
-      chatbox.scrollTop = chatbox.scrollHeight;
-    });
-  }
+      this.$nextTick(() => {
+        const chatbox = this.$refs.chatbox;
+        chatbox.scrollTop = chatbox.scrollHeight;
+      });
+    },
   },
 };
 </script>
@@ -563,7 +625,7 @@ div {
   border-radius: 25px; /* Half of the height to create the pill shape */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   margin-left: 1rem;
-  
+
   /* Add this property to allow text wrapping */
   white-space: normal;
 }
