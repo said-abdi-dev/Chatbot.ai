@@ -477,6 +477,9 @@ div {
   border-radius: 25px; /* Half of the height to create the pill shape */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   margin-left: 1rem;
+  
+  /* Add this property to allow text wrapping */
+  white-space: normal;
 }
 
 input {
@@ -571,11 +574,7 @@ button {
 .send-btn-svg {
   height: 1.75rem;
   width: 1.75rem;
-<<<<<<< HEAD
   cursor: pointer;
-=======
-  z-index:2;
->>>>>>> eb7d7ad1fafbffc402dcacd789f070b11bc8941b
 }
 .send-button {
   height: 4rem;
