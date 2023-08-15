@@ -58,6 +58,7 @@
               class="btn-wrapper"
               v-if="isSpeaking == false"
               @click="listenToResponse"
+                :disabled="buttonChanging"
             >
               <svg
                 class="btn-standard"
@@ -94,7 +95,9 @@
           </div>
         </li>
       </ul>
+       
       <!-- text to speech/voice -->
+       
       <div class="voiceAndText"></div>
     </section>
 
@@ -112,6 +115,7 @@
         class="btn-wrapper"
         v-if="audioTracking == false"
         @click="startRecognition"
+        
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -209,6 +213,9 @@ export default {
       transcribedText: "",
       responseMessage: "", // response message displayed from server
       switchValue: false,
+
+      buttonChanging: false,
+
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
@@ -271,11 +278,15 @@ export default {
     },
 
     startRecognition() {
-      console.log("We reached startReconginition");
+      
+   
       this.audioTracking = true;
+       this.buttonChanging = true;
+
       if (this.recognition) {
         this.recognition.start(); // Start speech recognition
       }
+   
     },
 
     stopRecognition() {
@@ -286,26 +297,38 @@ export default {
 
     // Method to generate and listen to a response
     listenToResponse() {
-      console.log("reached speakResponse");
-      this.isSpeaking = true;
 
-      // Check if SpeechSynthesisUtterance is supported in the browser
-      if ("SpeechSynthesisUtterance" in window) {
-        if (this.speech.speaking) {
-          //we check if currently speaking, if so, cancel it/stop
-          this.speech.cancel();
-        } else {
-          // Create a new SpeechSynthesisUtterance instance with the transcribed text
-          console.log(this.responseMessage);
-          const utterance = new SpeechSynthesisUtterance(this.responseMessage);
-          // Use the browser's speech synthesis to speak the utterance
-          this.speech.speak(utterance);
-        }
-      } else {
-        console.error("Speech synthesis is not supported in this browser.");
+
+          setTimeout(() => {
+      if (this.recognition) {
+        this.recognition.start(); // Start speech recognition
+        this.buttonChanging = false; // Reset buttonChanging after the delay
       }
-    },
+    }, 2000); // Delay of 2 seconds
 
+    
+  console.log("reached speakResponse");
+  this.isSpeaking = true;
+
+
+  setTimeout(() => {
+    // Check if SpeechSynthesisUtterance is supported in the browser
+    if ("SpeechSynthesisUtterance" in window) {
+      if (this.speech.speaking) {
+        //we check if currently speaking, if so, cancel it/stop
+        this.speech.cancel();
+      } else {
+        // Create a new SpeechSynthesisUtterance instance with the transcribed text
+        console.log(this.responseMessage);
+        const utterance = new SpeechSynthesisUtterance(this.responseMessage);
+        // Use the browser's speech synthesis to speak the utterance
+        this.speech.speak(utterance);
+      }
+    } else {
+      console.error("Speech synthesis is not supported in this browser.");
+    }
+  }, 2000); //wait about 2 seconds before listening starts here??? not too sure
+},
     stopListeningToResponse() {
       this.isSpeaking = false;
       this.speech.cancel();
@@ -516,7 +539,7 @@ div {
   margin: 10px;
   border: 3px solid rgb(75, 61, 61);
   width: 38vw;
-  height: 95vh;
+  height: 86vh;
   border-radius: 10px;
   margin-left: auto;
   margin-right: auto;
