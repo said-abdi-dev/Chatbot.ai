@@ -12,6 +12,11 @@ export default {
         return axios.get(`/${sanitizedInput}/${subjectContext}/${topicContext}`);
     },
     getChatbotSuggestions(contextString) {
-         return axios.get(`/${contextString}`);
+        return axios.get(`/${contextString}`)
+            .then(response => response.data)
+            .catch(error => {
+                console.error('Error fetching chatbot suggestions:', error);
+                throw error;
+            });
     }
 }

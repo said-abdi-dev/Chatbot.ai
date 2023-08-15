@@ -96,7 +96,8 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
     }
 
     public String getSuggestions(ChatbotResponse chatbotResponse) {
-        String suggestions = "";
+        List<String> suggestionsList = new ArrayList<>();
+
         String sqlSuggestions = "SELECT topic_name, subject_name\n" +
                 "FROM topics\n" +
                 "WHERE subject_name = ?\n" +
@@ -106,8 +107,9 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
 
         while (rows.next()) {
             String topicName = rows.getString("topic_name");
-            suggestions += topicName + " ";
+            suggestionsList.add(topicName); // adding each suggestion to the list
         }
+        String suggestions = String.join(" ", suggestionsList); // this Joins the list elements with a space
         return suggestions;
     }
     private String generateResponse(String foundSubject, String foundTopic) {

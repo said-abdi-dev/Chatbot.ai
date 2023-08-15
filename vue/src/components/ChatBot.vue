@@ -212,8 +212,6 @@ export default {
       speech: window.speechSynthesis,
       suggestionSets: [],
       selectedSuggestionSetIndex: 0,
-
-      sending: false,
       emailMessageLinks: "",
       formData: {
         //object sent to emailjs
