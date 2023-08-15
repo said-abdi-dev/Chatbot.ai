@@ -1,15 +1,18 @@
 <template>
   <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
-      <div class="vertical-buttons">
-        <button class="suggestion-button"
-        v-for="(suggestion, index) in suggestionSets"
-        :key="index"
-        :class="{ 'selected': index === selectedSuggestionSetIndex }"
-        @click="selectedSuggestionSetIndex = index; handleSuggestionButton()"
-        >
-         {{ variableContext }}
-        </button>
+      <div class="suggestion-container">
+        <div class="vertical-buttons">
+          <button
+            class="suggestion-button"
+            v-for="(suggestion, index) in suggestionSets"
+            :key="index"
+            :class="{ selected: index === selectedSuggestionSetIndex }"
+            @click="selectedSuggestions(suggestion)"
+          >
+            {{ suggestion }}
+          </button>
+        </div>
       </div>
       <ul class="chat-box-list">
         <li v-if="messages.length == 0" class="message-content">
@@ -91,8 +94,7 @@
         </li>
       </ul>
       <!-- text to speech/voice -->
-      <div class="voiceAndText">
-      </div>
+      <div class="voiceAndText"></div>
     </section>
 
     <div class="chat-input-bar">
@@ -181,7 +183,7 @@ export default {
     return {
       cat: "4",
       message: "",
-      messages: [], //all the messages in an array  
+      messages: [], //all the messages in an array
       responseArrayFromServer: [], //remember to RENAME this later
       subjectContext: "0", //both coming from the backend with default of 0
       topicContext: "0", //both coming from the backend with default of 0
@@ -194,10 +196,10 @@ export default {
       isSpeaking: false,
       speech: window.speechSynthesis,
       suggestionSets: [
-        ["Suggestion 1", "Suggestion 2", "Suggestion 3"],
-        ["Suggestion A", "Suggestion B", "Suggestion C"],
-        ["Suggestion X", "Suggestion Y", "Suggestion Z"],
-      ], 
+        "define java",
+        "javascript array",
+        "what are joins in SQL",
+      ],
       selectedSuggestionSetIndex: 0,
     };
   },
@@ -274,7 +276,7 @@ export default {
           this.speech.cancel();
         } else {
           // Create a new SpeechSynthesisUtterance instance with the transcribed text
-                console.log(this.responseMessage);
+          console.log(this.responseMessage);
           const utterance = new SpeechSynthesisUtterance(this.responseMessage);
           // Use the browser's speech synthesis to speak the utterance
           this.speech.speak(utterance);
@@ -290,8 +292,10 @@ export default {
     },
 
     handleSuggestionButton() {
-      const selectedSuggestions = this.suggestionSets[this.selectedSuggestionSetIndex];
+      const selectedSuggestions =
+      this.suggestionSets[this.selectedSuggestionSetIndex];
       this.variableContext = selectedSuggestions.join(" ");
+
       let longResult = ChatBotResponseService.getChatbotSuggestions(
         this.subjectContext
       );
@@ -302,11 +306,13 @@ export default {
           this.variableContext = response.data;
         }
       );
-      sendSuggestions() {
-
-        const userMessage = suggestion
-
-      }
+    },
+    //this method below send the suggested question by
+    // using the send message method
+    //suggestion is being passed here getting the information from the template
+    selectedSuggestions(suggestion) {
+      this.message = suggestion;
+      this.sendMessage();
     },
     sendMessage() {
       const message = this.message;
@@ -573,7 +579,7 @@ button {
 
 .chat-box-list-container::-webkit-scrollbar {
   width: 0.8rem;
-  background-color: transparent
+  background-color: transparent;
 }
 .greeting {
   margin: 10px;
@@ -587,6 +593,7 @@ button {
   width: 1.75rem;
   cursor: pointer;
 }
+
 .send-button {
   height: 4rem;
   width: 4rem;
@@ -618,7 +625,7 @@ button {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   cursor: pointer;
-  z-index:1;
+  z-index: 1;
 }
 
 .btn-standard {
@@ -628,6 +635,38 @@ button {
   color: #1abc9c;
 }
 ::-webkit-scrollbar-corner {
-  background: transparent  /* Replace 'your-color' with the desired background color */
+  background: transparent; /* Replace 'your-color' with the desired background color */
+}
+
+.suggestion-container {
+  position: absolute;
+  bottom: 10vh;
+  left: 50%;
+  max-width: 90%;
+  //overflow-x: auto;
+  transform: translateX(-50%);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 2;
+}
+
+.vertical-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  // overflow-x: auto;
+}
+
+.suggestion-button {
+  padding: 5px 15px;
+  background-color: #192b8f;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
 }
 </style>
