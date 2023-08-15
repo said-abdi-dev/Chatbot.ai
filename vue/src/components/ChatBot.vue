@@ -1,5 +1,6 @@
 <template>
-  <section class="chat-box">
+  <main class="rootTemplateTag">
+    <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
       <div class="suggestion-container">
         <div class="vertical-buttons">
@@ -170,12 +171,28 @@
       </button>
     </div>
   </section>
+    <!-- div email form temp here -->
+    <section class="sectionForEmailForm">
+      <div class="emailForm">
+        <form @submit.prevent="sendEmail" ref="hiddenForm" id="hidden-form">
+          <!-- now work on fixing the format part! -->
+      <input v-model="formData.to_name" type="text" name="to_name" />
+      <textarea v-model="responseMessage" name="message"></textarea>
+      <!-- Other input fields if needed -->
+      <button type="submit" :disabled="sending">Send Email</button>
+    </form>
+    </div>
+    </section>
+  </main>
 </template>
 
 <script>
 import ChatBotResponseService from "../services/ChatbotResponseService";
 import LinkedInService from "../services/LinkedInService";
+import emailjs from "emailjs-com";
 
+// Initialize EmailJS with your user ID
+emailjs.init("wKoUGtuY-Z0xMUnPc");
 export default {
   name: "ChatBox",
 
@@ -195,17 +212,20 @@ export default {
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
-      suggestionSets: [
-        "define java",
-        "javascript array",
-        "what are joins in SQL",
-      ],
+      suggestionSets: [],
       selectedSuggestionSetIndex: 0,
+      formData: {
+        //object sent to emailjs
+        to_name: "abdishirdon@gmail.com", 
+        message: "cats",
+      },
+      sending: false,
     };
   },
   mounted() {
     // When the component is mounted(fully compiled), initialize the speech recognition
     this.initializeRecognition();
+    this.fetchSuggestions();
   },
   methods: {
     // Method to initialize speech recognition
@@ -290,8 +310,7 @@ export default {
       this.isSpeaking = false;
       this.speech.cancel();
     },
-
-    handleSuggestionButton() {
+     fetchSuggestions() {
       const selectedSuggestions =
       this.suggestionSets[this.selectedSuggestionSetIndex];
       this.variableContext = selectedSuggestions.join(" ");
@@ -310,9 +329,10 @@ export default {
     //this method below send the suggested question by
     // using the send message method
     //suggestion is being passed here getting the information from the template
-    selectedSuggestions(suggestion) {
+    async selectedSuggestions(suggestion) {
       this.message = suggestion;
       this.sendMessage();
+      this.fetchSuggestions();
     },
     sendMessage() {
       const message = this.message;
@@ -330,16 +350,30 @@ export default {
 
       if (message.includes("job")) {
         LinkedInService.getJob(message).then((response) => {
-          console.log(response.data.data[0].url);
-          let linkedJob =
-            `<a href = "${response.data.data[0].url}">` +
-            "click here for jobs</a>";
+          let linkedJobs = "";
+          response.data.data.forEach((item) => {
+            linkedJobs += `<a href="${item.url}" target="_blank">${item.title}</a><br>`;
+          });
           this.messages.unshift({
-            text: linkedJob,
-            author: "response-box", //this is coming from the chatbot as a response.
+            text: 'here are some jobs, reply YES if you want us to email them to you<br>' + linkedJobs,
+            author: "response-box",
           });
         });
-      } else {
+      console.log(this.messages);
+      } 
+      else if (message.includes("YES") || message.includes("yes") && this.messages[1].text.includes("job")){
+        
+        this.messages.unshift({
+            text: 'what is your email?',
+            author: "response-box",
+          });
+      }
+      else if (message.includes("@") && this.messages[1].text.includes("email")){
+        console.log(this.messages[0])
+        this.formData = this.messages[0].text;
+        this.sendEmail()
+      }
+       else{
         //get normal response
         ChatBotResponseService.getChatbotResponse(
           message,
@@ -348,12 +382,11 @@ export default {
         )
           .then((responseArray) => {
             //after a response comes back from the server we take
-            console.log(responseArray);
+            console.log(this.messages[0].text)
             this.subjectContext = responseArray.data[1];
             this.topicContext = responseArray.data[2];
             this.responseMessage = responseArray.data[0];
             this.messages.unshift({
-              //
               text: responseArray.data[0], //response from server
 
               author: "response-box", //this is coming from the chatbot as a response.
@@ -363,6 +396,24 @@ export default {
             console.error(err);
           });
       }
+    },
+    sendEmail() {
+      //emailjs send email method
+      this.sending = true;
+      const serviceID = "default_service";
+      const templateID = "template_qjk5gaf";
+      const formElement = this.$refs.hiddenForm;
+
+      emailjs
+        .sendForm(serviceID, templateID, formElement)
+        .then(() => {
+          this.sending = false;
+          alert("Sent!");
+        })
+        .catch((err) => {
+          this.sending = false;
+          alert(JSON.stringify(err));
+        });
     },
   },
 };
@@ -611,7 +662,6 @@ button {
   padding-top: 200;
   display: flex;
 }
-
 .btn-wrapper {
   height: 3.5rem;
   width: 3.5rem;
