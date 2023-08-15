@@ -2,14 +2,18 @@
   <main class="rootTemplateTag">
     <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
-      <div class="vertical-buttons">
-        <button
-          class="custom-button"
-          @click="handleSuggestionButton()"
-          v-if="subjectContext != '0'"
-        >
-          {{ variableContext }}
-        </button>
+      <div class="suggestion-container">
+        <div class="vertical-buttons">
+          <button
+            class="suggestion-button"
+            v-for="(suggestion, index) in suggestionSets"
+            :key="index"
+            :class="{ selected: index === selectedSuggestionSetIndex }"
+            @click="selectedSuggestions(suggestion)"
+          >
+            {{ suggestion }}
+          </button>
+        </div>
       </div>
       <ul class="chat-box-list">
         <li v-if="messages.length == 0" class="message-content">
@@ -91,8 +95,7 @@
         </li>
       </ul>
       <!-- text to speech/voice -->
-      <div class="voiceAndText">
-      </div>
+      <div class="voiceAndText"></div>
     </section>
 
     <div class="chat-input-bar">
@@ -143,7 +146,6 @@
         </svg>
       </button>
 
-      <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
 
       <!-- SEND BUTTON -->
       <button
@@ -169,12 +171,13 @@
     </div>
   </section>
     <!-- div email form temp here -->
+    <!-- if this isnt here, email js doesnt work -->
     <section class="sectionForEmailForm">
       <div class="emailForm">
         <form @submit.prevent="sendEmail" ref="hiddenForm" id="hidden-form">
           <!-- now work on fixing the format part! -->
       <input v-model="formData.to_name" type="text" name="to_name" />
-      <textarea v-model="responseMessage" name="message"></textarea>
+      <textarea v-model="formData.message" name="message"></textarea>
       <!-- Other input fields if needed -->
       <button type="submit" :disabled="sending">Send Email</button>
     </form>
@@ -195,7 +198,6 @@ export default {
 
   data() {
     return {
-      cat: "4",
       message: "",
       messages: [], //all the messages in an array
       responseArrayFromServer: [], //remember to RENAME this later
@@ -205,26 +207,29 @@ export default {
       recognition: null,
       transcribedText: "",
       responseMessage: "", // response message displayed from server
-      switchValue: false,
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
+      suggestionSets: [],
+      selectedSuggestionSetIndex: 0,
 
+      sending: false,
+      emailMessageLinks: "",
       formData: {
         //object sent to emailjs
-        to_name: "abdishirdon@gmail.com", 
+        to_name: "noah@", 
         message: "cats",
       },
-      sending: false,
     };
   },
   mounted() {
     // When the component is mounted(fully compiled), initialize the speech recognition
     this.initializeRecognition();
+    this.fetchSuggestions();
+    this.scrollToBottom();
   },
   methods: {
     // Method to initialize speech recognition
-
     initializeRecognition() {
       // Check if SpeechRecognition is supported in the browser
       if (
@@ -291,7 +296,7 @@ export default {
           this.speech.cancel();
         } else {
           // Create a new SpeechSynthesisUtterance instance with the transcribed text
-                console.log(this.responseMessage);
+          console.log(this.responseMessage);
           const utterance = new SpeechSynthesisUtterance(this.responseMessage);
           // Use the browser's speech synthesis to speak the utterance
           this.speech.speak(utterance);
@@ -305,8 +310,11 @@ export default {
       this.isSpeaking = false;
       this.speech.cancel();
     },
+     fetchSuggestions() {
+      const selectedSuggestions =
+      this.suggestionSets[this.selectedSuggestionSetIndex];
+      this.variableContext = selectedSuggestions.join(" ");
 
-    handleSuggestionButton() {
       let longResult = ChatBotResponseService.getChatbotSuggestions(
         this.subjectContext
       );
@@ -318,6 +326,14 @@ export default {
         }
       );
     },
+    //this method below send the suggested question by
+    // using the send message method
+    //suggestion is being passed here getting the information from the template
+    async selectedSuggestions(suggestion) {
+      this.message = suggestion;
+      this.sendMessage();
+      this.fetchSuggestions();
+    },
     sendMessage() {
       const message = this.message;
 
@@ -328,9 +344,8 @@ export default {
       });
 
       this.message = "";
-      this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      this.scrollToBottom()
       //probably a good idea to have this if condition in a different method
-      this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
 
       if (message.includes("job")) {
         LinkedInService.getJob(message).then((response) => {
@@ -338,24 +353,31 @@ export default {
           response.data.data.forEach((item) => {
             linkedJobs += `<a href="${item.url}" target="_blank">${item.title}</a><br>`;
           });
+                this.scrollToBottom()
+
           this.messages.unshift({
             text: 'here are some jobs, reply YES if you want us to email them to you<br>' + linkedJobs,
             author: "response-box",
           });
+          this.formData.message = linkedJobs;
+
         });
-      console.log(this.messages);
+      this.scrollToBottom()
+
       } 
       else if (message.includes("YES") || message.includes("yes") && this.messages[1].text.includes("job")){
-        
         this.messages.unshift({
             text: 'what is your email?',
             author: "response-box",
           });
       }
       else if (message.includes("@") && this.messages[1].text.includes("email")){
-        console.log(this.messages[0])
-        this.formData = this.messages[0].text;
-        this.sendEmail()
+        console.log(this.formData.message + 'formDataLog');
+        this.formData.to_name= message;
+       this.$nextTick(() => {
+        this.sendEmail();
+    });      this.scrollToBottom()
+
       }
        else{
         //get normal response
@@ -375,11 +397,15 @@ export default {
 
               author: "response-box", //this is coming from the chatbot as a response.
             });
+                  this.scrollToBottom()
+
           })
           .catch((err) => {
             console.error(err);
           });
       }
+            this.scrollToBottom()
+
     },
     sendEmail() {
       //emailjs send email method
@@ -387,6 +413,7 @@ export default {
       const serviceID = "default_service";
       const templateID = "template_qjk5gaf";
       const formElement = this.$refs.hiddenForm;
+      console.log(formElement)
 
       emailjs
         .sendForm(serviceID, templateID, formElement)
@@ -399,6 +426,12 @@ export default {
           alert(JSON.stringify(err));
         });
     },
+    scrollToBottom() {
+    this.$nextTick(() => {
+      const chatbox = this.$refs.chatbox;
+      chatbox.scrollTop = chatbox.scrollHeight;
+    });
+  }
   },
 };
 </script>
@@ -532,6 +565,9 @@ div {
   border-radius: 25px; /* Half of the height to create the pill shape */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   margin-left: 1rem;
+  
+  /* Add this property to allow text wrapping */
+  white-space: normal;
 }
 
 input {
@@ -626,6 +662,7 @@ button {
 .send-btn-svg {
   height: 1.75rem;
   width: 1.75rem;
+  cursor: pointer;
 }
 
 .send-button {
@@ -669,5 +706,45 @@ button {
 }
 ::-webkit-scrollbar-corner {
   background: transparent; /* Replace 'your-color' with the desired background color */
+}
+
+.suggestion-container {
+  position: absolute;
+  bottom: 10vh;
+  left: 50%;
+  max-width: 90%;
+  //overflow-x: auto;
+  transform: translateX(-50%);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 2;
+}
+
+.vertical-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  // overflow-x: auto;
+}
+
+.suggestion-button {
+  padding: 5px 15px;
+  background-color: #192b8f;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+.sectionForEmailForm {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 </style>
