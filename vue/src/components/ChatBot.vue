@@ -181,7 +181,7 @@
         <form @submit.prevent="sendEmail" ref="hiddenForm" id="hidden-form">
           <!-- now work on fixing the format part! -->
       <input v-model="formData.to_name" type="text" name="to_name" />
-      <textarea v-model="responseMessage" name="message"></textarea>
+      <textarea v-model="formData.message" name="message"></textarea>
       <!-- Other input fields if needed -->
       <button type="submit" :disabled="sending">Send Email</button>
     </form>
@@ -221,9 +221,10 @@ export default {
       speech: window.speechSynthesis,
       suggestionSets: [],
       selectedSuggestionSetIndex: 0,
+      emailMessageLinks: "",
       formData: {
         //object sent to emailjs
-        to_name: "abdishirdon@gmail.com", 
+        to_name: "noah@", 
         message: "cats",
       },
       sending: false,
@@ -233,6 +234,7 @@ export default {
     // When the component is mounted(fully compiled), initialize the speech recognition
     this.initializeRecognition();
     this.fetchSuggestions();
+    this.scrollToBottom();
   },
   methods: {
     // Method to initialize speech recognition
@@ -367,9 +369,8 @@ export default {
       });
 
       this.message = "";
-      this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
+      this.scrollToBottom()
       //probably a good idea to have this if condition in a different method
-      this.$refs.chatbox.scrollTop = this.$refs.chatbox.scrollHeight;
 
       if (message.includes("job")) {
         LinkedInService.getJob(message).then((response) => {
@@ -377,24 +378,31 @@ export default {
           response.data.data.forEach((item) => {
             linkedJobs += `<a href="${item.url}" target="_blank">${item.title}</a><br>`;
           });
+                this.scrollToBottom()
+
           this.messages.unshift({
             text: 'here are some jobs, reply YES if you want us to email them to you<br>' + linkedJobs,
             author: "response-box",
           });
+          this.formData.message = linkedJobs;
+
         });
-      console.log(this.messages);
+      this.scrollToBottom()
+
       } 
       else if (message.includes("YES") || message.includes("yes") && this.messages[1].text.includes("job")){
-        
         this.messages.unshift({
             text: 'what is your email?',
             author: "response-box",
           });
       }
       else if (message.includes("@") && this.messages[1].text.includes("email")){
-        console.log(this.messages[0])
-        this.formData = this.messages[0].text;
-        this.sendEmail()
+        console.log(this.formData.message + 'formDataLog');
+        this.formData.to_name= message;
+       this.$nextTick(() => {
+        this.sendEmail();
+    });      this.scrollToBottom()
+
       }
        else{
         //get normal response
@@ -414,11 +422,15 @@ export default {
 
               author: "response-box", //this is coming from the chatbot as a response.
             });
+                  this.scrollToBottom()
+
           })
           .catch((err) => {
             console.error(err);
           });
       }
+            this.scrollToBottom()
+
     },
     sendEmail() {
       //emailjs send email method
@@ -426,6 +438,7 @@ export default {
       const serviceID = "default_service";
       const templateID = "template_qjk5gaf";
       const formElement = this.$refs.hiddenForm;
+      console.log(formElement)
 
       emailjs
         .sendForm(serviceID, templateID, formElement)
@@ -438,6 +451,12 @@ export default {
           alert(JSON.stringify(err));
         });
     },
+    scrollToBottom() {
+    this.$nextTick(() => {
+      const chatbox = this.$refs.chatbox;
+      chatbox.scrollTop = chatbox.scrollHeight;
+    });
+  }
   },
 };
 </script>
@@ -744,5 +763,13 @@ button {
   border: none;
   cursor: pointer;
   font-size: 14px;
+}
+.sectionForEmailForm {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 </style>
