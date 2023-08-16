@@ -1,5 +1,8 @@
 <template>
   <main class="rootTemplateTag">
+    <div class ="buttonTHing">
+    <button @click="getGptResponse">Generate Chat</button>
+  </div>
     <section class="chat-box">
     <section class="chat-box-list-container" ref="chatbox">
       <div class="suggestion-container">
@@ -104,8 +107,8 @@
         type="text"
         placeholder="Aa"
         v-model="message"
-        @keyup.enter="sendMessage"
-      />
+         @keyup.enter="message.trim() !== '' && sendMessage()"
+         @keyup.enter.prevent>
 
       <!-- RECORD BUTTON -->
       <button
@@ -146,7 +149,6 @@
         </svg>
       </button>
 
-      <!-- what is this line doing JM (:disabled="message.trim() === ''") -->
 
       <!-- SEND BUTTON -->
       <button
@@ -172,6 +174,7 @@
     </div>
   </section>
     <!-- div email form temp here -->
+    <!-- if this isnt here, email js doesnt work -->
     <section class="sectionForEmailForm">
       <div class="emailForm">
         <form @submit.prevent="sendEmail" ref="hiddenForm" id="hidden-form">
@@ -190,6 +193,7 @@
 import ChatBotResponseService from "../services/ChatbotResponseService";
 import LinkedInService from "../services/LinkedInService";
 import emailjs from "emailjs-com";
+import ChatGPTService from "../services/ChatGPTService.js"
 
 // Initialize EmailJS with your user ID
 emailjs.init("wKoUGtuY-Z0xMUnPc");
@@ -198,7 +202,6 @@ export default {
 
   data() {
     return {
-      cat: "4",
       message: "",
       messages: [], //all the messages in an array
       responseArrayFromServer: [], //remember to RENAME this later
@@ -208,30 +211,42 @@ export default {
       recognition: null,
       transcribedText: "",
       responseMessage: "", // response message displayed from server
-      switchValue: false,
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
       suggestionSets: [],
       selectedSuggestionSetIndex: 0,
+
+      sending: false,
       emailMessageLinks: "",
       formData: {
         //object sent to emailjs
         to_name: "noah@", 
         message: "cats",
       },
-      sending: false,
     };
   },
   mounted() {
     // When the component is mounted(fully compiled), initialize the speech recognition
     this.initializeRecognition();
-    this.fetchSuggestions();
     this.scrollToBottom();
   },
   methods: {
+    getGptResponse(x) {
+      ChatGPTService.generateChat(x)
+        .then(response => {
+          console.log(response.data.choices[0].message.content);
+           this.messages.unshift({
+            text: response.data.choices[0].message.content,
+            author: "response-box",
+          });
+          // Handle the response here, e.g., update a variable in the component's data
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     // Method to initialize speech recognition
-
     initializeRecognition() {
       // Check if SpeechRecognition is supported in the browser
       if (
@@ -312,22 +327,7 @@ export default {
       this.isSpeaking = false;
       this.speech.cancel();
     },
-     fetchSuggestions() {
-      const selectedSuggestions =
-      this.suggestionSets[this.selectedSuggestionSetIndex];
-      this.variableContext = selectedSuggestions.join(" ");
-
-      let longResult = ChatBotResponseService.getChatbotSuggestions(
-        this.subjectContext
-      );
-      console.log(longResult);
-      ChatBotResponseService.getChatbotSuggestions(this.subjectContext).then(
-        (response) => {
-          console.log(response.data);
-          this.variableContext = response.data;
-        }
-      );
-    },
+    
     //this method below send the suggested question by
     // using the send message method
     //suggestion is being passed here getting the information from the template
@@ -366,6 +366,9 @@ export default {
         });
       this.scrollToBottom()
 
+      }
+      else if (message.includes("code")) {
+        this.getGptResponse(message)
       } 
       else if (message.includes("YES") || message.includes("yes") && this.messages[1].text.includes("job")){
         this.messages.unshift({
