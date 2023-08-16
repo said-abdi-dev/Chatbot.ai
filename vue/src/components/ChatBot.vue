@@ -328,7 +328,6 @@ export default {
   },
   computed: {
     newSuggestionArray() {
-      console.log(this.suggestionArray)
       return this.suggestionArray;
     },
     localStoragePhoto() {
@@ -351,7 +350,7 @@ export default {
     watch: {
     message(newMessage) {
       if (newMessage.includes("send")) {
-        console.log("This message includes 'send'");
+        // console.log("This message includes 'send'");
         this.stopRecognition;
         this.sendMessage()
       }
@@ -405,12 +404,8 @@ async takePhoto() {
 
     // Save photo data to LocalStorage
     localStorage.setItem("userAvatar", this.capturedPhoto);
-    // console.log(this.capturedPhoto + ' ;capturedPhoto');
     // Update the component's photoDataUrl property
     this.photoDataUrl = this.capturedPhoto;
-
-    console.log(this.photoDataUrl + ' :photoDataurl')
-
     // Turn off the video stream after capturing the photo
     if (this.stream) {
       this.stream.getTracks().forEach((track) => track.stop());
@@ -440,9 +435,7 @@ async takePhoto() {
     // },
 
     setMessageAndSendMessage(suggestion) {
-      console.log(suggestion);
       this.message = suggestion;
-      console.log(this.message);
       this.$nextTick(() => {
         this.sendMessage();
       });
@@ -525,7 +518,6 @@ async takePhoto() {
             this.speech.cancel();
           } else {
             // Create a new SpeechSynthesisUtterance instance with the transcribed text
-            console.log(this.responseMessage);
             const utterance = new SpeechSynthesisUtterance(
               this.responseMessage
             );
@@ -598,7 +590,6 @@ async takePhoto() {
         )
           .then((responseArray) => {
             //after a response comes back from the server we take
-            console.log(this.messages[0].text);
             this.subjectContext = responseArray.data[1];
             this.topicContext = responseArray.data[2];
             this.responseMessage = responseArray.data[0];
