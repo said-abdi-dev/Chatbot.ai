@@ -295,7 +295,7 @@ export default {
     // this.fetchSuggestions();
     this.scrollToBottom();
   },
-    watch: {
+  watch: {
     message(newMessage) {
       if (newMessage) {
         this.getSuggestions(newMessage); // gets the suggestion as the user types
