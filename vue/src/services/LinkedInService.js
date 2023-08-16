@@ -12,6 +12,12 @@ const http = axios.create ({
 
 
 export default{
+     // getChatbotSuggestions(userCode) {
+    // gptMsgRequest = 'for this code, please write some comments, and then send me back the corrected code: ' + userCode
+    //     return axios.get(`/${gptMessageRequest}`)
+    // }
+
+
      getJob(jobType) {
           console.log(jobType);
          let data = {
@@ -20,5 +26,7 @@ export default{
           //this method was broken 
           return http.get('/Search', { params: data });   
      }
+
+     
      
 }

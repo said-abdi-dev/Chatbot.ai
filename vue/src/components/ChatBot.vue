@@ -3,7 +3,6 @@
     <section class="chat-box">
       <section class="chat-box-list-container" ref="chatbox">
         <div class="suggestion-container">
-          <button @click="getSuggestions()">suggestions plz</button>
           <div
             class="vertical-buttons"
             v-if="subjectContext !== '0' && topicContext == '0'"
@@ -62,17 +61,11 @@
                     @loadedmetadata="videoLoaded"
                   ></video>
                   <img
+                    class="userDefault localStored"
                     :src="photoDataUrl"
                     alt="Captured Photo"
-                    v-if="photoDataUrl"
                   />
                 </div>
-
-                <img
-                  class="userDefault"
-                  :src="img / photoDataUrl"
-                  alt="Profile Photo"
-                />
 
                 <button
                   class="circle-button"
@@ -87,20 +80,6 @@
                   v-if="showCamera && !photoDataUrl"
                 >
                   Take Photo
-                </button>
-                <button
-                  class="circle-button"
-                  @click="savePhoto"
-                  v-if="photoDataUrl"
-                >
-                  Save Photo
-                </button>
-                <button
-                  class="circle-button"
-                  @click="retakePhoto"
-                  v-if="photoDataUrl"
-                >
-                  Retake
                 </button>
               </div>
             </div>
@@ -296,7 +275,7 @@
           <input v-model="formData.to_name" type="text" name="to_name" />
           <textarea v-model="formData.message" name="message"></textarea>
           <!-- Other input fields if needed -->
-          <button type="submit" :disabled="sending">Send Email</button>
+          <button type="submit">Send Email</button>
         </form>
       </div>
     </section>
@@ -328,12 +307,13 @@ export default {
       isSpeaking: false,
       speech: window.speechSynthesis,
       suggestionArray: ["a", "b", "c"],
-
       sending: null,
-
       stream: null,
-      photoDataUrl: this.localStorage.getUserMedia(this.caputuredPhoto),
+
+      photoDataUrl: null,
+
       showCamera: false,
+
       selectedSuggestionSetIndex: 0,
       emailMessageLinks: "",
       formData: {
@@ -357,6 +337,13 @@ export default {
     // this.fetchSuggestions();
     this.scrollToBottom();
   },
+    watch: {
+    message(newMessage) {
+      if (newMessage) {
+        this.getSuggestions(newMessage); // gets the suggestion as the user types
+      }
+    }
+  },
   methods: {
     async toggleCamera() {
       this.showCamera = !this.showCamera;
@@ -377,33 +364,36 @@ export default {
         }
       }
     },
-    async takePhoto() {
-      try {
-        const videoElement = this.$refs.video;
+async takePhoto() {
+  try {
+    const videoElement = this.$refs.video;
+    console.log("reached" + "takePhoto")
+    // Pause the video to freeze the frame
+    videoElement.pause();
 
-        // Pause the video to freeze the frame
-        videoElement.pause();
+    const canvas = document.createElement("canvas");
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-        const canvas = document.createElement("canvas");
-        canvas.width = videoElement.videoWidth;
-        canvas.height = videoElement.videoHeight;
-        const context = canvas.getContext("2d");
-        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+    this.capturedPhoto = canvas.toDataURL("image/png");
 
-        this.caputuredPhoto = canvas.toDataURL("avatar/png");
+    // Save photo data to LocalStorage
+    localStorage.setItem("userAvatar", this.capturedPhoto);
 
-        // Save photo data to LocalStorage
-        localStorage.setItem("userAvatar", this.caputuredPhoto);
-        this.photoDataUrl = this.localStorage.getUserMedia(this.caputuredPhoto);
+    // Update the component's photoDataUrl property
+    this.photoDataUrl = this.capturedPhoto;
 
-        // Turn off the video stream after capturing the photo
-        if (this.stream) {
-          this.stream.getTracks().forEach((track) => track.stop());
-        }
-      } catch (error) {
-        console.error("Error capturing photo:", error);
-      }
-    },
+    // Turn off the video stream after capturing the photo
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => track.stop());
+    }
+  } catch (error) {
+    console.error("Error capturing photo:", error);
+  }
+},
+
 
     // retakePhoto() {
     //   this.photoDataUrl = null;
@@ -411,11 +401,11 @@ export default {
     //   const videoElement = this.$refs.video;
     //   videoElement.play();
     // },
-    // videoLoaded() {
-    //   // Video loaded, start playing
-    //   const videoElement = this.$refs.video;
-    //   videoElement.play();
-    // },
+    videoLoaded() {
+      // Video loaded, start playing
+      const videoElement = this.$refs.video;
+      videoElement.play();
+    },
 
     // beforeUnmount() {
     //   if (this.stream) {
@@ -599,18 +589,12 @@ export default {
       }
       this.scrollToBottom();
     },
-    getSuggestions() {
-      console.log(this.suggestionArray);
-      ChatBotResponseService.getChatbotSuggestions(this.messages[1].text).then(
-        (responseArray) => {
-          this.suggestionArray[0] = responseArray.data[0];
-          this.suggestionArray[1] = responseArray.data[1];
-          this.suggestionArray[2] = responseArray.data[2];
-          console.log(this.suggestionArray);
-        }
-      );
-    },
 
+    getSuggestions(message) {
+      ChatBotResponseService.getChatbotSuggestions(message).then((responseArray) => {
+        this.suggestionArray = responseArray.data; // Update suggestions directly
+      });
+    },
     sendEmail() {
       //emailjs send email method
       this.sending = true;
