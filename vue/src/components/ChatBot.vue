@@ -541,7 +541,7 @@ div {
   width: auto;
   text-align: left;
   font-size: 1.3rem;
-  background-color: #c27c0e;
+  background-color: #1436cc;
   border-radius: 12px;
   color: #f0f0f0;
   align-self: flex-end;
