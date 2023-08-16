@@ -3,13 +3,17 @@
     <section class="chat-box">
       <section class="chat-box-list-container" ref="chatbox">
         <div class="suggestion-container">
-          <div class="vertical-buttons">
+          <button @click="getSuggestions()">suggestions plz</button>
+          <div
+            class="vertical-buttons"
+            v-if="subjectContext !== '0' && topicContext == '0'"
+          >
             <button
               class="suggestion-button"
-              v-for="(suggestion, index) in suggestionSets"
+              v-for="(suggestion, index) in newSuggestionArray"
               :key="index"
               :class="{ selected: index === selectedSuggestionSetIndex }"
-              @click="selectedSuggestions(suggestion)"
+              @click="setMessageAndSendMessage(suggestion)"
             >
               {{ suggestion }}
             </button>
@@ -271,7 +275,7 @@ export default {
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
-      suggestionSets: [],
+      suggestionArray: ['a','b','c'],
       selectedSuggestionSetIndex: 0,
       emailMessageLinks: "",
       formData: {
@@ -281,13 +285,26 @@ export default {
       },
     };
   },
+  computed: {
+    newSuggestionArray(){
+      return this.suggestionArray;
+    }
+  },
   mounted() {
     // When the component is mounted(fully compiled), initialize the speech recognition
     this.initializeRecognition();
-    this.fetchSuggestions();
+    // this.fetchSuggestions();
     this.scrollToBottom();
   },
   methods: {
+    setMessageAndSendMessage(suggestion) {
+      console.log(suggestion)
+    this.message = suggestion;
+    console.log(this.message)
+    this.$nextTick(() => {
+        this.sendMessage();
+      });
+  },
     // Method to initialize speech recognition
     initializeRecognition() {
       // Check if SpeechRecognition is supported in the browser
@@ -369,30 +386,6 @@ export default {
       this.isSpeaking = false;
       this.speech.cancel();
     },
-    fetchSuggestions() {
-      const selectedSuggestions =
-        this.suggestionSets[this.selectedSuggestionSetIndex];
-      this.variableContext = selectedSuggestions.join(" ");
-
-      let longResult = ChatBotResponseService.getChatbotSuggestions(
-        this.subjectContext
-      );
-      console.log(longResult);
-      ChatBotResponseService.getChatbotSuggestions(this.subjectContext).then(
-        (response) => {
-          console.log(response.data);
-          this.variableContext = response.data;
-        }
-      );
-    },
-    //this method below send the suggested question by
-    // using the send message method
-    //suggestion is being passed here getting the information from the template
-    async selectedSuggestions(suggestion) {
-      this.message = suggestion;
-      this.sendMessage();
-      this.fetchSuggestions();
-    },
     sendMessage() {
       const message = this.message;
 
@@ -467,6 +460,17 @@ export default {
       }
       this.scrollToBottom();
     },
+    getSuggestions() {
+      console.log(this.suggestionArray)
+      ChatBotResponseService.getChatbotSuggestions(this.messages[1].text).then((responseArray)=>{
+        this.suggestionArray[0] = responseArray.data[0]
+        this.suggestionArray[1] = responseArray.data[1]
+        this.suggestionArray[2] = responseArray.data[2]
+        console.log(this.suggestionArray)
+      })
+  
+    },
+
     sendEmail() {
       //emailjs send email method
       this.sending = true;

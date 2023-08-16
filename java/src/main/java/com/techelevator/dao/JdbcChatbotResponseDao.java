@@ -95,14 +95,30 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
         return new String[]{userInput, foundSubject, foundTopic};
     }
 
+<<<<<<< HEAD
+    public List<String> getSuggestions(String input) {
+        List<String> suggestionsList = new ArrayList<>(); // Use an ArrayList to store suggestions
+=======
     public String getSuggestions(ChatbotResponse chatbotResponse) {
         List<String> suggestionsList = new ArrayList<>();
+>>>>>>> 33610b9a32bb29b8fe49edd6f9ea9da61e9ca100
 
         String sqlSuggestions = "SELECT topic_name, subject_name\n" +
                 "FROM topics\n" +
                 "WHERE subject_name = ?\n" +
                 "LIMIT 3;";
 
+<<<<<<< HEAD
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSuggestions, input);
+
+        while (rows.next()) {
+            String topicName = rows.getString("topic_name");
+            suggestionsList.add(topicName); // Add each suggestion to the ArrayList using the add() method
+        }
+
+        return suggestionsList;
+}
+=======
         SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSuggestions, chatbotResponse.getVariableContext());
 
         while (rows.next()) {
@@ -128,4 +144,5 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
         }
         return response;
     }
+>>>>>>> 33610b9a32bb29b8fe49edd6f9ea9da61e9ca100
 }
