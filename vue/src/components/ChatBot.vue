@@ -289,6 +289,7 @@
 import ChatBotResponseService from "../services/ChatbotResponseService";
 import LinkedInService from "../services/LinkedInService";
 import emailjs from "emailjs-com";
+import ChatGPTService from "../services/ChatGPTService.js"
 
 // Initialize EmailJS with your user ID
 emailjs.init("wKoUGtuY-Z0xMUnPc");
@@ -490,6 +491,7 @@ async takePhoto() {
       if (this.recognition) {
         this.recognition.start(); // Start speech recognition
       }
+      console.log('the user stopped speaking now')
     },
 
     stopRecognition() {
@@ -505,7 +507,8 @@ async takePhoto() {
           this.recognition.start(); // Start speech recognition
           this.buttonChanging = false; // Reset buttonChanging after the delay
         }
-      }, 2000); // Delay of 2 seconds
+      }, 2000);
+       // Delay of 2 seconds
 
       console.log("reached speakResponse");
       this.isSpeaking = true;
@@ -533,6 +536,21 @@ async takePhoto() {
       this.isSpeaking = false;
       this.speech.cancel();
     },
+    getGptResponse(x) {
+      ChatGPTService.generateChat(x)
+        .then(response => {
+          console.log(response.data.choices[0].message.content);
+           this.messages.unshift({
+            text: response.data.choices[0].message.content,
+            author: "response-box",
+          });
+          // Handle the response here, e.g., update a variable in the component's data
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
     sendMessage() {
       const message = this.message;
 
@@ -563,6 +581,9 @@ async takePhoto() {
           this.formData.message = linkedJobs;
         });
         this.scrollToBottom();
+      }
+      else if (message.includes("code")){
+        this.getGptResponse(message)
       } else if (
         message.includes("YES") ||
         (message.includes("yes") && this.messages[1].text.includes("job"))
@@ -605,6 +626,9 @@ async takePhoto() {
           });
       }
       this.scrollToBottom();
+      //audiotracking needs to be disabled on submit, but this caused alot of errors so i commented it out
+      // this.audioTracking=false;
+      
     },
 
     getSuggestions(message) {

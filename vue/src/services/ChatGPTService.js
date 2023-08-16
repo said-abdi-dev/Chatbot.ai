@@ -9,7 +9,7 @@ generateChat(userCode) {
         "https://api.openai.com/v1/chat/completions",
         {
           model: "gpt-3.5-turbo", 
-          messages: [{ role: "user", content: "please interpret this code for me, limit the response to 1000 characters" + userCode }],
+          messages: [{ role: "user", content: "please interpret this code for me, limit the response to 1000 characters " + userCode }],
           temperature: 0.7,
         },
         {
