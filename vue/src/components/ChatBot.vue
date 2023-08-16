@@ -120,11 +120,13 @@
               v-if="message.author === 'request-box'"
             >
               <div class="bot-image">
-                <img
-                  src="img/userIcon.png"
+                <!-- we need to change this based on stuff -->
+                <img 
+                  :src="getImageSource"
                   alt="User Icon"
                   class="message-icon"
                 />
+                
               </div>
               <div class="message-container">
                 <div class="message-content">
@@ -330,6 +332,13 @@ export default {
     localStoragePhoto() {
       return localStorage.getItem("capturedPhoto");
     },
+    getImageSource() {
+      if (this.photoDataUrl !== null) {
+        return this.photoDataUrl; // Set the new image source here
+      } else {
+        return "img/userIcon.png"; // Default image source
+      }
+    },
   },
   mounted() {
     // When the component is mounted(fully compiled), initialize the speech recognition
@@ -345,6 +354,14 @@ export default {
     }
   },
   methods: {
+    // setProfilePhoto(){
+    //   if (this.photoDataUrl == null) {
+
+    //   }
+    //   else (this.photoDataUrl != null){
+
+    //   }
+    // }
     async toggleCamera() {
       this.showCamera = !this.showCamera;
 
@@ -381,9 +398,11 @@ async takePhoto() {
 
     // Save photo data to LocalStorage
     localStorage.setItem("userAvatar", this.capturedPhoto);
-
+    // console.log(this.capturedPhoto + ' ;capturedPhoto');
     // Update the component's photoDataUrl property
     this.photoDataUrl = this.capturedPhoto;
+
+    console.log(this.photoDataUrl + ' :photoDataurl')
 
     // Turn off the video stream after capturing the photo
     if (this.stream) {
