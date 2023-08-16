@@ -3,7 +3,6 @@
     <section class="chat-box">
       <section class="chat-box-list-container" ref="chatbox">
         <div class="suggestion-container">
-          <button @click="getSuggestions()">suggestions plz</button>
           <div
             class="vertical-buttons"
             v-if="subjectContext !== '0' && topicContext == '0'"
@@ -296,6 +295,13 @@ export default {
     // this.fetchSuggestions();
     this.scrollToBottom();
   },
+    watch: {
+    message(newMessage) {
+      if (newMessage) {
+        this.getSuggestions(newMessage); // gets the suggestion as the user types
+      }
+    }
+  },
   methods: {
     setMessageAndSendMessage(suggestion) {
       console.log(suggestion)
@@ -460,17 +466,11 @@ export default {
       }
       this.scrollToBottom();
     },
-    getSuggestions() {
-      console.log(this.suggestionArray)
-      ChatBotResponseService.getChatbotSuggestions(this.messages[1].text).then((responseArray)=>{
-        this.suggestionArray[0] = responseArray.data[0]
-        this.suggestionArray[1] = responseArray.data[1]
-        this.suggestionArray[2] = responseArray.data[2]
-        console.log(this.suggestionArray)
-      })
-  
+    getSuggestions(message) {
+      ChatBotResponseService.getChatbotSuggestions(message).then((responseArray) => {
+        this.suggestionArray = responseArray.data; // Update suggestions directly
+      });
     },
-
     sendEmail() {
       //emailjs send email method
       this.sending = true;
