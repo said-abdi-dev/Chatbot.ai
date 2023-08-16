@@ -274,7 +274,7 @@ export default {
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
-      suggestionArray: ['a','b','c'],
+      suggestionArray: [],
       selectedSuggestionSetIndex: 0,
       emailMessageLinks: "",
       formData: {
