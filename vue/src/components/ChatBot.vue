@@ -244,7 +244,7 @@
           <input v-model="formData.to_name" type="text" name="to_name" />
           <textarea v-model="formData.message" name="message"></textarea>
           <!-- Other input fields if needed -->
-          <button type="submit" :disabled="sending">Send Email</button>
+          <button type="submit">Send Email</button>
         </form>
       </div>
     </section>
