@@ -1,11 +1,14 @@
 <template>
   <main class="rootTemplateTag">
+    <div class ="buttonTHing">
+    <button @click="getGptResponse">Generate Chat</button>
+  </div>
     <section class="chat-box">
       <section class="chat-box-list-container" ref="chatbox">
         <div class="suggestion-container">
           <div
             class="vertical-buttons"
-            v-if="subjectContext !== '0' && topicContext == '0'"
+            v-if="subjectContext !== '0'"
           >
             <button
               class="suggestion-button"
@@ -254,6 +257,7 @@
 import ChatBotResponseService from "../services/ChatbotResponseService";
 import LinkedInService from "../services/LinkedInService";
 import emailjs from "emailjs-com";
+import ChatGPTService from "../services/ChatGPTService.js"
 
 // Initialize EmailJS with your user ID
 emailjs.init("wKoUGtuY-Z0xMUnPc");
@@ -276,6 +280,8 @@ export default {
       speech: window.speechSynthesis,
       suggestionArray: [],
       selectedSuggestionSetIndex: 0,
+
+      sending: false,
       emailMessageLinks: "",
       formData: {
         //object sent to emailjs
@@ -292,7 +298,6 @@ export default {
   mounted() {
     // When the component is mounted(fully compiled), initialize the speech recognition
     this.initializeRecognition();
-    // this.fetchSuggestions();
     this.scrollToBottom();
   },
   watch: {
@@ -303,14 +308,29 @@ export default {
     }
   },
   methods: {
-    setMessageAndSendMessage(suggestion) {
+    getGptResponse(x) {
+      ChatGPTService.generateChat(x)
+        .then(response => {
+          console.log(response.data.choices[0].message.content);
+           this.messages.unshift({
+            text: response.data.choices[0].message.content,
+            author: "response-box",
+          });
+          // Handle the response here, e.g., update a variable in the component's data
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+       setMessageAndSendMessage(suggestion) {
       console.log(suggestion)
     this.message = suggestion;
     console.log(this.message)
     this.$nextTick(() => {
         this.sendMessage();
       });
-  },
+    },
+
     // Method to initialize speech recognition
     initializeRecognition() {
       // Check if SpeechRecognition is supported in the browser
@@ -421,11 +441,13 @@ export default {
           });
           this.formData.message = linkedJobs;
         });
-        this.scrollToBottom();
-      } else if (
-        message.includes("YES") ||
-        (message.includes("yes") && this.messages[1].text.includes("job"))
-      ) {
+      this.scrollToBottom()
+
+      }
+      else if (message.includes("code")) {
+        this.getGptResponse(message)
+      } 
+      else if (message.includes("YES") || message.includes("yes") && this.messages[1].text.includes("job")){
         this.messages.unshift({
           text: "what is your email?",
           author: "response-box",
