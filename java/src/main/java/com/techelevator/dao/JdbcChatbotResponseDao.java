@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Arrays;
+import java.util.Collections;
 
 @Component
 public class JdbcChatbotResponseDao implements ChatbotResponseDao {
@@ -25,39 +26,26 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
 
     @Override
     public String[] getResponseFromInput(ChatbotResponse chatbotResponse) {
-
         String[] returnResponseAndContext = new String[3];
         String response = "";
 
-        returnResponseAndContext[1] = chatbotResponse.getSubjectContext();
-        returnResponseAndContext[2] = chatbotResponse.getTopicContext();
+        // Extract context from chatbotResponse
+        String usersSubjectContext = chatbotResponse.getSubjectContext();
+        String usersTopicContext = chatbotResponse.getTopicContext();
+        String userInput = chatbotResponse.getUserInput();
 
+        // Check for subject and topic
+        returnResponseAndContext = checkForSubjectAndTopic(usersSubjectContext, usersTopicContext, userInput);
+        String foundSubject = returnResponseAndContext[1];
+        String foundTopic = returnResponseAndContext[2];
 
-        //changes the values within the array as desired based on checks
-        returnResponseAndContext = checkForSubjectAndTopic(chatbotResponse.getSubjectContext(), chatbotResponse.getTopicContext(), chatbotResponse.getUserInput());
-    //    [input, subject, topic. response_id]
-        chatbotResponse.setSubjectContext(returnResponseAndContext[1]);
-        chatbotResponse.setTopicContext(returnResponseAndContext[2]);
+        // Set updated context in chatbotResponse
+        chatbotResponse.setSubjectContext(foundSubject);
+        chatbotResponse.setTopicContext(foundTopic);
 
-        //valid subject & topic
-        if (!returnResponseAndContext[1].equals("0") && !returnResponseAndContext[2].equals("0")) {
-            String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
+        // Generate response based on context
+        response = generateResponse(foundSubject, foundTopic);
 
-            response =  jdbcTemplate.queryForObject(sql, String.class, returnResponseAndContext[1],returnResponseAndContext[2]);
-        //NO subject, and VALID topic
-        } else if (returnResponseAndContext[1].equals("0") && !returnResponseAndContext[2].equals("0") ) {
-            response = "I'm sorry, I don't have quite enough information about what you're looking to learn about." +
-            "Could you be a little more specific? Or try wording your question in a different way.";
-        //VALID topic, NO topic
-        } else if (!returnResponseAndContext[1].equals("0") && returnResponseAndContext[2].equals("0")) {
-            response = "I can see you're asking about " + returnResponseAndContext[1] + ", but could you a little " +
-            "more specific what you'd like to know about " + returnResponseAndContext[1] + "?";
-        }
-        //INVALID subject && INVALID topic
-        else {
-            response = "We couldn't understand your request. We recommend asking questions about a certain subject, " +
-            "and a topic of that subject. Such as 'The definition of JavaScript' or 'What are some features of Vue?'";
-        }
         returnResponseAndContext[0] = response;
         return returnResponseAndContext;
     }
@@ -108,22 +96,40 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
         return new String[]{userInput, foundSubject, foundTopic};
     }
 
-    public String getSuggestions(ChatbotResponse chatbotResponse) {
-    List<String> suggestionsList = new ArrayList<>(); 
+    public List<String> getSuggestions(String input) {
+        List<String> suggestionsList = new ArrayList<>(); // Use an ArrayList to store suggestions
 
-    String sqlSuggestions = "SELECT topic_name, subject_name\n" +
-            "FROM topics\n" +
-            "WHERE subject_name = ?\n" +
-            "LIMIT 3;";
+        String sqlSuggestions = "SELECT topic_name, subject_name\n" +
+                "FROM topics\n" +
+                "WHERE subject_name = ?\n" +
+                "LIMIT 3;";
 
-    SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSuggestions, chatbotResponse.getVariableContext());
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSuggestions, input);
 
-    while (rows.next()) {
-        String topicName = rows.getString("topic_name");
-        suggestionsList.add(topicName); // adding each suggestion to the list
-    }
+        while (rows.next()) {
+            String topicName = rows.getString("topic_name");
+            suggestionsList.add(topicName); // Add each suggestion to the ArrayList using the add() method
+        }
 
-    String suggestions = String.join(" ", suggestionsList); // this Joins the list elements with a space
-    return suggestions;
+        Collections.shuffle(suggestionsList); // shuffle the list
+
+        return suggestionsList;
 }
+
+    private String generateResponse(String foundSubject, String foundTopic) {
+        String response = "";
+
+        if (!foundSubject.equals("0") && !foundTopic.equals("0")) {
+            // Retrieve response from the database
+            String sql = "SELECT response FROM responses WHERE response_id = (SELECT response_id FROM topics WHERE subject_name = ? AND topic_name = ?)";
+            response = jdbcTemplate.queryForObject(sql, String.class, foundSubject, foundTopic);
+        } else if (foundSubject.equals("0") && !foundTopic.equals("0")) {
+            response = "I'm sorry, I don't have quite enough information...";
+        } else if (!foundSubject.equals("0") && foundTopic.equals("0")) {
+            response = "I can see you're asking about " + foundSubject + ", but could you be a little more specific?";
+        } else {
+            response = "We couldn't understand your request. We recommend asking questions about a certain subject and topic.";
+        }
+        return response;
+    }
 }

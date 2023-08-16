@@ -20,7 +20,8 @@ export default new Vuex.Store({
   state: {
     token: currentToken || '',
     user: currentUser || {},
-    conversationHistory: [{text:"starterValue"}]
+    conversationHistory: [{text:"starterValue"}],
+    allMessages: []
   },
   mutations: {
     SET_AUTH_TOKEN(state, token) {
@@ -39,8 +40,8 @@ export default new Vuex.Store({
       state.user = {};
       axios.defaults.headers.common = {};
     },
-    ADD_TO_CONV_HISTORY(state, message) {
-      state.conversationHistory.unshift(message);
+    ADD_TO_ALL_MESSAGES(state, messageObject) {
+      state.allMessages.unshift(messageObject);
     }
   }
 })
