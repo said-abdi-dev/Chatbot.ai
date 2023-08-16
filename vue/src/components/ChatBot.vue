@@ -2,22 +2,6 @@
   <main class="rootTemplateTag">
     <section class="chat-box">
       <section class="chat-box-list-container" ref="chatbox">
-        <div class="suggestion-container">
-          <div
-            class="vertical-buttons"
-            v-if="subjectContext !== '0' && topicContext == '0'"
-          >
-            <button
-              class="suggestion-button"
-              v-for="(suggestion, index) in newSuggestionArray"
-              :key="index"
-              :class="{ selected: index === selectedSuggestionSetIndex }"
-              @click="setMessageAndSendMessage(suggestion)"
-            >
-              {{ suggestion }}
-            </button>
-          </div>
-        </div>
         <ul class="chat-box-list">
           <li v-if="messages.length == 0" class="message response-box">
             <div class="text-and-image-container">
@@ -195,6 +179,23 @@
         </ul>
         <!-- text to speech/voice -->
         <div class="voiceAndText"></div>
+        <div class="suggestion-container"
+        v-if="subjectContext!=='0'">
+          <div
+            class="vertical-buttons"
+            v-if="subjectContext !== '0'"
+          >
+            <button
+              class="suggestion-button"
+              v-for="(suggestion,index) in newSuggestionArray"
+              :key="index"
+              :class="{ selected: index === selectedSuggestionSetIndex }"
+              @click="setMessageAndSendMessage(suggestion)"
+            >
+              {{ suggestion}}
+            </button>
+          </div>
+        </div>
       </section>
 
       <div class="chat-input-bar">
@@ -327,6 +328,7 @@ export default {
   },
   computed: {
     newSuggestionArray() {
+      console.log(this.suggestionArray)
       return this.suggestionArray;
     },
     localStoragePhoto() {
@@ -348,10 +350,15 @@ export default {
   },
     watch: {
     message(newMessage) {
+      if (newMessage.includes("send")) {
+        console.log("This message includes 'send'");
+        this.stopRecognition;
+        this.sendMessage()
+      }
       if (newMessage) {
         this.getSuggestions(newMessage); // gets the suggestion as the user types
       }
-    }
+    },
   },
   methods: {
     // setProfilePhoto(){
@@ -752,7 +759,7 @@ div {
   border-radius: 10px;
 }
 .chat-box-list li {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .chat-input-bar {
@@ -919,12 +926,11 @@ button {
 }
 
 .suggestion-container {
-  position: absolute;
   bottom: 10vh;
   left: 50%;
   max-width: 90%;
   //overflow-x: auto;
-  transform: translateX(-50%);
+  // transform: translateX(-50%);
   background-color: white;
   border-radius: 10px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -942,12 +948,13 @@ button {
 }
 
 .suggestion-button {
-  padding: 5px 15px;
-  background-color: #192b8f;
+  padding: 20px 15px;
+  background-color: #33414b;
   border-radius: 10px;
   border: none;
   cursor: pointer;
   font-size: 14px;
+  color:white
 }
 .sectionForEmailForm {
   position: absolute;
