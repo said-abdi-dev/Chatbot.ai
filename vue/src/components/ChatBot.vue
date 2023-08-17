@@ -19,76 +19,6 @@
                 would like a profile picture, hit the camera button, or select
                 your default avatar at any time to add one!
               </p>
-              <br /><br />
-              <p>
-                You can ask me anything you would like, but I'll help you out on
-                how to utilize me to your advantage. You can ask me about jobs,
-                just be sure to ask me about a job title or skill in the message
-                so that I can find you the most accurate jobs you are looking to
-                find!
-              </p>
-              <br /><br />
-              <p>
-                You can also ask me about a variety of programming topics, like
-                programming languages, or concepts. If provided with enough
-                information of what you're looking to know, I will find you
-                information, as well as articles and videos so you can dig
-                deeper into the topic.
-              </p>
-              <!-- ACTIVATE CAMERA BUTTON -->
-              <div>
-                <div class="preview-box">
-                  <video
-                    ref="video"
-                    autoplay
-                    v-if="showCamera"
-                    @loadedmetadata="videoLoaded"
-                  ></video>
-                  <img
-                    class="userDefault localStored"
-                    :src="photoDataUrl"
-                    alt="Captured Photo"
-                  />
-                </div>
-
-                <!-- <button
-                  class="circle-button"
-                  @click="toggleCamera"
-                  v-if="!showCamera && !photoDataUrl"
-                >
-                  Take a Photo
-                </button> -->
-                <button
-                  class="circle-button"
-                  @click="takePhoto"
-                  v-if="showCamera && !photoDataUrl"
-                >
-                  Take Photo
-                </button>
-              </div>
-            </div>
-            <div class="btn-wrapper">
-              <svg
-                class="btn-standard"
-                @click="toggleCamera"
-                v-if="!showCamera && !photoDataUrl"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                />
-              </svg>
             </div>
           </li>
 
@@ -104,13 +34,12 @@
               v-if="message.author === 'request-box'"
             >
               <div class="bot-image">
-                <!-- we need to change this based on stuff -->
-                <img 
-                  :src="getImageSource"
+                <img
+                  :src="photoDataUrl ? photoDataUrl : '/img/userIcon.png'"
                   alt="User Icon"
                   class="message-icon"
+                  @click="!showCamera ? toggleCamera() : takePhoto()"
                 />
-                
               </div>
               <div class="message-container">
                 <div class="message-content">
@@ -176,23 +105,30 @@
               </button>
             </div>
           </li>
+          <li id="videoID" class="message request-box" v-if="showCamera">
+            <div class="preview-box">
+              <video
+                style="width: 100%; height: auto"
+                ref="video"
+                autoplay
+                @loadedmetadata="videoLoaded"
+                v-if="showCamera"
+              ></video>
+            </div>
+          </li>
         </ul>
         <!-- text to speech/voice -->
         <div class="voiceAndText"></div>
-        <div class="suggestion-container"
-        v-if="subjectContext!=='0'">
-          <div
-            class="vertical-buttons"
-            v-if="subjectContext !== '0'"
-          >
+        <div class="suggestion-container" v-if="subjectContext !== '0'">
+          <div class="vertical-buttons" v-if="subjectContext !== '0'">
             <button
               class="suggestion-button"
-              v-for="(suggestion,index) in newSuggestionArray"
+              v-for="(suggestion, index) in newSuggestionArray"
               :key="index"
               :class="{ selected: index === selectedSuggestionSetIndex }"
               @click="setMessageAndSendMessage(suggestion)"
             >
-              {{ suggestion}}
+              {{ suggestion }}
             </button>
           </div>
         </div>
@@ -289,7 +225,7 @@
 import ChatBotResponseService from "../services/ChatbotResponseService";
 import LinkedInService from "../services/LinkedInService";
 import emailjs from "emailjs-com";
-import ChatGPTService from "../services/ChatGPTService.js"
+import ChatGPTService from "../services/ChatGPTService.js";
 
 // Initialize EmailJS with your user ID
 emailjs.init("wKoUGtuY-Z0xMUnPc");
@@ -327,6 +263,9 @@ export default {
       },
     };
   },
+  created() {
+    this.setUserProfile();
+  },
   computed: {
     newSuggestionArray() {
       return this.suggestionArray;
@@ -348,12 +287,12 @@ export default {
     // this.fetchSuggestions();
     this.scrollToBottom();
   },
-    watch: {
+  watch: {
     message(newMessage) {
       if (newMessage.includes("send")) {
         // console.log("This message includes 'send'");
         this.stopRecognition;
-        this.sendMessage()
+        this.sendMessage();
       }
       if (newMessage) {
         this.getSuggestions(newMessage); // gets the suggestion as the user types
@@ -371,7 +310,6 @@ export default {
     // }
     async toggleCamera() {
       this.showCamera = !this.showCamera;
-
       if (this.showCamera) {
         try {
           this.stream = await navigator.mediaDevices.getUserMedia({
@@ -388,49 +326,44 @@ export default {
         }
       }
     },
-async takePhoto() {
-  try {
-    
-    const videoElement = this.$refs.video;
-    console.log("reached" + "takePhoto")
-    this.scrollToBottom();
-    // Pause the video to freeze the frame
-    videoElement.pause();
+    async takePhoto() {
+      try {
+        this.showCamera = !this.showCamera;
+        const videoElement = this.$refs.video;
+        // Pause the video to freeze the frame
+        videoElement.pause();
 
-    const canvas = document.createElement("canvas");
-    canvas.width = videoElement.videoWidth;
-    canvas.height = videoElement.videoHeight;
-    const context = canvas.getContext("2d");
-    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        const canvas = document.createElement("canvas");
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        const context = canvas.getContext("2d");
+        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-    this.capturedPhoto = canvas.toDataURL("image/png");
+        this.capturedPhoto = canvas.toDataURL("image/png");
 
-    // Save photo data to LocalStorage
-    localStorage.setItem("userAvatar", this.capturedPhoto);
-    // Update the component's photoDataUrl property
-    this.photoDataUrl = this.capturedPhoto;
-    // Turn off the video stream after capturing the photo
-    if (this.stream) {
-      this.stream.getTracks().forEach((track) => track.stop());
-    }
-  } catch (error) {
-    console.error("Error capturing photo:", error);
-  }
-},
+        // Save photo data to LocalStorage
+        localStorage.setItem("userAvatar", this.capturedPhoto);
+        // Update the component's photoDataUrl property
+        this.photoDataUrl = this.capturedPhoto;
+        // Turn off the video stream after capturing the photo
+        if (this.stream) {
+          this.stream.getTracks().forEach((track) => track.stop());
+        }
+      } catch (error) {
+        console.error("Error capturing photo:", error);
+      }
+    },
 
-
-    // retakePhoto() {
-    //   this.photoDataUrl = null;
-    //   this.showCamera = true;
-    //   const videoElement = this.$refs.video;
-    //   videoElement.play();
-    // },
     videoLoaded() {
-      // Video loaded, start playing
       const videoElement = this.$refs.video;
+      // Start playing the video
       videoElement.play();
     },
 
+    setUserProfile() {
+      this.photoDataUrl = localStorage.getItem("userAvatar");
+    },
+    // WHAT WAS THIS FOR BOYS?
     // beforeUnmount() {
     //   if (this.stream) {
     //     this.stream.getTracks().forEach(track => track.stop());
@@ -443,6 +376,7 @@ async takePhoto() {
         this.sendMessage();
       });
     },
+
     // Method to initialize speech recognition
     initializeRecognition() {
       // Check if SpeechRecognition is supported in the browser
@@ -493,7 +427,7 @@ async takePhoto() {
       if (this.recognition) {
         this.recognition.start(); // Start speech recognition
       }
-      console.log('the user stopped speaking now')
+      console.log("the user stopped speaking now");
     },
 
     stopRecognition() {
@@ -510,7 +444,7 @@ async takePhoto() {
           this.buttonChanging = false; // Reset buttonChanging after the delay
         }
       }, 2000);
-       // Delay of 2 seconds
+      // Delay of 2 seconds
 
       console.log("reached speakResponse");
       this.isSpeaking = true;
@@ -540,15 +474,15 @@ async takePhoto() {
     },
     getGptResponse(x) {
       ChatGPTService.generateChat(x)
-        .then(response => {
+        .then((response) => {
           console.log(response.data.choices[0].message.content);
-           this.messages.unshift({
+          this.messages.unshift({
             text: response.data.choices[0].message.content,
             author: "response-box",
           });
           // Handle the response here, e.g., update a variable in the component's data
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
     },
@@ -557,7 +491,6 @@ async takePhoto() {
       const message = this.message;
 
       this.messages.unshift({
-        //**we'll come back for this**
         text: message,
         author: "request-box", //this is coming from the user as a response.
       });
@@ -583,9 +516,8 @@ async takePhoto() {
           this.formData.message = linkedJobs;
         });
         this.scrollToBottom();
-      }
-      else if (message.includes("code")){
-        this.getGptResponse(message)
+      } else if (message.includes("code")) {
+        this.getGptResponse(message);
       } else if (
         message.includes("YES") ||
         (message.includes("yes") && this.messages[1].text.includes("job"))
@@ -635,13 +567,14 @@ async takePhoto() {
       this.scrollToBottom();
       //audiotracking needs to be disabled on submit, but this caused alot of errors so i commented it out
       // this.audioTracking=false;
-      
     },
 
     getSuggestions(message) {
-      ChatBotResponseService.getChatbotSuggestions(message).then((responseArray) => {
-        this.suggestionArray = responseArray.data; // Update suggestions directly
-      });
+      ChatBotResponseService.getChatbotSuggestions(message).then(
+        (responseArray) => {
+          this.suggestionArray = responseArray.data; // Update suggestions directly
+        }
+      );
     },
     sendEmail() {
       //emailjs send email method
@@ -681,6 +614,11 @@ div {
   display: inline-block;
 }
 
+video {
+  width: 100%;
+  height: 100%;
+}
+
 .chat-box,
 .chat-box-list {
   display: flex;
@@ -688,6 +626,17 @@ div {
   flex-direction: column;
   list-style-type: none;
   background-color: white;
+}
+#videoID{
+}
+.response-box,
+.request-box {
+  max-width: 80%;
+  margin-bottom: 1rem;
+  display: inline-block;
+  word-wrap: break-word;
+  padding: 1rem;
+  margin: 1rem;
 }
 
 .message {
@@ -764,8 +713,8 @@ div {
 .request-box p {
   font-size: 1.3rem;
   text-align: left;
-  margin-left: 1rem;
-  margin-right: 1rem;
+  // margin-left: 1rem;
+  // margin-right: 1rem;
 }
 
 .chat-box {
@@ -840,6 +789,20 @@ input {
   -moz-box-sizing: border-box;
 }
 
+
+
+// m.changes
+.message-enter-active,
+.message-leave-active {
+  transition: opacity 0.5s;
+}
+.message-enter, .message-leave-to {
+  opacity: 0;
+}// m.changes
+
+
+
+
 .custom-button:hover {
   background-color: rgb(133, 47, 47);
 }
@@ -877,14 +840,11 @@ button {
 }
 
 .message-text {
-  .message-text {
-    background-color: #f0f0f0;
-    padding: 8px;
-    border-radius: 10px;
-    max-width: 70%;
-    line-height: 1.4;
-    margin-bottom: 6px;
-  }
+  padding: 8px;
+  border-radius: 10px;
+  max-width: 70%;
+  line-height: 1.4;
+  margin-bottom: 6px;
 }
 
 .chat-box-list-container::-webkit-scrollbar {
@@ -913,9 +873,11 @@ button {
   margin-right: 1rem;
   border-radius: 50%;
   cursor: pointer;
+
+  transition: background-color 0.3s;
 }
 .send-button:hover {
-  text-decoration-color: green;
+  background-color: green;
 }
 .voiceAndText {
   padding-top: 200;
@@ -976,7 +938,7 @@ button {
   border: none;
   cursor: pointer;
   font-size: 14px;
-  color:white
+  color: white;
 }
 .sectionForEmailForm {
   position: absolute;
