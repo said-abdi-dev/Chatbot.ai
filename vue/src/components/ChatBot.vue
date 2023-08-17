@@ -668,6 +668,16 @@ video {
   padding-right: 15px;
 }
 
+.response-box,
+.request-box {
+  max-width: 80%;
+  margin-bottom: 1rem;
+  display: inline-block;
+  word-wrap: break-word;
+  padding: 1rem;
+  margin: 1rem;
+}
+
 .response-box {
   width: auto;
   font-size: 1.3rem;
@@ -774,6 +784,20 @@ input {
   -moz-box-sizing: border-box;
 }
 
+
+
+// m.changes
+.message-enter-active,
+.message-leave-active {
+  transition: opacity 0.5s;
+}
+.message-enter, .message-leave-to {
+  opacity: 0;
+}// m.changes
+
+
+
+
 .custom-button:hover {
   background-color: rgb(133, 47, 47);
 }
@@ -844,9 +868,11 @@ button {
   margin-right: 1rem;
   border-radius: 50%;
   cursor: pointer;
+
+  transition: background-color 0.3s;
 }
 .send-button:hover {
-  text-decoration-color: green;
+  background-color: green;
 }
 .voiceAndText {
   padding-top: 200;
