@@ -51,13 +51,13 @@
                   />
                 </div>
 
-                <button
+                <!-- <button
                   class="circle-button"
                   @click="toggleCamera"
                   v-if="!showCamera && !photoDataUrl"
                 >
                   Take a Photo
-                </button>
+                </button> -->
                 <button
                   class="circle-button"
                   @click="takePhoto"
@@ -390,8 +390,10 @@ export default {
     },
 async takePhoto() {
   try {
+    
     const videoElement = this.$refs.video;
     console.log("reached" + "takePhoto")
+    this.scrollToBottom();
     // Pause the video to freeze the frame
     videoElement.pause();
 
@@ -592,6 +594,7 @@ async takePhoto() {
           text: "what is your email?",
           author: "response-box",
         });
+        
       } else if (
         message.includes("@") &&
         this.messages[1].text.includes("email")
@@ -600,6 +603,10 @@ async takePhoto() {
         this.formData.to_name = message;
         this.$nextTick(() => {
           this.sendEmail();
+          this.messages.unshift({
+          text: "sent!",
+          author: "response-box",
+        });
         });
         this.scrollToBottom();
       } else {
@@ -648,7 +655,7 @@ async takePhoto() {
         .sendForm(serviceID, templateID, formElement)
         .then(() => {
           this.sending = false;
-          alert("Sent!");
+          // alert("Sent!");
         })
         .catch((err) => {
           this.sending = false;
