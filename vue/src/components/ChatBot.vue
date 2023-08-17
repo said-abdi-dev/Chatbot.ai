@@ -2,23 +2,6 @@
   <main class="rootTemplateTag">
     <section class="chat-box">
       <section class="chat-box-list-container" ref="chatbox">
-        <div class="suggestion-container">
-          <button @click="getSuggestions()">suggestions plz</button>
-          <div
-            class="vertical-buttons"
-            v-if="subjectContext !== '0' && topicContext == '0'"
-          >
-            <button
-              class="suggestion-button"
-              v-for="(suggestion, index) in newSuggestionArray"
-              :key="index"
-              :class="{ selected: index === selectedSuggestionSetIndex }"
-              @click="setMessageAndSendMessage(suggestion)"
-            >
-              {{ suggestion }}
-            </button>
-          </div>
-        </div>
         <ul class="chat-box-list">
           <li v-if="messages.length == 0" class="message response-box">
             <div class="text-and-image-container">
@@ -53,27 +36,59 @@
                 deeper into the topic.
               </p>
               <!-- ACTIVATE CAMERA BUTTON -->
-              <div class="btn-wrapper">
-                <svg
-                  class="btn-standard"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
+              <div>
+                <div class="preview-box">
+                  <video
+                    ref="video"
+                    autoplay
+                    v-if="showCamera"
+                    @loadedmetadata="videoLoaded"
+                  ></video>
+                  <img
+                    class="userDefault localStored"
+                    :src="photoDataUrl"
+                    alt="Captured Photo"
+                  />
+                </div>
+
+                <button
+                  class="circle-button"
+                  @click="toggleCamera"
+                  v-if="!showCamera && !photoDataUrl"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                  />
-                </svg>
+                  Take a Photo
+                </button>
+                <button
+                  class="circle-button"
+                  @click="takePhoto"
+                  v-if="showCamera && !photoDataUrl"
+                >
+                  Take Photo
+                </button>
               </div>
+            </div>
+            <div class="btn-wrapper">
+              <svg
+                class="btn-standard"
+                @click="toggleCamera"
+                v-if="!showCamera && !photoDataUrl"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                />
+              </svg>
             </div>
           </li>
 
@@ -89,11 +104,13 @@
               v-if="message.author === 'request-box'"
             >
               <div class="bot-image">
-                <img
-                  src="img/userIcon.png"
+                <!-- we need to change this based on stuff -->
+                <img 
+                  :src="getImageSource"
                   alt="User Icon"
                   class="message-icon"
                 />
+                
               </div>
               <div class="message-container">
                 <div class="message-content">
@@ -162,6 +179,23 @@
         </ul>
         <!-- text to speech/voice -->
         <div class="voiceAndText"></div>
+        <div class="suggestion-container"
+        v-if="subjectContext!=='0'">
+          <div
+            class="vertical-buttons"
+            v-if="subjectContext !== '0'"
+          >
+            <button
+              class="suggestion-button"
+              v-for="(suggestion,index) in newSuggestionArray"
+              :key="index"
+              :class="{ selected: index === selectedSuggestionSetIndex }"
+              @click="setMessageAndSendMessage(suggestion)"
+            >
+              {{ suggestion}}
+            </button>
+          </div>
+        </div>
       </section>
 
       <div class="chat-input-bar">
@@ -244,7 +278,7 @@
           <input v-model="formData.to_name" type="text" name="to_name" />
           <textarea v-model="formData.message" name="message"></textarea>
           <!-- Other input fields if needed -->
-          <button type="submit" :disabled="sending">Send Email</button>
+          <button type="submit">Send Email</button>
         </form>
       </div>
     </section>
@@ -255,6 +289,7 @@
 import ChatBotResponseService from "../services/ChatbotResponseService";
 import LinkedInService from "../services/LinkedInService";
 import emailjs from "emailjs-com";
+import ChatGPTService from "../services/ChatGPTService.js"
 
 // Initialize EmailJS with your user ID
 emailjs.init("wKoUGtuY-Z0xMUnPc");
@@ -275,7 +310,14 @@ export default {
       audioTracking: false, // tells whether the audio is currently being recorded
       isSpeaking: false,
       speech: window.speechSynthesis,
-      suggestionArray: ['a','b','c'],
+      suggestionArray: ["a", "b", "c"],
+      sending: null,
+      stream: null,
+
+      photoDataUrl: null,
+
+      showCamera: false,
+
       selectedSuggestionSetIndex: 0,
       emailMessageLinks: "",
       formData: {
@@ -286,9 +328,19 @@ export default {
     };
   },
   computed: {
-    newSuggestionArray(){
+    newSuggestionArray() {
       return this.suggestionArray;
-    }
+    },
+    localStoragePhoto() {
+      return localStorage.getItem("capturedPhoto");
+    },
+    getImageSource() {
+      if (this.photoDataUrl !== null) {
+        return this.photoDataUrl; // Set the new image source here
+      } else {
+        return "img/userIcon.png"; // Default image source
+      }
+    },
   },
   mounted() {
     // When the component is mounted(fully compiled), initialize the speech recognition
@@ -296,15 +348,99 @@ export default {
     // this.fetchSuggestions();
     this.scrollToBottom();
   },
+    watch: {
+    message(newMessage) {
+      if (newMessage.includes("send")) {
+        // console.log("This message includes 'send'");
+        this.stopRecognition;
+        this.sendMessage()
+      }
+      if (newMessage) {
+        this.getSuggestions(newMessage); // gets the suggestion as the user types
+      }
+    },
+  },
   methods: {
+    // setProfilePhoto(){
+    //   if (this.photoDataUrl == null) {
+
+    //   }
+    //   else (this.photoDataUrl != null){
+
+    //   }
+    // }
+    async toggleCamera() {
+      this.showCamera = !this.showCamera;
+
+      if (this.showCamera) {
+        try {
+          this.stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          });
+          const videoElement = this.$refs.video;
+          videoElement.srcObject = this.stream;
+        } catch (error) {
+          console.error("Error accessing camera:", error);
+        }
+      } else {
+        if (this.stream) {
+          this.stream.getTracks().forEach((track) => track.stop());
+        }
+      }
+    },
+async takePhoto() {
+  try {
+    const videoElement = this.$refs.video;
+    console.log("reached" + "takePhoto")
+    // Pause the video to freeze the frame
+    videoElement.pause();
+
+    const canvas = document.createElement("canvas");
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+    this.capturedPhoto = canvas.toDataURL("image/png");
+
+    // Save photo data to LocalStorage
+    localStorage.setItem("userAvatar", this.capturedPhoto);
+    // Update the component's photoDataUrl property
+    this.photoDataUrl = this.capturedPhoto;
+    // Turn off the video stream after capturing the photo
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => track.stop());
+    }
+  } catch (error) {
+    console.error("Error capturing photo:", error);
+  }
+},
+
+
+    // retakePhoto() {
+    //   this.photoDataUrl = null;
+    //   this.showCamera = true;
+    //   const videoElement = this.$refs.video;
+    //   videoElement.play();
+    // },
+    videoLoaded() {
+      // Video loaded, start playing
+      const videoElement = this.$refs.video;
+      videoElement.play();
+    },
+
+    // beforeUnmount() {
+    //   if (this.stream) {
+    //     this.stream.getTracks().forEach(track => track.stop());
+    //   }
+    // },
+
     setMessageAndSendMessage(suggestion) {
-      console.log(suggestion)
-    this.message = suggestion;
-    console.log(this.message)
-    this.$nextTick(() => {
+      this.message = suggestion;
+      this.$nextTick(() => {
         this.sendMessage();
       });
-  },
+    },
     // Method to initialize speech recognition
     initializeRecognition() {
       // Check if SpeechRecognition is supported in the browser
@@ -347,11 +483,15 @@ export default {
     },
 
     startRecognition() {
-      console.log("We reached startReconginition");
+      console.log("we reached startRecognition() ");
+
       this.audioTracking = true;
+      this.buttonChanging = true;
+
       if (this.recognition) {
         this.recognition.start(); // Start speech recognition
       }
+      console.log('the user stopped speaking now')
     },
 
     stopRecognition() {
@@ -362,30 +502,55 @@ export default {
 
     // Method to generate and listen to a response
     listenToResponse() {
+      setTimeout(() => {
+        if (this.recognition) {
+          this.recognition.start(); // Start speech recognition
+          this.buttonChanging = false; // Reset buttonChanging after the delay
+        }
+      }, 2000);
+       // Delay of 2 seconds
+
       console.log("reached speakResponse");
       this.isSpeaking = true;
 
-      // Check if SpeechSynthesisUtterance is supported in the browser
-      if ("SpeechSynthesisUtterance" in window) {
-        if (this.speech.speaking) {
-          //we check if currently speaking, if so, cancel it/stop
-          this.speech.cancel();
+      setTimeout(() => {
+        // Check if SpeechSynthesisUtterance is supported in the browser
+        if ("SpeechSynthesisUtterance" in window) {
+          if (this.speech.speaking) {
+            //we check if currently speaking, if so, cancel it/stop
+            this.speech.cancel();
+          } else {
+            // Create a new SpeechSynthesisUtterance instance with the transcribed text
+            const utterance = new SpeechSynthesisUtterance(
+              this.responseMessage
+            );
+            // Use the browser's speech synthesis to speak the utterance
+            this.speech.speak(utterance);
+          }
         } else {
-          // Create a new SpeechSynthesisUtterance instance with the transcribed text
-          console.log(this.responseMessage);
-          const utterance = new SpeechSynthesisUtterance(this.responseMessage);
-          // Use the browser's speech synthesis to speak the utterance
-          this.speech.speak(utterance);
+          console.error("Speech synthesis is not supported in this browser.");
         }
-      } else {
-        console.error("Speech synthesis is not supported in this browser.");
-      }
+      }, 2000); //wait about 2 seconds before listening starts here??? not too sure
     },
-
     stopListeningToResponse() {
       this.isSpeaking = false;
       this.speech.cancel();
     },
+    getGptResponse(x) {
+      ChatGPTService.generateChat(x)
+        .then(response => {
+          console.log(response.data.choices[0].message.content);
+           this.messages.unshift({
+            text: response.data.choices[0].message.content,
+            author: "response-box",
+          });
+          // Handle the response here, e.g., update a variable in the component's data
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
     sendMessage() {
       const message = this.message;
 
@@ -416,6 +581,9 @@ export default {
           this.formData.message = linkedJobs;
         });
         this.scrollToBottom();
+      }
+      else if (message.includes("code")){
+        this.getGptResponse(message)
       } else if (
         message.includes("YES") ||
         (message.includes("yes") && this.messages[1].text.includes("job"))
@@ -443,7 +611,6 @@ export default {
         )
           .then((responseArray) => {
             //after a response comes back from the server we take
-            console.log(this.messages[0].text);
             this.subjectContext = responseArray.data[1];
             this.topicContext = responseArray.data[2];
             this.responseMessage = responseArray.data[0];
@@ -459,18 +626,16 @@ export default {
           });
       }
       this.scrollToBottom();
-    },
-    getSuggestions() {
-      console.log(this.suggestionArray)
-      ChatBotResponseService.getChatbotSuggestions(this.messages[1].text).then((responseArray)=>{
-        this.suggestionArray[0] = responseArray.data[0]
-        this.suggestionArray[1] = responseArray.data[1]
-        this.suggestionArray[2] = responseArray.data[2]
-        console.log(this.suggestionArray)
-      })
-  
+      //audiotracking needs to be disabled on submit, but this caused alot of errors so i commented it out
+      // this.audioTracking=false;
+      
     },
 
+    getSuggestions(message) {
+      ChatBotResponseService.getChatbotSuggestions(message).then((responseArray) => {
+        this.suggestionArray = responseArray.data; // Update suggestions directly
+      });
+    },
     sendEmail() {
       //emailjs send email method
       this.sending = true;
@@ -575,12 +740,15 @@ div {
 .response-box p {
   text-align: left;
 }
-
+.userDefault {
+  width: 90px;
+  height: 90px;
+}
 .request-box {
   width: auto;
   text-align: left;
   font-size: 1.3rem;
-  background-color: #c27c0e;
+  background-color: #1436cc;
   border-radius: 12px;
   color: #f0f0f0;
   align-self: flex-end;
@@ -597,7 +765,7 @@ div {
   margin: 10px;
   border: 3px solid rgb(75, 61, 61);
   width: 38vw;
-  height: 95vh;
+  height: 86vh;
   border-radius: 10px;
   margin-left: auto;
   margin-right: auto;
@@ -606,7 +774,7 @@ div {
   border-radius: 10px;
 }
 .chat-box-list li {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .chat-input-bar {
@@ -773,12 +941,11 @@ button {
 }
 
 .suggestion-container {
-  position: absolute;
   bottom: 10vh;
   left: 50%;
   max-width: 90%;
   //overflow-x: auto;
-  transform: translateX(-50%);
+  // transform: translateX(-50%);
   background-color: white;
   border-radius: 10px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -796,12 +963,13 @@ button {
 }
 
 .suggestion-button {
-  padding: 5px 15px;
-  background-color: #192b8f;
+  padding: 20px 15px;
+  background-color: #33414b;
   border-radius: 10px;
   border: none;
   cursor: pointer;
   font-size: 14px;
+  color:white
 }
 .sectionForEmailForm {
   position: absolute;

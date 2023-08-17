@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import javax.xml.crypto.Data;
+import java.util.List;
 
 public class JdbcDaoIntegrationTests extends BaseDaoTests {
     private JdbcChatbotResponseDao sut;
@@ -66,5 +67,12 @@ public class JdbcDaoIntegrationTests extends BaseDaoTests {
         Assert.assertEquals("We couldn't understand your request. We recommend asking questions about a certain subject, and a topic of that subject. Such as 'The definition of JavaScript' or 'What are some features of Vue?", result[0]);
     }
 
+    @Test
+    public void getSuggestionsTest(){
+       ChatbotResponse response = new ChatbotResponse("java", "0", "0");
+        List<String> result = sut.getSuggestions(response.getUserInput());
 
+        Assert.assertNotNull(result);
+        Assert.assertEquals(3, result.size());
+    }
 }
