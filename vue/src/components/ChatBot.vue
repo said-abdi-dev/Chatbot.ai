@@ -1,15 +1,6 @@
 <template>
   <main class="rootTemplateTag">
     <section class="chat-box">
-          <div class="preview-box">
-      <video
-        style="width: 100%; height: auto"
-        ref="video"
-        autoplay
-        @loadedmetadata="videoLoaded"
-        v-if="showCamera"
-      ></video>
-    </div>
       <section class="chat-box-list-container" ref="chatbox">
         <ul class="chat-box-list">
           <li v-if="messages.length == 0" class="message response-box">
@@ -28,54 +19,6 @@
                 would like a profile picture, hit the camera button, or select
                 your default avatar at any time to add one!
               </p>
-              <br /><br />
-              <p>
-                You can ask me anything you would like, but I'll help you out on
-                how to utilize me to your advantage. You can ask me about jobs,
-                just be sure to ask me about a job title or skill in the message
-                so that I can find you the most accurate jobs you are looking to
-                find!
-              </p>
-              <br /><br />
-              <p>
-                You can also ask me about a variety of programming topics, like
-                programming languages, or concepts. If provided with enough
-                information of what you're looking to know, I will find you
-                information, as well as articles and videos so you can dig
-                deeper into the topic.
-              </p>
-              <!-- ACTIVATE CAMERA BUTTON -->
-              <div class="preview-box">
-                <video
-                  ref="video"
-                  autoplay
-                  v-if="showCamera"
-                  @loadedmetadata="videoLoaded"
-                ></video>
-              </div>
-            </div>
-            <div class="btn-wrapper">
-              <svg
-                class="btn-standard"
-                @click="toggleCamera"
-                v-if="!showCamera && !photoDataUrl"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                />
-              </svg>
             </div>
           </li>
 
@@ -160,6 +103,17 @@
                   />
                 </svg>
               </button>
+            </div>
+          </li>
+          <li id="videoID" class="message request-box" v-if="showCamera">
+            <div class="preview-box">
+              <video
+                style="width: 100%; height: auto"
+                ref="video"
+                autoplay
+                @loadedmetadata="videoLoaded"
+                v-if="showCamera"
+              ></video>
             </div>
           </li>
         </ul>
@@ -537,7 +491,6 @@ export default {
       const message = this.message;
 
       this.messages.unshift({
-        //**we'll come back for this**
         text: message,
         author: "request-box", //this is coming from the user as a response.
       });
@@ -669,6 +622,17 @@ video {
   list-style-type: none;
   background-color: white;
 }
+#videoID{
+}
+.response-box,
+.request-box {
+  max-width: 80%;
+  margin-bottom: 1rem;
+  display: inline-block;
+  word-wrap: break-word;
+  padding: 1rem;
+  margin: 1rem;
+}
 
 .message {
   display: flex;
@@ -713,7 +677,6 @@ video {
   padding: 1rem;
   margin: 1rem;
 }
-
 
 .response-box {
   width: auto;
