@@ -101,8 +101,7 @@ public class JdbcChatbotResponseDao implements ChatbotResponseDao {
 
         String sqlSuggestions = "SELECT topic_name, subject_name\n" +
                 "FROM topics\n" +
-                "WHERE subject_name = ?\n" +
-                "LIMIT 3;";
+                "WHERE subject_name = ?\n";
 
         SqlRowSet rows = jdbcTemplate.queryForRowSet(sqlSuggestions, input);
 
