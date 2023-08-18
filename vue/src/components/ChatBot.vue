@@ -249,11 +249,8 @@ export default {
       suggestionArray: ["a", "b", "c"],
       sending: null,
       stream: null,
-
       photoDataUrl: null,
-
       showCamera: false,
-
       selectedSuggestionSetIndex: 0,
       emailMessageLinks: "",
       formData: {
@@ -437,37 +434,25 @@ export default {
     },
 
     // Method to generate and listen to a response
-    listenToResponse() {
-      setTimeout(() => {
-        if (this.recognition) {
-          this.recognition.start(); // Start speech recognition
-          this.buttonChanging = false; // Reset buttonChanging after the delay
-        }
-      }, 2000);
-      // Delay of 2 seconds
+listenToResponse() {
+  this.isSpeaking = true;
 
-      console.log("reached speakResponse");
-      this.isSpeaking = true;
+  // Check if SpeechSynthesisUtterance is supported in the browser
+  if ("SpeechSynthesisUtterance" in window) {
+    if (this.speech.speaking) {
+      //we check if currently speaking, if so, cancel it/stop
+      this.speech.cancel();
+    } else {
+      // Create a new SpeechSynthesisUtterance instance with the transcribed text
+      const utterance = new SpeechSynthesisUtterance(this.responseMessage);
+      // Use the browser's speech synthesis to speak the utterance
+      this.speech.speak(utterance);
+    }
+  } else {
+    console.error("Speech synthesis is not supported in this browser.");
+  }
+},
 
-      setTimeout(() => {
-        // Check if SpeechSynthesisUtterance is supported in the browser
-        if ("SpeechSynthesisUtterance" in window) {
-          if (this.speech.speaking) {
-            //we check if currently speaking, if so, cancel it/stop
-            this.speech.cancel();
-          } else {
-            // Create a new SpeechSynthesisUtterance instance with the transcribed text
-            const utterance = new SpeechSynthesisUtterance(
-              this.responseMessage
-            );
-            // Use the browser's speech synthesis to speak the utterance
-            this.speech.speak(utterance);
-          }
-        } else {
-          console.error("Speech synthesis is not supported in this browser.");
-        }
-      }, 2000); //wait about 2 seconds before listening starts here??? not too sure
-    },
     stopListeningToResponse() {
       this.isSpeaking = false;
       this.speech.cancel();
