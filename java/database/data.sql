@@ -24,13 +24,13 @@ VALUES
     ('css'), --14
     ('ide'), --15
     ('npm'), --16
-    ('jeff'), --17
+  --  ('jeff'), --17
     ('muter'), --18
-    ('noah'), --19
-    ('olsen'), --20
-    ('said'), --21
-    ('abdi'), --22
-    ('shirdon'), -- 23
+  --  ('noah'), --19
+  --  ('olsen'), --20
+  --  ('said'), --21
+ --   ('abdi'), --22
+  --  ('shirdon'), -- 23
     ('team'), --24
     ('developers'), --25
     ('elevator'); --26
@@ -191,8 +191,8 @@ VALUES
    ('about', 'html', 29),
    ('definition', 'html', 29),
    ('what', 'ide', 30),
-   ('jeff', 'jeff', 33),
-   ('muter', 'muter', 33),
+   ('jeffery', 'muter', 33),
+   ('jeff', 'muter', 33),
    ('jeff', 'team', 52),
    ('jeff', 'developers', 52),
    ('noah', 'team', 53),
