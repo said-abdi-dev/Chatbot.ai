@@ -1,13 +1,9 @@
 --any data goes here
 --inserts, updates, deletes
-
 --create.
-
 BEGIN TRANSACTION;
-
 --INSERT INTO users (username,password_hash,role) VALUES ('user','$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC','ROLE_USER');
 --INSERT INTO users (username,password_hash,role) VALUES ('admin','$2a$08$UkVvwpULis18S19S5pZFn.YHPZt3oaqHZnDwqbCW9pft6uFtkXKDC','ROLE_ADMIN');
-
 --makes java, js tables with data
 
 INSERT INTO subjects (subject_name)
@@ -28,13 +24,17 @@ VALUES
     ('css'), --14
     ('ide'), --15
     ('npm'), --16
-    ('jeff'), --17
+  --  ('jeff'), --17
     ('muter'), --18
-    ('noah'), --19
-    ('olsen'), --20
-    ('said'), --21
-    ('abdi'), --22
-    ('shirdon'); -- 23
+  --  ('noah'), --19
+  --  ('olsen'), --20
+  --  ('said'), --21
+ --   ('abdi'), --22
+  --  ('shirdon'), -- 23
+    ('team'), --24
+    ('developers'), --25
+    ('elevator'), --26
+    ('hey'); -- 27
 
 INSERT INTO responses (response)
 VALUES
@@ -78,7 +78,6 @@ VALUES
     ('"Input/Output (I/O)" in Java involves reading and writing data from/to external sources like files or streams. It enables communication between a program and its environment.'),
     ('"Override" is a mechanism where a subclass provides a new implementation for a method already defined in its superclass. It allows customizing behavior while maintaining the methods signature.'),
     ('The "Java Virtual Machine (JVM)" is a runtime environment that executes Java bytecode. It abstracts hardware and OS differences, enabling Java programs to run consistently across various platforms.'),
-
     ('Identifying and fixing errors in JavaScript code using tools like browser consoles, breakpoints, and error messages to ensure the program runs smoothly and as intended.'),
     ('JavaScript has fundamental types like numbers, strings, and booleans, as well as objects and arrays for more complex data structures.'),
     ('A concise way to write conditional expressions with a true/false condition, resulting in one of two specified values depending on the conditions outcome.'),
@@ -88,8 +87,14 @@ VALUES
     ('In JavaScript, promises manage asynchronous operations, representing eventual completion or failure of an operation. They enhance code readability and handle callbacks elegantly. Async/Await is a modern syntax built on top of promises, simplifying asynchronous code further by using async functions to write non-blocking code that resembles synchronous style, making asynchronous operations more intuitive and manageable.'),
     ('Functions are blocks of reusable code, while methods are functions attached to objects, often used in object-oriented programming.'),
     ('A function is a self-contained block of code that can accept parameters, execute tasks, and return values, promoting code reusability and modularity in JavaScript applications.'),
-    ('Closures are functions that remember the scope in which they were created, allowing them to access variables from their outer function even after that function has finished executing. They play a crucial role in encapsulation, data privacy, and creating modular and maintainable code.');
-
+    ('Closures are functions that remember the scope in which they were created, allowing them to access variables from their outer function even after that function has finished executing. They play a crucial role in encapsulation, data privacy, and creating modular and maintainable code.'),
+    ('Great question!<br><br>This application was built by Jeff Muter, Noah Olsen, Said Abdi, and Abdi Shirdon. This project was built in less than two weeks by the four of them in an Agile environment with periodic presentations with a product owner to deliver features in a high-pressure environment. If you would like to know more about the team, type which member you would like more info about!'),
+    ('Of course! Jeff Muter worked across the whole application. The notable parts of the application he developed was developing the ability for the API to remember subjects or topics to allow for users to have more authentic interractions with the Chatbot. He also developed the original database design, and developed the profile pricture functionality. Jeff found this part of the application especially fun as he never used local storage to save information about a user between uses of the site without a user logging in.'),
+    ('Yes, Noah Olsen worked accross the entire application. He played a crucial role in both the front and back-end of the application. He really honed his ability to find and use Axios to create quick and free functionality with APIs. Most notably, Noah built out the audio functionality, recording user voices, and creating a speaker to play back previous messages from the chatbot.'),
+    ('I am glad you asked! Said Abdi had a hand in both the front and back-end of the application. He was originally adamant to stick to what he was familiar with, which was Java & Spring Boot in the back-end. However, over the course of the project, Said truly grew into building crucial functionality in the front-end, most notably, the suggestions that the database provides when the user is close to providing a valid subject.'),
+    ('Abdi Shirdon worked primarily on the front-end of the application. Notably building out the camera functionality, and developing the majority of the styling.'),
+    ('Great question! Tech Elevator is a company with a mission to provide the best talent to the tech industry! By providing a rigorous curriculum, Java or C#, and Vue.js on the front-end. By selecting strong students, and pairing them with instructors with decades fo experience, Tech Elevator has developed an impressive reputation for not only finding great students, but being able to support those students dreams of being able to enter the tech industry.'),
+    ('Hey! Good to meet you!');
 
 INSERT INTO topics (topic_name, subject_name, response_id)
 VALUES
@@ -186,7 +191,18 @@ VALUES
    ('about', 'html', 29),
    ('definition', 'html', 29),
    ('what', 'ide', 30),
-   ('jeff', 'jeff', 33),
-   ('muter', 'muter', 33);
+   ('jeffery', 'muter', 33),
+   ('jeff', 'muter', 33),
+   ('jeff', 'team', 52),
+   ('jeff', 'developers', 52),
+   ('noah', 'team', 53),
+   ('noah', 'developers', 53),
+   ('said', 'team', 54),
+   ('said', 'developers', 54),
+   ('abdi', 'team', 55),
+   ('abdi', 'developers', 55),
+   ('elevator', 'elevator', 56),
+   ('hey', 'hey', 57);
+
 COMMIT;
 

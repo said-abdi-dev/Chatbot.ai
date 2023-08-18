@@ -1,15 +1,6 @@
 <template>
   <main class="rootTemplateTag">
     <section class="chat-box">
-          <div class="preview-box">
-      <video
-        style="width: 100%; height: auto"
-        ref="video"
-        autoplay
-        @loadedmetadata="videoLoaded"
-        v-if="showCamera"
-      ></video>
-    </div>
       <section class="chat-box-list-container" ref="chatbox">
         <ul class="chat-box-list">
           <li v-if="messages.length == 0" class="message response-box">
@@ -24,58 +15,8 @@
               <p class="message-text">
                 Hey! My name is ChatBot. I am a bot designed to help aspiring
                 software developers learn more about programming, prepare for,
-                and find the job of their dreams! First thing's first. If you
-                would like a profile picture, hit the camera button, or select
-                your default avatar at any time to add one!
+                and find the job of their dreams! The best responses are those which have a main category, like 'Java', or 'meet the team', and a sub-category, like 'The JVM', or 'JOINS' for SQL. 
               </p>
-              <br /><br />
-              <p>
-                You can ask me anything you would like, but I'll help you out on
-                how to utilize me to your advantage. You can ask me about jobs,
-                just be sure to ask me about a job title or skill in the message
-                so that I can find you the most accurate jobs you are looking to
-                find!
-              </p>
-              <br /><br />
-              <p>
-                You can also ask me about a variety of programming topics, like
-                programming languages, or concepts. If provided with enough
-                information of what you're looking to know, I will find you
-                information, as well as articles and videos so you can dig
-                deeper into the topic.
-              </p>
-              <!-- ACTIVATE CAMERA BUTTON -->
-              <div class="preview-box">
-                <video
-                  ref="video"
-                  autoplay
-                  v-if="showCamera"
-                  @loadedmetadata="videoLoaded"
-                ></video>
-              </div>
-            </div>
-            <div class="btn-wrapper">
-              <svg
-                class="btn-standard"
-                @click="toggleCamera"
-                v-if="!showCamera && !photoDataUrl"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                />
-              </svg>
             </div>
           </li>
 
@@ -160,6 +101,17 @@
                   />
                 </svg>
               </button>
+            </div>
+          </li>
+          <li id="videoID" class="message request-box" v-if="showCamera">
+            <div class="preview-box">
+              <video
+                style="width: 100%; height: auto"
+                ref="video"
+                autoplay
+                @loadedmetadata="videoLoaded"
+                v-if="showCamera"
+              ></video>
             </div>
           </li>
         </ul>
@@ -294,7 +246,7 @@ export default {
       speech: window.speechSynthesis,
       suggestionArray: [],
       selectedSuggestionSetIndex: 0,
-      photoDataUrl: null,
+      photoDataUrl: n
       showCamera: false,
       emailMessageLinks: "",
       formData: {
@@ -341,14 +293,6 @@ export default {
     },
   },
   methods: {
-    // setProfilePhoto(){
-    //   if (this.photoDataUrl == null) {
-
-    //   }
-    //   else (this.photoDataUrl != null){
-
-    //   }
-    // }
     async toggleCamera() {
       this.showCamera = !this.showCamera;
       if (this.showCamera) {
@@ -404,12 +348,6 @@ export default {
     setUserProfile() {
       this.photoDataUrl = localStorage.getItem("userAvatar");
     },
-    // WHAT WAS THIS FOR BOYS?
-    // beforeUnmount() {
-    //   if (this.stream) {
-    //     this.stream.getTracks().forEach(track => track.stop());
-    //   }
-    // },
 
     setMessageAndSendMessage(suggestion) {
       this.message = suggestion;
@@ -418,8 +356,8 @@ export default {
       });
     },
 
-    // Method to initialize speech recognition
-    initializeRecognition() {
+    initializeRecognition() {//Method to initialize speech recognition
+
       // Check if SpeechRecognition is supported in the browser
       if (
         "SpeechRecognition" in window ||
@@ -460,8 +398,6 @@ export default {
     },
 
     startRecognition() {
-      console.log("we reached startRecognition() ");
-
       this.audioTracking = true;
       this.buttonChanging = true;
 
@@ -479,40 +415,29 @@ export default {
 
     // Method to generate and listen to a response
     listenToResponse() {
-      setTimeout(() => {
-        if (this.recognition) {
-          this.recognition.start(); // Start speech recognition
-          this.buttonChanging = false; // Reset buttonChanging after the delay
-        }
-      }, 2000);
-      // Delay of 2 seconds
-
-      console.log("reached speakResponse");
       this.isSpeaking = true;
 
-      setTimeout(() => {
-        // Check if SpeechSynthesisUtterance is supported in the browser
-        if ("SpeechSynthesisUtterance" in window) {
-          if (this.speech.speaking) {
-            //we check if currently speaking, if so, cancel it/stop
-            this.speech.cancel();
-          } else {
-            // Create a new SpeechSynthesisUtterance instance with the transcribed text
-            const utterance = new SpeechSynthesisUtterance(
-              this.responseMessage
-            );
-            // Use the browser's speech synthesis to speak the utterance
-            this.speech.speak(utterance);
-          }
+      // Check if SpeechSynthesisUtterance is supported in the browser
+      if ("SpeechSynthesisUtterance" in window) {
+        if (this.speech.speaking) {
+          //we check if currently speaking, if so, cancel it/stop
+          this.speech.cancel();
         } else {
-          console.error("Speech synthesis is not supported in this browser.");
+          // Create a new SpeechSynthesisUtterance instance with the transcribed text
+          const utterance = new SpeechSynthesisUtterance(this.responseMessage);
+          // Use the browser's speech synthesis to speak the utterance
+          this.speech.speak(utterance);
         }
-      }, 2000); //wait about 2 seconds before listening starts here??? not too sure
+      } else {
+        console.error("Speech synthesis is not supported in this browser.");
+      }
     },
+
     stopListeningToResponse() {
       this.isSpeaking = false;
       this.speech.cancel();
     },
+
     getGptResponse(x) {
       ChatGPTService.generateChat(x)
         .then((response) => {
@@ -532,7 +457,6 @@ export default {
       const message = this.message;
 
       this.messages.unshift({
-        //**we'll come back for this**
         text: message,
         author: "request-box", //this is coming from the user as a response.
       });
@@ -576,6 +500,12 @@ export default {
         this.formData.to_name = message;
         this.$nextTick(() => {
           this.sendEmail();
+          //this code is new
+          this.messages.unshift({
+          text: "sent!",
+          author: "response-box",
+        });
+        //and stops here. check if it works
         });
         this.scrollToBottom();
       } else {
@@ -625,7 +555,7 @@ export default {
         .sendForm(serviceID, templateID, formElement)
         .then(() => {
           this.sending = false;
-          alert("Sent!");
+      //    alert("Sent!");
         })
         .catch((err) => {
           this.sending = false;
@@ -663,6 +593,17 @@ video {
   flex-direction: column;
   list-style-type: none;
   background-color: white;
+}
+#videoID{
+}
+.response-box,
+.request-box {
+  max-width: 80%;
+  margin-bottom: 1rem;
+  display: inline-block;
+  word-wrap: break-word;
+  padding: 1rem;
+  margin: 1rem;
 }
 
 .message {
@@ -718,6 +659,7 @@ video {
   border-radius: 12px;
   align-self: flex-start;
 }
+
 
 .response-box p {
   text-align: left;
@@ -815,6 +757,20 @@ input {
   -moz-box-sizing: border-box;
 }
 
+
+
+// m.changes
+.message-enter-active,
+.message-leave-active {
+  transition: opacity 0.5s;
+}
+.message-enter, .message-leave-to {
+  opacity: 0;
+}// m.changes
+
+
+
+
 .custom-button:hover {
   background-color: rgb(133, 47, 47);
 }
@@ -885,9 +841,11 @@ button {
   margin-right: 1rem;
   border-radius: 50%;
   cursor: pointer;
+
+  transition: background-color 0.3s;
 }
 .send-button:hover {
-  text-decoration-color: green;
+  background-color: green;
 }
 .voiceAndText {
   padding-top: 200;
