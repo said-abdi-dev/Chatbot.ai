@@ -297,14 +297,6 @@ export default {
     },
   },
   methods: {
-    // setProfilePhoto(){
-    //   if (this.photoDataUrl == null) {
-
-    //   }
-    //   else (this.photoDataUrl != null){
-
-    //   }
-    // }
     async toggleCamera() {
       this.showCamera = !this.showCamera;
       if (this.showCamera) {
@@ -360,12 +352,6 @@ export default {
     setUserProfile() {
       this.photoDataUrl = localStorage.getItem("userAvatar");
     },
-    // WHAT WAS THIS FOR BOYS?
-    // beforeUnmount() {
-    //   if (this.stream) {
-    //     this.stream.getTracks().forEach(track => track.stop());
-    //   }
-    // },
 
     setMessageAndSendMessage(suggestion) {
       this.message = suggestion;
@@ -374,8 +360,8 @@ export default {
       });
     },
 
-    // Method to initialize speech recognition
-    initializeRecognition() {
+    initializeRecognition() {//Method to initialize speech recognition
+
       // Check if SpeechRecognition is supported in the browser
       if (
         "SpeechRecognition" in window ||
@@ -434,29 +420,30 @@ export default {
     },
 
     // Method to generate and listen to a response
-listenToResponse() {
-  this.isSpeaking = true;
+    listenToResponse() {
+      this.isSpeaking = true;
 
-  // Check if SpeechSynthesisUtterance is supported in the browser
-  if ("SpeechSynthesisUtterance" in window) {
-    if (this.speech.speaking) {
-      //we check if currently speaking, if so, cancel it/stop
-      this.speech.cancel();
-    } else {
-      // Create a new SpeechSynthesisUtterance instance with the transcribed text
-      const utterance = new SpeechSynthesisUtterance(this.responseMessage);
-      // Use the browser's speech synthesis to speak the utterance
-      this.speech.speak(utterance);
-    }
-  } else {
-    console.error("Speech synthesis is not supported in this browser.");
-  }
-},
+      // Check if SpeechSynthesisUtterance is supported in the browser
+      if ("SpeechSynthesisUtterance" in window) {
+        if (this.speech.speaking) {
+          //we check if currently speaking, if so, cancel it/stop
+          this.speech.cancel();
+        } else {
+          // Create a new SpeechSynthesisUtterance instance with the transcribed text
+          const utterance = new SpeechSynthesisUtterance(this.responseMessage);
+          // Use the browser's speech synthesis to speak the utterance
+          this.speech.speak(utterance);
+        }
+      } else {
+        console.error("Speech synthesis is not supported in this browser.");
+      }
+    },
 
     stopListeningToResponse() {
       this.isSpeaking = false;
       this.speech.cancel();
     },
+
     getGptResponse(x) {
       ChatGPTService.generateChat(x)
         .then((response) => {
@@ -511,7 +498,6 @@ listenToResponse() {
           text: "what is your email?",
           author: "response-box",
         });
-        
       } else if (
         message.includes("@") &&
         this.messages[1].text.includes("email")
@@ -520,10 +506,12 @@ listenToResponse() {
         this.formData.to_name = message;
         this.$nextTick(() => {
           this.sendEmail();
+          //this code is new
           this.messages.unshift({
           text: "sent!",
           author: "response-box",
         });
+        //and stops here. check if it works
         });
         this.scrollToBottom();
       } else {
@@ -573,7 +561,7 @@ listenToResponse() {
         .sendForm(serviceID, templateID, formElement)
         .then(() => {
           this.sending = false;
-          // alert("Sent!");
+      //    alert("Sent!");
         })
         .catch((err) => {
           this.sending = false;
