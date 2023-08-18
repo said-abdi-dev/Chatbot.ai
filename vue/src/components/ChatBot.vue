@@ -15,9 +15,7 @@
               <p class="message-text">
                 Hey! My name is ChatBot. I am a bot designed to help aspiring
                 software developers learn more about programming, prepare for,
-                and find the job of their dreams! First thing's first. If you
-                would like a profile picture, hit the camera button, or select
-                your default avatar at any time to add one!
+                and find the job of their dreams! The best responses are those which have a main category, like 'Java', or 'meet the team', and a sub-category, like 'The JVM', or 'JOINS' for SQL. 
               </p>
             </div>
           </li>
@@ -402,8 +400,6 @@ export default {
     },
 
     startRecognition() {
-      console.log("we reached startRecognition() ");
-
       this.audioTracking = true;
       this.buttonChanging = true;
 

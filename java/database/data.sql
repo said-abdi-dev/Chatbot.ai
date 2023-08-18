@@ -33,8 +33,8 @@ VALUES
   --  ('shirdon'), -- 23
     ('team'), --24
     ('developers'), --25
-    ('elevator'); --26
-
+    ('elevator'), --26
+    ('hey'); -- 27
 
 INSERT INTO responses (response)
 VALUES
@@ -93,8 +93,8 @@ VALUES
     ('Yes, Noah Olsen worked accross the entire application. He played a crucial role in both the front and back-end of the application. He really honed his ability to find and use Axios to create quick and free functionality with APIs. Most notably, Noah built out the audio functionality, recording user voices, and creating a speaker to play back previous messages from the chatbot.'),
     ('I am glad you asked! Said Abdi had a hand in both the front and back-end of the application. He was originally adamant to stick to what he was familiar with, which was Java & Spring Boot in the back-end. However, over the course of the project, Said truly grew into building crucial functionality in the front-end, most notably, the suggestions that the database provides when the user is close to providing a valid subject.'),
     ('Abdi Shirdon worked primarily on the front-end of the application. Notably building out the camera functionality, and developing the majority of the styling.'),
-    ('Great question! Tech Elevator is a company with a mission to provide the best talent to the tech industry! By providing a rigorous curriculum, Java or C#, and Vue.js on the front-end. By selecting strong students, and pairing them with instructors with decades fo experience, Tech Elevator has developed an impressive reputation for not only finding great students, but being able to support those students dreams of being able to enter the tech industry.');
-
+    ('Great question! Tech Elevator is a company with a mission to provide the best talent to the tech industry! By providing a rigorous curriculum, Java or C#, and Vue.js on the front-end. By selecting strong students, and pairing them with instructors with decades fo experience, Tech Elevator has developed an impressive reputation for not only finding great students, but being able to support those students dreams of being able to enter the tech industry.'),
+    ('Hey! Good to meet you!');
 
 INSERT INTO topics (topic_name, subject_name, response_id)
 VALUES
@@ -201,7 +201,8 @@ VALUES
    ('said', 'developers', 54),
    ('abdi', 'team', 55),
    ('abdi', 'developers', 55),
-   ('elevator', 'elevator', 56);
+   ('elevator', 'elevator', 56),
+   ('hey', 'hey', 57);
 
 COMMIT;
 
