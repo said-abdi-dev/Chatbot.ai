@@ -511,6 +511,7 @@ listenToResponse() {
           text: "what is your email?",
           author: "response-box",
         });
+        
       } else if (
         message.includes("@") &&
         this.messages[1].text.includes("email")
@@ -519,6 +520,10 @@ listenToResponse() {
         this.formData.to_name = message;
         this.$nextTick(() => {
           this.sendEmail();
+          this.messages.unshift({
+          text: "sent!",
+          author: "response-box",
+        });
         });
         this.scrollToBottom();
       } else {
@@ -568,7 +573,7 @@ listenToResponse() {
         .sendForm(serviceID, templateID, formElement)
         .then(() => {
           this.sending = false;
-          alert("Sent!");
+          // alert("Sent!");
         })
         .catch((err) => {
           this.sending = false;
@@ -672,6 +677,7 @@ video {
   border-radius: 12px;
   align-self: flex-start;
 }
+
 
 .response-box p {
   text-align: left;
