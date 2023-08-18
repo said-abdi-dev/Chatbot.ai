@@ -33,7 +33,7 @@ VALUES
     ('shirdon'), -- 23
     ('team'), --24
     ('developers'), --25
-    ('elevator'), --26
+    ('elevator'); --26
 
 
 INSERT INTO responses (response)
